@@ -1,0 +1,40 @@
+{
+  "apiVersion": "v1",
+  "kind": "List",
+  "items": [
+    {
+      "apiVersion": "v1",
+      "kind": "ConfigMap",
+      "metadata": {
+        "name": "preview-selection",
+        "namespace": "anatomy-motion"
+      },
+      "data": {
+        "pr": "0"
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "ConfigMap",
+      "metadata": {
+        "name": "preview-state",
+        "namespace": "anatomy-motion"
+      },
+      "data": {
+        "highestRunId": "0",
+        "status": "idle"
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "ConfigMap",
+      "metadata": {
+        "name": "preview-rollback",
+        "namespace": "anatomy-motion"
+      },
+      "data": {
+        "snapshot.json": "{}"
+      }
+    }
+  ]
+}
