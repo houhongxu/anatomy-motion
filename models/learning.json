@@ -1,0 +1,1466 @@
+{
+  "version": 1,
+  "groups": [
+    {
+      "id": "pectoralis-major",
+      "name": {
+        "zh": "胸大肌",
+        "en": "Pectoralis major"
+      },
+      "structureIds": [
+        "FJ1446",
+        "FJ1446M",
+        "FJ1447",
+        "FJ1447M",
+        "FJ1464",
+        "FJ1464M"
+      ]
+    },
+    {
+      "id": "deltoid-anterior",
+      "name": {
+        "zh": "三角肌前部（锁骨部）",
+        "en": "Anterior deltoid (clavicular part)"
+      },
+      "structureIds": [
+        "FJ1468",
+        "FJ1468M"
+      ]
+    },
+    {
+      "id": "deltoid-posterior",
+      "name": {
+        "zh": "三角肌后部（肩胛冈部）",
+        "en": "Posterior deltoid (spinal part)"
+      },
+      "structureIds": [
+        "FJ1513",
+        "FJ1513M"
+      ]
+    },
+    {
+      "id": "biceps-brachii",
+      "name": {
+        "zh": "肱二头肌",
+        "en": "Biceps brachii"
+      },
+      "structureIds": [
+        "FJ1478",
+        "FJ1478M",
+        "FJ1512",
+        "FJ1512M"
+      ]
+    },
+    {
+      "id": "biceps-long-head-muscle",
+      "name": {
+        "zh": "肱二头肌长头肌腹",
+        "en": "Long-head biceps muscle belly"
+      },
+      "structureIds": [
+        "FJ1478",
+        "FJ1478M"
+      ]
+    },
+    {
+      "id": "infraspinatus-muscle",
+      "name": {
+        "zh": "冈下肌",
+        "en": "Infraspinatus muscle"
+      },
+      "structureIds": [
+        "FJ1500",
+        "FJ1500M"
+      ]
+    },
+    {
+      "id": "triceps-brachii",
+      "name": {
+        "zh": "肱三头肌",
+        "en": "Triceps brachii"
+      },
+      "structureIds": [
+        "FJ1477",
+        "FJ1477M",
+        "FJ1479",
+        "FJ1479M",
+        "FJ1480",
+        "FJ1480M"
+      ]
+    },
+    {
+      "id": "rhomboids",
+      "name": {
+        "zh": "菱形肌群",
+        "en": "Rhomboids"
+      },
+      "structureIds": [
+        "FJ1536",
+        "FJ1536M",
+        "FJ1537",
+        "FJ1537M"
+      ]
+    },
+    {
+      "id": "trapezius",
+      "name": {
+        "zh": "斜方肌",
+        "en": "Trapezius"
+      },
+      "structureIds": [
+        "FJ1554",
+        "FJ1554M",
+        "FJ1520",
+        "FJ1520M",
+        "FJ1521",
+        "FJ1521M"
+      ]
+    },
+    {
+      "id": "trapezius-middle",
+      "name": {
+        "zh": "斜方肌横部",
+        "en": "Middle trapezius (transverse part)"
+      },
+      "structureIds": [
+        "FJ1554",
+        "FJ1554M"
+      ]
+    },
+    {
+      "id": "latissimus-dorsi",
+      "name": {
+        "zh": "背阔肌",
+        "en": "Latissimus dorsi"
+      },
+      "structureIds": [],
+      "missing": {
+        "zh": "来源元素清单未提供背阔肌网格，不能高亮。",
+        "en": "The source element table provides no latissimus dorsi mesh; highlighting is unavailable."
+      }
+    },
+    {
+      "id": "quadriceps",
+      "name": {
+        "zh": "股四头肌群",
+        "en": "Quadriceps"
+      },
+      "structureIds": [
+        "FJ1433",
+        "FJ1433M",
+        "FJ1441",
+        "FJ1441M",
+        "FJ1442",
+        "FJ1442M",
+        "FJ1443",
+        "FJ1443M"
+      ]
+    },
+    {
+      "id": "gluteus-maximus",
+      "name": {
+        "zh": "臀大肌",
+        "en": "Gluteus maximus"
+      },
+      "structureIds": [
+        "FJ1418",
+        "FJ1418M"
+      ]
+    },
+    {
+      "id": "hamstrings",
+      "name": {
+        "zh": "腘绳肌群",
+        "en": "Hamstrings"
+      },
+      "structureIds": [
+        "FJ1395",
+        "FJ1395M",
+        "FJ1444",
+        "FJ1444M",
+        "FJ1435",
+        "FJ1435M",
+        "FJ1436",
+        "FJ1436M"
+      ]
+    },
+    {
+      "id": "hip-adductors",
+      "name": {
+        "zh": "髋内收肌群",
+        "en": "Hip adductors"
+      },
+      "structureIds": [
+        "FJ1401",
+        "FJ1401M",
+        "FJ1402",
+        "FJ1402M",
+        "FJ1403",
+        "FJ1403M",
+        "FJ1421",
+        "FJ1421M",
+        "FJ1427",
+        "FJ1427M"
+      ]
+    },
+    {
+      "id": "gastrocnemius",
+      "name": {
+        "zh": "腓肠肌",
+        "en": "Gastrocnemius"
+      },
+      "structureIds": [
+        "FJ1394",
+        "FJ1394M",
+        "FJ1397",
+        "FJ1397M"
+      ]
+    },
+    {
+      "id": "soleus",
+      "name": {
+        "zh": "比目鱼肌",
+        "en": "Soleus"
+      },
+      "structureIds": [
+        "FJ1437",
+        "FJ1437M"
+      ]
+    },
+    {
+      "id": "rectus-abdominis",
+      "name": {
+        "zh": "腹直肌",
+        "en": "Rectus abdominis"
+      },
+      "structureIds": [],
+      "missing": {
+        "zh": "来源元素清单未提供腹直肌网格，不能高亮。",
+        "en": "The source element table provides no rectus abdominis mesh; highlighting is unavailable."
+      }
+    },
+    {
+      "id": "transversus-abdominis",
+      "name": {
+        "zh": "腹横肌",
+        "en": "Transversus abdominis"
+      },
+      "structureIds": [],
+      "missing": {
+        "zh": "来源元素清单未提供腹横肌网格，不能高亮。",
+        "en": "The source element table provides no transversus abdominis mesh; highlighting is unavailable."
+      }
+    },
+    {
+      "id": "obliques",
+      "name": {
+        "zh": "腹斜肌群（仅腹外斜肌网格）",
+        "en": "Obliques (external oblique mesh only)"
+      },
+      "structureIds": [
+        "FJ1452",
+        "FJ1452M"
+      ],
+      "missing": {
+        "zh": "仅腹外斜肌有网格，腹内斜肌缺失。",
+        "en": "Only external oblique meshes are available; internal oblique is absent."
+      }
+    },
+    {
+      "id": "erector-spinae",
+      "name": {
+        "zh": "竖脊肌群",
+        "en": "Erector spinae"
+      },
+      "structureIds": [
+        "FJ1526",
+        "FJ1526M",
+        "FJ1527",
+        "FJ1527M",
+        "FJ1528",
+        "FJ1528M",
+        "FJ1533",
+        "FJ1533M",
+        "FJ1534",
+        "FJ1534M",
+        "FJ1535",
+        "FJ1535M",
+        "FJ1543",
+        "FJ1543M",
+        "FJ1544",
+        "FJ1544M"
+      ]
+    },
+    {
+      "id": "multifidus",
+      "name": {
+        "zh": "多裂肌",
+        "en": "Multifidus"
+      },
+      "structureIds": [],
+      "missing": {
+        "zh": "来源元素清单未提供多裂肌网格，不能高亮。",
+        "en": "The source element table provides no multifidus mesh; highlighting is unavailable."
+      }
+    },
+    {
+      "id": "quadratus-lumborum",
+      "name": {
+        "zh": "腰方肌",
+        "en": "Quadratus lumborum"
+      },
+      "structureIds": [],
+      "missing": {
+        "zh": "来源元素清单未提供腰方肌网格，不能高亮。",
+        "en": "The source element table provides no quadratus lumborum mesh; highlighting is unavailable."
+      }
+    },
+    {
+      "id": "rotator-cuff-muscles",
+      "name": {
+        "zh": "肩袖肌群",
+        "en": "Rotator cuff muscles"
+      },
+      "structureIds": [
+        "FJ1506",
+        "FJ1506M",
+        "FJ1500",
+        "FJ1500M",
+        "FJ1504",
+        "FJ1504M",
+        "FJ1508",
+        "FJ1508M"
+      ]
+    },
+    {
+      "id": "ecrb-muscle",
+      "name": {
+        "zh": "桡侧腕短伸肌",
+        "en": "Extensor carpi radialis brevis muscle"
+      },
+      "structureIds": [
+        "FJ1489",
+        "FJ1489M"
+      ]
+    },
+    {
+      "id": "flexor-pronator-muscles",
+      "name": {
+        "zh": "屈肌旋前肌群",
+        "en": "Flexor-pronator muscles"
+      },
+      "structureIds": [
+        "FJ1474",
+        "FJ1474M",
+        "FJ1516",
+        "FJ1516M",
+        "FJ1496",
+        "FJ1496M",
+        "FJ1502",
+        "FJ1502M",
+        "FJ1475",
+        "FJ1475M",
+        "FJ1499",
+        "FJ1499M",
+        "FJ1473",
+        "FJ1473M",
+        "FJ1518",
+        "FJ1518M"
+      ]
+    },
+    {
+      "id": "achilles-tendon",
+      "name": {
+        "zh": "跟腱",
+        "en": "Achilles tendon"
+      },
+      "structureIds": [
+        "FJ1405",
+        "FJ1405M"
+      ]
+    },
+    {
+      "id": "patellar-tendon",
+      "name": {
+        "zh": "髌腱",
+        "en": "Patellar tendon"
+      },
+      "structureIds": [],
+      "missing": {
+        "zh": "来源没有该肌腱的独立网格，无法单独高亮。",
+        "en": "The source has no separate mesh for this tendon; it cannot be highlighted."
+      }
+    },
+    {
+      "id": "biceps-long-head-tendon",
+      "name": {
+        "zh": "肱二头肌长头腱",
+        "en": "Long-head biceps tendon"
+      },
+      "structureIds": [],
+      "missing": {
+        "zh": "来源没有该肌腱的独立网格，无法单独高亮。",
+        "en": "The source has no separate mesh for this tendon; it cannot be highlighted."
+      }
+    },
+    {
+      "id": "rotator-cuff-tendons",
+      "name": {
+        "zh": "肩袖肌腱",
+        "en": "Rotator cuff tendons"
+      },
+      "structureIds": [],
+      "missing": {
+        "zh": "来源没有该肌腱的独立网格，无法单独高亮。",
+        "en": "The source has no separate mesh for this tendon; it cannot be highlighted."
+      }
+    },
+    {
+      "id": "ecrb-tendon",
+      "name": {
+        "zh": "桡侧腕短伸肌腱（肘外侧）",
+        "en": "ECRB tendon at lateral elbow"
+      },
+      "structureIds": [],
+      "missing": {
+        "zh": "来源没有该肌腱的独立网格，无法单独高亮。",
+        "en": "The source has no separate mesh for this tendon; it cannot be highlighted."
+      }
+    },
+    {
+      "id": "common-flexor-tendon",
+      "name": {
+        "zh": "共同屈肌腱（肘内侧）",
+        "en": "Common flexor tendon at medial elbow"
+      },
+      "structureIds": [],
+      "missing": {
+        "zh": "来源没有该肌腱的独立网格，无法单独高亮。",
+        "en": "The source has no separate mesh for this tendon; it cannot be highlighted."
+      }
+    }
+  ],
+  "entries": [
+    {
+      "id": "push-up",
+      "kind": "exercise",
+      "name": {
+        "zh": "俯卧撑",
+        "en": "Push-Up"
+      },
+      "summary": {
+        "zh": "胸部推举与肘伸展配合，躯干同时保持稳定。",
+        "en": "A bodyweight press combining chest work, elbow extension and trunk stability."
+      },
+      "groupIds": [
+        "pectoralis-major",
+        "deltoid-anterior",
+        "triceps-brachii"
+      ],
+      "sources": [
+        {
+          "title": "NASM — Push-Up",
+          "label": {
+            "zh": "NASM：俯卧撑",
+            "en": "NASM: Push-Up"
+          },
+          "url": "https://www.nasm.org/resource-center/exercise-library/push-up"
+        }
+      ]
+    },
+    {
+      "id": "barbell-bench-press",
+      "kind": "exercise",
+      "name": {
+        "zh": "杠铃卧推",
+        "en": "Barbell Bench Press"
+      },
+      "summary": {
+        "zh": "卧位水平推举，涉及胸大肌、肱三头肌和三角肌前部。",
+        "en": "A horizontal press involving pectoralis major, triceps and anterior deltoid."
+      },
+      "groupIds": [
+        "pectoralis-major",
+        "triceps-brachii",
+        "deltoid-anterior"
+      ],
+      "sources": [
+        {
+          "title": "NASM — Barbell Bench Press",
+          "label": {
+            "zh": "NASM：杠铃卧推",
+            "en": "NASM: Barbell Bench Press"
+          },
+          "url": "https://www.nasm.org/resource-center/exercise-library/barbell-bench-press"
+        }
+      ]
+    },
+    {
+      "id": "cable-crossover",
+      "kind": "exercise",
+      "name": {
+        "zh": "绳索夹胸",
+        "en": "Cable Crossover"
+      },
+      "summary": {
+        "zh": "绳索阻力下的肩水平内收，主要关联胸大肌。",
+        "en": "Cable-resisted horizontal shoulder adduction, centered on pectoralis major."
+      },
+      "groupIds": [
+        "pectoralis-major",
+        "deltoid-anterior"
+      ],
+      "sources": [
+        {
+          "title": "NASM — Cable Crossover",
+          "label": {
+            "zh": "NASM：绳索夹胸",
+            "en": "NASM: Cable Crossover"
+          },
+          "url": "https://www.nasm.org/resource-center/exercise-library/cable-crossover"
+        }
+      ]
+    },
+    {
+      "id": "chest-press-machine",
+      "kind": "exercise",
+      "name": {
+        "zh": "器械推胸",
+        "en": "Chest Press Machine"
+      },
+      "summary": {
+        "zh": "沿器械轨迹进行推胸，关联胸部与伸肘肌群。",
+        "en": "A guided pressing movement involving chest and elbow-extensor muscles."
+      },
+      "groupIds": [
+        "pectoralis-major",
+        "deltoid-anterior",
+        "triceps-brachii"
+      ],
+      "sources": [
+        {
+          "title": "NASM — Chest Press Machine",
+          "label": {
+            "zh": "NASM：器械推胸",
+            "en": "NASM: Chest Press Machine"
+          },
+          "url": "https://www.nasm.org/resource-center/exercise-library/chest-press-machine"
+        }
+      ]
+    },
+    {
+      "id": "close-grip-bench-press",
+      "kind": "exercise",
+      "name": {
+        "zh": "窄握卧推",
+        "en": "Close Grip Bench Press"
+      },
+      "summary": {
+        "zh": "较窄握距的推举变式，突出肱三头肌的伸肘作用。",
+        "en": "A narrower-grip press emphasizing the triceps' elbow-extension role."
+      },
+      "groupIds": [
+        "triceps-brachii",
+        "deltoid-anterior",
+        "pectoralis-major"
+      ],
+      "sources": [
+        {
+          "title": "NASM — Close Grip Bench Press",
+          "label": {
+            "zh": "NASM：窄握卧推",
+            "en": "NASM: Close Grip Bench Press"
+          },
+          "url": "https://www.nasm.org/resource-center/exercise-library/close-grip-bench-press"
+        }
+      ]
+    },
+    {
+      "id": "barbell-bicep-curl",
+      "kind": "exercise",
+      "name": {
+        "zh": "杠铃弯举",
+        "en": "Barbell Bicep Curl"
+      },
+      "summary": {
+        "zh": "以屈肘为主要动作，重点关联肱二头肌。",
+        "en": "An elbow-flexion exercise centered on the biceps brachii."
+      },
+      "groupIds": [
+        "biceps-brachii"
+      ],
+      "sources": [
+        {
+          "title": "NASM — Barbell Bicep Curl",
+          "label": {
+            "zh": "NASM：杠铃弯举",
+            "en": "NASM: Barbell Bicep Curl"
+          },
+          "url": "https://www.nasm.org/resource-center/exercise-library/barbell-bicep-curl"
+        }
+      ]
+    },
+    {
+      "id": "pike-push-up",
+      "kind": "exercise",
+      "name": {
+        "zh": "折刀俯卧撑",
+        "en": "Pike Push-Up"
+      },
+      "summary": {
+        "zh": "髋部抬高的自重推举，肩部与肱三头肌共同参与。",
+        "en": "A raised-hip bodyweight press involving the deltoids and triceps."
+      },
+      "groupIds": [
+        "deltoid-anterior",
+        "pectoralis-major",
+        "triceps-brachii"
+      ],
+      "sources": [
+        {
+          "title": "NASM — Pike Push-Up",
+          "label": {
+            "zh": "NASM：折刀俯卧撑",
+            "en": "NASM: Pike Push-Up"
+          },
+          "url": "https://www.nasm.org/resource-center/exercise-library/pike-push-up"
+        }
+      ]
+    },
+    {
+      "id": "face-pull",
+      "kind": "exercise",
+      "name": {
+        "zh": "绳索面拉",
+        "en": "Face Pull"
+      },
+      "summary": {
+        "zh": "向面部方向拉动绳索，关联三角肌后部与肩胛后缩肌。",
+        "en": "A cable pull involving posterior deltoids and scapular retractors."
+      },
+      "groupIds": [
+        "deltoid-posterior",
+        "rhomboids",
+        "trapezius-middle",
+        "infraspinatus-muscle"
+      ],
+      "sources": [
+        {
+          "title": "NASM — Face Pull",
+          "label": {
+            "zh": "NASM：绳索面拉",
+            "en": "NASM: Face Pull"
+          },
+          "url": "https://www.nasm.org/resource-center/exercise-library/face-pull"
+        }
+      ]
+    },
+    {
+      "id": "pull-up",
+      "kind": "exercise",
+      "name": {
+        "zh": "引体向上",
+        "en": "Pull-Up"
+      },
+      "summary": {
+        "zh": "垂直拉动身体，背阔肌与屈肘肌共同参与。",
+        "en": "A vertical bodyweight pull involving latissimus dorsi and elbow flexors."
+      },
+      "groupIds": [
+        "latissimus-dorsi",
+        "biceps-brachii",
+        "rhomboids",
+        "trapezius-middle",
+        "deltoid-posterior"
+      ],
+      "sources": [
+        {
+          "title": "NASM — Pull-Up",
+          "label": {
+            "zh": "NASM：引体向上",
+            "en": "NASM: Pull-Up"
+          },
+          "url": "https://www.nasm.org/resource-center/exercise-library/pull-up"
+        }
+      ],
+      "notice": {
+        "zh": "部分相关结构缺少来源网格；高亮仅展示已有结构，不能代表完整肌肉参与情况。",
+        "en": "Some involved structures lack source meshes. Highlights show available structures, not complete muscle involvement."
+      }
+    },
+    {
+      "id": "seated-machine-row-close-grip",
+      "kind": "exercise",
+      "name": {
+        "zh": "器械窄握坐姿划船",
+        "en": "Seated Machine Row Close Grip"
+      },
+      "summary": {
+        "zh": "水平拉动器械，关联背阔肌、菱形肌与上肢屈肌。",
+        "en": "A horizontal machine pull involving lats, rhomboids and arm flexors."
+      },
+      "groupIds": [
+        "latissimus-dorsi",
+        "rhomboids",
+        "trapezius-middle",
+        "deltoid-posterior",
+        "biceps-brachii"
+      ],
+      "sources": [
+        {
+          "title": "NASM — Seated Machine Row Close Grip",
+          "label": {
+            "zh": "NASM：器械窄握坐姿划船",
+            "en": "NASM: Seated Machine Row Close Grip"
+          },
+          "url": "https://www.nasm.org/resource-center/exercise-library/seated-machine-row-close-grip"
+        }
+      ],
+      "notice": {
+        "zh": "部分相关结构缺少来源网格；高亮仅展示已有结构，不能代表完整肌肉参与情况。",
+        "en": "Some involved structures lack source meshes. Highlights show available structures, not complete muscle involvement."
+      }
+    },
+    {
+      "id": "goblet-squat",
+      "kind": "exercise",
+      "name": {
+        "zh": "高脚杯深蹲",
+        "en": "Goblet Squat"
+      },
+      "summary": {
+        "zh": "负重置于身前的深蹲，关联股四头肌与臀大肌。",
+        "en": "A front-held squat involving knee extensors and gluteus maximus."
+      },
+      "groupIds": [
+        "quadriceps",
+        "gluteus-maximus",
+        "hip-adductors"
+      ],
+      "sources": [
+        {
+          "title": "NASM — Goblet Squat",
+          "label": {
+            "zh": "NASM：高脚杯深蹲",
+            "en": "NASM: Goblet Squat"
+          },
+          "url": "https://www.nasm.org/resource-center/exercise-library/goblet-squat"
+        }
+      ]
+    },
+    {
+      "id": "dumbbell-front-squat",
+      "kind": "exercise",
+      "name": {
+        "zh": "哑铃前蹲",
+        "en": "Dumbbell Front Squat"
+      },
+      "summary": {
+        "zh": "哑铃置于肩前的深蹲，同时需要躯干稳定。",
+        "en": "A dumbbell front-loaded squat combining leg work and trunk stabilization."
+      },
+      "groupIds": [
+        "quadriceps",
+        "gluteus-maximus",
+        "rectus-abdominis",
+        "transversus-abdominis"
+      ],
+      "sources": [
+        {
+          "title": "NASM — Dumbbell Front Squat",
+          "label": {
+            "zh": "NASM：哑铃前蹲",
+            "en": "NASM: Dumbbell Front Squat"
+          },
+          "url": "https://www.nasm.org/resource-center/exercise-library/dumbbell-front-squat"
+        }
+      ],
+      "notice": {
+        "zh": "部分相关结构缺少来源网格；高亮仅展示已有结构，不能代表完整肌肉参与情况。",
+        "en": "Some involved structures lack source meshes. Highlights show available structures, not complete muscle involvement."
+      }
+    },
+    {
+      "id": "bulgarian-split-squat",
+      "kind": "exercise",
+      "name": {
+        "zh": "保加利亚分腿蹲",
+        "en": "Bulgarian Split Squat"
+      },
+      "summary": {
+        "zh": "后脚抬高的分腿蹲，前腿承担主要髋膝伸展任务。",
+        "en": "A rear-foot-elevated split squat with most hip and knee work in the front leg."
+      },
+      "groupIds": [
+        "quadriceps",
+        "gluteus-maximus",
+        "hip-adductors"
+      ],
+      "sources": [
+        {
+          "title": "NASM — Bulgarian Split Squat",
+          "label": {
+            "zh": "NASM：保加利亚分腿蹲",
+            "en": "NASM: Bulgarian Split Squat"
+          },
+          "url": "https://www.nasm.org/resource-center/exercise-library/bulgarian-split-squat"
+        }
+      ]
+    },
+    {
+      "id": "leg-press",
+      "kind": "exercise",
+      "name": {
+        "zh": "腿举",
+        "en": "Leg Press"
+      },
+      "summary": {
+        "zh": "器械支撑下的髋膝伸展，关联股四头肌与臀肌。",
+        "en": "A supported machine movement using hip and knee extension."
+      },
+      "groupIds": [
+        "quadriceps",
+        "gluteus-maximus",
+        "hamstrings"
+      ],
+      "sources": [
+        {
+          "title": "NASM — Leg Press",
+          "label": {
+            "zh": "NASM：腿举",
+            "en": "NASM: Leg Press"
+          },
+          "url": "https://www.nasm.org/resource-center/exercise-library/leg-press"
+        }
+      ]
+    },
+    {
+      "id": "barbell-deadlift",
+      "kind": "exercise",
+      "name": {
+        "zh": "杠铃硬拉",
+        "en": "Barbell Deadlift"
+      },
+      "summary": {
+        "zh": "从地面提起杠铃，髋膝伸肌发力，背部肌群参与稳定。",
+        "en": "A floor-to-standing lift using hip and knee extensors with back stabilization."
+      },
+      "groupIds": [
+        "gluteus-maximus",
+        "quadriceps",
+        "hamstrings",
+        "erector-spinae",
+        "trapezius",
+        "latissimus-dorsi"
+      ],
+      "sources": [
+        {
+          "title": "NASM — Barbell Deadlift",
+          "label": {
+            "zh": "NASM：杠铃硬拉",
+            "en": "NASM: Barbell Deadlift"
+          },
+          "url": "https://www.nasm.org/resource-center/exercise-library/barbell-deadlift"
+        }
+      ],
+      "notice": {
+        "zh": "部分相关结构缺少来源网格；高亮仅展示已有结构，不能代表完整肌肉参与情况。",
+        "en": "Some involved structures lack source meshes. Highlights show available structures, not complete muscle involvement."
+      }
+    },
+    {
+      "id": "dumbbell-romanian-deadlift",
+      "kind": "exercise",
+      "name": {
+        "zh": "哑铃罗马尼亚硬拉",
+        "en": "Dumbbell Romanian Deadlift"
+      },
+      "summary": {
+        "zh": "以髋铰链为主的负重动作，关联腘绳肌与臀大肌。",
+        "en": "A loaded hip hinge involving hamstrings and gluteus maximus."
+      },
+      "groupIds": [
+        "hamstrings",
+        "gluteus-maximus",
+        "erector-spinae"
+      ],
+      "sources": [
+        {
+          "title": "NASM — Dumbbell Romanian Deadlift",
+          "label": {
+            "zh": "NASM：哑铃罗马尼亚硬拉",
+            "en": "NASM: Dumbbell Romanian Deadlift"
+          },
+          "url": "https://www.nasm.org/resource-center/exercise-library/dumbbell-romanian-deadlift"
+        }
+      ]
+    },
+    {
+      "id": "lying-leg-curl",
+      "kind": "exercise",
+      "name": {
+        "zh": "俯卧腿弯举",
+        "en": "Lying Leg Curl"
+      },
+      "summary": {
+        "zh": "器械阻力下屈膝，重点关联腘绳肌，小腿肌也参与。",
+        "en": "Resisted knee flexion centered on hamstrings, with calf involvement."
+      },
+      "groupIds": [
+        "hamstrings",
+        "gastrocnemius"
+      ],
+      "sources": [
+        {
+          "title": "NASM — Lying Leg Curl",
+          "label": {
+            "zh": "NASM：俯卧腿弯举",
+            "en": "NASM: Lying Leg Curl"
+          },
+          "url": "https://www.nasm.org/resource-center/exercise-library/lying-leg-curl"
+        }
+      ]
+    },
+    {
+      "id": "floor-bridge",
+      "kind": "exercise",
+      "name": {
+        "zh": "地面臀桥",
+        "en": "Floor Bridge"
+      },
+      "summary": {
+        "zh": "仰卧抬髋的髋伸展动作，重点关联臀大肌。",
+        "en": "A supine hip-extension movement centered on gluteus maximus."
+      },
+      "groupIds": [
+        "gluteus-maximus",
+        "hamstrings",
+        "erector-spinae"
+      ],
+      "sources": [
+        {
+          "title": "NASM — Floor Bridge",
+          "label": {
+            "zh": "NASM：地面臀桥",
+            "en": "NASM: Floor Bridge"
+          },
+          "url": "https://www.nasm.org/resource-center/exercise-library/floor-bridge"
+        }
+      ]
+    },
+    {
+      "id": "good-mornings",
+      "kind": "exercise",
+      "name": {
+        "zh": "早安式",
+        "en": "Good Mornings"
+      },
+      "summary": {
+        "zh": "肩背负重的髋铰链动作，关联腘绳肌、臀肌与竖脊肌。",
+        "en": "A shoulder-loaded hip hinge involving hamstrings, glutes and spinal extensors."
+      },
+      "groupIds": [
+        "hamstrings",
+        "gluteus-maximus",
+        "erector-spinae"
+      ],
+      "sources": [
+        {
+          "title": "NASM — Good Mornings",
+          "label": {
+            "zh": "NASM：早安式",
+            "en": "NASM: Good Mornings"
+          },
+          "url": "https://www.nasm.org/resource-center/exercise-library/good-mornings"
+        }
+      ]
+    },
+    {
+      "id": "leg-press-calf-raise",
+      "kind": "exercise",
+      "name": {
+        "zh": "腿举机提踵",
+        "en": "Leg Press Calf Raise"
+      },
+      "summary": {
+        "zh": "器械上以踝跖屈移动阻力，关联腓肠肌与比目鱼肌。",
+        "en": "Machine-resisted ankle plantarflexion involving gastrocnemius and soleus."
+      },
+      "groupIds": [
+        "gastrocnemius",
+        "soleus"
+      ],
+      "sources": [
+        {
+          "title": "NASM — Leg Press Calf Raise",
+          "label": {
+            "zh": "NASM：腿举机提踵",
+            "en": "NASM: Leg Press Calf Raise"
+          },
+          "url": "https://www.nasm.org/resource-center/exercise-library/leg-press-calf-raise"
+        }
+      ]
+    },
+    {
+      "id": "plank",
+      "kind": "exercise",
+      "name": {
+        "zh": "平板支撑",
+        "en": "Plank"
+      },
+      "summary": {
+        "zh": "前臂支撑下抵抗躯干过度伸展，主要关联腹部稳定肌。",
+        "en": "An isometric hold resisting trunk extension through abdominal stabilization."
+      },
+      "groupIds": [
+        "rectus-abdominis",
+        "transversus-abdominis",
+        "obliques",
+        "erector-spinae"
+      ],
+      "sources": [
+        {
+          "title": "NASM — Plank",
+          "label": {
+            "zh": "NASM：平板支撑",
+            "en": "NASM: Plank"
+          },
+          "url": "https://www.nasm.org/resource-center/exercise-library/plank"
+        }
+      ],
+      "notice": {
+        "zh": "部分相关结构缺少来源网格；高亮仅展示已有结构，不能代表完整肌肉参与情况。",
+        "en": "Some involved structures lack source meshes. Highlights show available structures, not complete muscle involvement."
+      }
+    },
+    {
+      "id": "side-plank",
+      "kind": "exercise",
+      "name": {
+        "zh": "侧平板支撑",
+        "en": "Side Plank"
+      },
+      "summary": {
+        "zh": "侧向支撑下抵抗躯干侧屈，关联腹斜肌与腰方肌。",
+        "en": "A lateral isometric hold involving obliques and quadratus lumborum."
+      },
+      "groupIds": [
+        "obliques",
+        "quadratus-lumborum"
+      ],
+      "sources": [
+        {
+          "title": "NASM — Side Plank",
+          "label": {
+            "zh": "NASM：侧平板支撑",
+            "en": "NASM: Side Plank"
+          },
+          "url": "https://www.nasm.org/resource-center/exercise-library/side-plank"
+        }
+      ],
+      "notice": {
+        "zh": "部分相关结构缺少来源网格；高亮仅展示已有结构，不能代表完整肌肉参与情况。",
+        "en": "Some involved structures lack source meshes. Highlights show available structures, not complete muscle involvement."
+      }
+    },
+    {
+      "id": "bird-dog",
+      "kind": "exercise",
+      "name": {
+        "zh": "鸟狗式",
+        "en": "Bird Dog"
+      },
+      "summary": {
+        "zh": "四点跪姿交替伸展对侧肢体，训练躯干抗旋转控制。",
+        "en": "Opposite-limb reaches from quadruped challenge trunk control against rotation."
+      },
+      "groupIds": [
+        "erector-spinae",
+        "multifidus",
+        "gluteus-maximus",
+        "rectus-abdominis",
+        "transversus-abdominis"
+      ],
+      "sources": [
+        {
+          "title": "NASM — Bird Dog",
+          "label": {
+            "zh": "NASM：鸟狗式",
+            "en": "NASM: Bird Dog"
+          },
+          "url": "https://www.nasm.org/resource-center/exercise-library/bird-dog"
+        },
+        {
+          "title": "NASM Exercise Library",
+          "label": {
+            "zh": "NASM 动作库",
+            "en": "NASM Exercise Library"
+          },
+          "url": "https://www.nasm.org/workout-exercise-guidance"
+        }
+      ],
+      "notice": {
+        "zh": "部分相关结构缺少来源网格；高亮仅展示已有结构，不能代表完整肌肉参与情况。",
+        "en": "Some involved structures lack source meshes. Highlights show available structures, not complete muscle involvement."
+      }
+    },
+    {
+      "id": "dead-bug",
+      "kind": "exercise",
+      "name": {
+        "zh": "死虫式",
+        "en": "Dead Bug"
+      },
+      "summary": {
+        "zh": "仰卧交替移动四肢，同时以腹肌维持躯干稳定。",
+        "en": "Alternating supine limb movements while abdominal muscles stabilize the trunk."
+      },
+      "groupIds": [
+        "rectus-abdominis",
+        "transversus-abdominis",
+        "obliques"
+      ],
+      "sources": [
+        {
+          "title": "NASM — Dead Bug",
+          "label": {
+            "zh": "NASM：死虫式",
+            "en": "NASM: Dead Bug"
+          },
+          "url": "https://www.nasm.org/resource-center/exercise-library/dead-bug"
+        }
+      ],
+      "notice": {
+        "zh": "部分相关结构缺少来源网格；高亮仅展示已有结构，不能代表完整肌肉参与情况。",
+        "en": "Some involved structures lack source meshes. Highlights show available structures, not complete muscle involvement."
+      }
+    },
+    {
+      "id": "russian-twist",
+      "kind": "exercise",
+      "name": {
+        "zh": "俄罗斯转体",
+        "en": "Russian Twist"
+      },
+      "summary": {
+        "zh": "躯干旋转动作，重点关联腹斜肌并需要腹部控制。",
+        "en": "A trunk-rotation movement involving obliques and abdominal control."
+      },
+      "groupIds": [
+        "rectus-abdominis",
+        "transversus-abdominis",
+        "obliques"
+      ],
+      "sources": [
+        {
+          "title": "NASM — Russian Twist",
+          "label": {
+            "zh": "NASM：俄罗斯转体",
+            "en": "NASM: Russian Twist"
+          },
+          "url": "https://www.nasm.org/resource-center/exercise-library/russian-twist"
+        }
+      ],
+      "notice": {
+        "zh": "部分相关结构缺少来源网格；高亮仅展示已有结构，不能代表完整肌肉参与情况。",
+        "en": "Some involved structures lack source meshes. Highlights show available structures, not complete muscle involvement."
+      }
+    },
+    {
+      "id": "hamstring-strain",
+      "kind": "condition",
+      "name": {
+        "zh": "腘绳肌拉伤",
+        "en": "Hamstring strain"
+      },
+      "summary": {
+        "zh": "大腿后侧腘绳肌群的肌纤维损伤，可与高速跑动有关。",
+        "en": "A strain affects posterior-thigh hamstring fibers and can occur during fast running."
+      },
+      "groupIds": [
+        "hamstrings"
+      ],
+      "sources": [
+        {
+          "title": "AAOS — Hamstring Muscle Injuries",
+          "label": {
+            "zh": "来源：腘绳肌拉伤",
+            "en": "AAOS — Hamstring Muscle Injuries"
+          },
+          "url": "https://www.orthoinfo.org/diseases--conditions/hamstring-muscle-injuries/"
+        }
+      ],
+      "notice": {
+        "zh": "用于解剖学习，不据酸痛位置诊断。若肌腱网格缺失，相关肌肉高亮仅作解剖背景。",
+        "en": "For anatomy learning, not diagnosis from soreness location. If a tendon mesh is absent, muscle highlights provide anatomical context only."
+      }
+    },
+    {
+      "id": "quadriceps-strain",
+      "kind": "condition",
+      "name": {
+        "zh": "股四头肌拉伤",
+        "en": "Quadriceps strain"
+      },
+      "summary": {
+        "zh": "大腿前侧股四头肌群的肌纤维损伤，属于肌肉拉伤。",
+        "en": "A muscle-fiber strain in the quadriceps at the front of the thigh."
+      },
+      "groupIds": [
+        "quadriceps"
+      ],
+      "sources": [
+        {
+          "title": "AAOS — Muscle Strains in the Thigh",
+          "label": {
+            "zh": "来源：股四头肌拉伤",
+            "en": "AAOS — Muscle Strains in the Thigh"
+          },
+          "url": "https://www.orthoinfo.org/diseases--conditions/muscle-strains-in-the-thigh"
+        }
+      ],
+      "notice": {
+        "zh": "用于解剖学习，不据酸痛位置诊断。若肌腱网格缺失，相关肌肉高亮仅作解剖背景。",
+        "en": "For anatomy learning, not diagnosis from soreness location. If a tendon mesh is absent, muscle highlights provide anatomical context only."
+      }
+    },
+    {
+      "id": "groin-adductor-strain",
+      "kind": "condition",
+      "name": {
+        "zh": "腹股沟内收肌拉伤",
+        "en": "Groin adductor strain"
+      },
+      "summary": {
+        "zh": "大腿内侧内收肌群的拉伤；并非所有腹股沟疼痛都是肌肉拉伤。",
+        "en": "A strain of inner-thigh adductors; groin pain alone does not identify this condition."
+      },
+      "groupIds": [
+        "hip-adductors"
+      ],
+      "sources": [
+        {
+          "title": "Health New Zealand — Groin strains",
+          "label": {
+            "zh": "来源：腹股沟内收肌拉伤",
+            "en": "Health New Zealand — Groin strains"
+          },
+          "url": "https://www.healthnz.govt.nz/health-topics/conditions-treatments/bones-and-joints/groin-strains"
+        }
+      ],
+      "notice": {
+        "zh": "用于解剖学习，不据酸痛位置诊断。若肌腱网格缺失，相关肌肉高亮仅作解剖背景。",
+        "en": "For anatomy learning, not diagnosis from soreness location. If a tendon mesh is absent, muscle highlights provide anatomical context only."
+      }
+    },
+    {
+      "id": "calf-strain",
+      "kind": "condition",
+      "name": {
+        "zh": "小腿后侧肌群拉伤",
+        "en": "Calf strain"
+      },
+      "summary": {
+        "zh": "涉及腓肠肌或比目鱼肌部分肌纤维的撕裂。",
+        "en": "A strain can tear fibers of the gastrocnemius or soleus."
+      },
+      "groupIds": [
+        "gastrocnemius",
+        "soleus"
+      ],
+      "sources": [
+        {
+          "title": "Hull NHS — Soft Tissue Injury: Calf Strain",
+          "label": {
+            "zh": "来源：小腿后侧肌群拉伤",
+            "en": "Hull NHS — Soft Tissue Injury: Calf Strain"
+          },
+          "url": "https://www.hey.nhs.uk/patient-leaflet/soft-tissue-injury-calf-strain/"
+        }
+      ],
+      "notice": {
+        "zh": "用于解剖学习，不据酸痛位置诊断。若肌腱网格缺失，相关肌肉高亮仅作解剖背景。",
+        "en": "For anatomy learning, not diagnosis from soreness location. If a tendon mesh is absent, muscle highlights provide anatomical context only."
+      }
+    },
+    {
+      "id": "achilles-tendinopathy",
+      "kind": "condition",
+      "name": {
+        "zh": "跟腱病",
+        "en": "Achilles tendinopathy"
+      },
+      "summary": {
+        "zh": "跟腱承受重复负荷相关的问题，属于肌腱而非小腿肌腹。",
+        "en": "A load-related tendon condition involving the Achilles, distinct from the calf muscle bellies."
+      },
+      "groupIds": [
+        "achilles-tendon"
+      ],
+      "sources": [
+        {
+          "title": "AAOS — Achilles Tendinitis",
+          "label": {
+            "zh": "来源：跟腱病",
+            "en": "AAOS — Achilles Tendinitis"
+          },
+          "url": "https://www.orthoinfo.org/diseases--conditions/achilles-tendinitis"
+        }
+      ],
+      "notice": {
+        "zh": "用于解剖学习，不据酸痛位置诊断。若肌腱网格缺失，相关肌肉高亮仅作解剖背景。",
+        "en": "For anatomy learning, not diagnosis from soreness location. If a tendon mesh is absent, muscle highlights provide anatomical context only."
+      }
+    },
+    {
+      "id": "patellar-tendinopathy",
+      "kind": "condition",
+      "name": {
+        "zh": "髌腱病",
+        "en": "Patellar tendinopathy"
+      },
+      "summary": {
+        "zh": "位于髌骨下方肌腱的负荷相关问题，常见于跑跳活动。",
+        "en": "A load-related problem of the tendon below the kneecap, associated with running and jumping."
+      },
+      "groupIds": [
+        "patellar-tendon",
+        "quadriceps"
+      ],
+      "sources": [
+        {
+          "title": "Kingston and Richmond NHS — Patellar tendinopathy",
+          "label": {
+            "zh": "来源：髌腱病",
+            "en": "Kingston and Richmond NHS — Patellar tendinopathy"
+          },
+          "url": "https://www.kingstonandrichmond.nhs.uk/patients-and-families/patient-leaflets/patellar-tendinopathy"
+        }
+      ],
+      "notice": {
+        "zh": "用于解剖学习，不据酸痛位置诊断。若肌腱网格缺失，相关肌肉高亮仅作解剖背景。",
+        "en": "For anatomy learning, not diagnosis from soreness location. If a tendon mesh is absent, muscle highlights provide anatomical context only."
+      }
+    },
+    {
+      "id": "biceps-tendinitis",
+      "kind": "condition",
+      "name": {
+        "zh": "肱二头肌长头腱炎",
+        "en": "Long-head biceps tendinitis"
+      },
+      "summary": {
+        "zh": "肩前方肱二头肌长头腱的刺激或炎症，与肱二头肌肌腹不同。",
+        "en": "Irritation or inflammation of the proximal long-head biceps tendon, distinct from its muscle belly."
+      },
+      "groupIds": [
+        "biceps-long-head-tendon",
+        "biceps-long-head-muscle"
+      ],
+      "sources": [
+        {
+          "title": "AAOS — Biceps Tendinitis",
+          "label": {
+            "zh": "来源：肱二头肌长头腱炎",
+            "en": "AAOS — Biceps Tendinitis"
+          },
+          "url": "https://www.orthoinfo.org/diseases--conditions/biceps-tendinitis/"
+        }
+      ],
+      "notice": {
+        "zh": "用于解剖学习，不据酸痛位置诊断。若肌腱网格缺失，相关肌肉高亮仅作解剖背景。",
+        "en": "For anatomy learning, not diagnosis from soreness location. If a tendon mesh is absent, muscle highlights provide anatomical context only."
+      }
+    },
+    {
+      "id": "rotator-cuff-tendinitis",
+      "kind": "condition",
+      "name": {
+        "zh": "肩袖肌腱炎",
+        "en": "Rotator cuff tendinitis"
+      },
+      "summary": {
+        "zh": "肩袖肌腱的炎症；与滑囊问题或肌腱撕裂属于不同概念。",
+        "en": "Inflammation of rotator cuff tendons, distinct from bursitis or a tendon tear."
+      },
+      "groupIds": [
+        "rotator-cuff-tendons",
+        "rotator-cuff-muscles"
+      ],
+      "sources": [
+        {
+          "title": "AAOS — Shoulder Impingement / Rotator Cuff Tendinitis",
+          "label": {
+            "zh": "来源：肩袖肌腱炎",
+            "en": "AAOS — Shoulder Impingement / Rotator Cuff Tendinitis"
+          },
+          "url": "https://www.orthoinfo.org/diseases--conditions/shoulder-impingementrotator-cuff-tendinitis/"
+        }
+      ],
+      "notice": {
+        "zh": "用于解剖学习，不据酸痛位置诊断。若肌腱网格缺失，相关肌肉高亮仅作解剖背景。",
+        "en": "For anatomy learning, not diagnosis from soreness location. If a tendon mesh is absent, muscle highlights provide anatomical context only."
+      }
+    },
+    {
+      "id": "tennis-elbow",
+      "kind": "condition",
+      "name": {
+        "zh": "网球肘（肱骨外上髁病）",
+        "en": "Tennis elbow (lateral epicondylitis)"
+      },
+      "summary": {
+        "zh": "肘外侧伸肌腱相关问题，桡侧腕短伸肌及其肌腱常被累及。",
+        "en": "A lateral-elbow extensor-tendon condition commonly involving the ECRB muscle-tendon unit."
+      },
+      "groupIds": [
+        "ecrb-tendon",
+        "ecrb-muscle"
+      ],
+      "sources": [
+        {
+          "title": "AAOS — Tennis Elbow (Lateral Epicondylitis)",
+          "label": {
+            "zh": "来源：网球肘（肱骨外上髁病）",
+            "en": "AAOS — Tennis Elbow (Lateral Epicondylitis)"
+          },
+          "url": "https://www.orthoinfo.org/diseases--conditions/tennis-elbow-lateral-epicondylitis/"
+        }
+      ],
+      "notice": {
+        "zh": "用于解剖学习，不据酸痛位置诊断。若肌腱网格缺失，相关肌肉高亮仅作解剖背景。",
+        "en": "For anatomy learning, not diagnosis from soreness location. If a tendon mesh is absent, muscle highlights provide anatomical context only."
+      }
+    },
+    {
+      "id": "golfers-elbow",
+      "kind": "condition",
+      "name": {
+        "zh": "高尔夫球肘（肱骨内上髁病）",
+        "en": "Golfer's elbow (medial epicondylitis)"
+      },
+      "summary": {
+        "zh": "肘内侧屈肌旋前肌起点相关问题，并不限于高尔夫运动者。",
+        "en": "A medial-elbow flexor-pronator tendon-origin condition that also occurs outside golf."
+      },
+      "groupIds": [
+        "common-flexor-tendon",
+        "flexor-pronator-muscles"
+      ],
+      "sources": [
+        {
+          "title": "AAOS — Medial Epicondylitis (Golfer's Elbow)",
+          "label": {
+            "zh": "来源：高尔夫球肘（肱骨内上髁病）",
+            "en": "AAOS — Medial Epicondylitis (Golfer's Elbow)"
+          },
+          "url": "https://www.orthoinfo.org/diseases--conditions/medial-epicondylitis-golfers-elbow/"
+        }
+      ],
+      "notice": {
+        "zh": "用于解剖学习，不据酸痛位置诊断。若肌腱网格缺失，相关肌肉高亮仅作解剖背景。",
+        "en": "For anatomy learning, not diagnosis from soreness location. If a tendon mesh is absent, muscle highlights provide anatomical context only."
+      }
+    }
+  ]
+}
