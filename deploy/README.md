@@ -32,9 +32,9 @@ English: CI's `github-deployer` cannot read or change Secrets, RBAC or other nam
 
 English: The preview environment requires GitHub Secrets `K3S_PREVIEW_KUBECONFIG`, `K3S_PREVIEW_SSH_KEY` and `K3S_PREVIEW_KNOWN_HOSTS`. Kubeconfig uses `https://127.0.0.1:16443`, TLS server-name `kubernetes.default.svc` and namespace-scoped credentials. SSH opens only the loopback tunnel to the server's `127.0.0.1:6443`, with verified known_hosts and a key constrained by restrict, port-forwarding, permitopen and a forbidden remote command. Temporary credentials use mode 0600; exit cleanup closes the tunnel and removes them. kubectl v1.36.2 is downloaded from its official source with SHA256 verification.
 
-中文：镜像为 `ghcr.io/houhongxu/anatomy-motion:sha-完整SHA`；部署优先使用构建器返回的不可变 digest。`ghcr-read` 必须由管理员提前配置有效的拉取凭据，或在镜像公开后调整引用；短期 GitHub 工作流 token 不能作为持久拉取凭据。Docker 镜像保留项目 LICENSE、BodyParts3D 署名与 CC BY 4.0 全文。
+中文：镜像为 `ghcr.io/houhongxu/anatomy-motion:sha-完整SHA`；部署优先使用构建器返回的不可变 digest。镜像已公开，Pod 拉取镜像无需凭据，清单不引用 imagePullSecrets。Docker 镜像保留项目 LICENSE、BodyParts3D 署名与 CC BY 4.0 全文。
 
-English: Images use `ghcr.io/houhongxu/anatomy-motion:sha-FULL_SHA`; deployment prefers the builder's immutable digest. Administrators must provision valid `ghcr-read` pull credentials or adjust the reference after making the image public. Short-lived workflow tokens are not persistent pull credentials. Images retain the project LICENSE, BodyParts3D attribution and full CC BY 4.0 text.
+English: Images use `ghcr.io/houhongxu/anatomy-motion:sha-FULL_SHA`; deployment prefers the builder's immutable digest. The image is public, so pods need no registry pull credentials and the manifest does not reference imagePullSecrets. Images retain the project LICENSE, BodyParts3D attribution and full CC BY 4.0 text.
 
 ## 失败恢复与验证 / Recovery and validation
 

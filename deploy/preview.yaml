@@ -69,11 +69,6 @@
                 "effect": "NoSchedule"
               }
             ],
-            "imagePullSecrets": [
-              {
-                "name": "ghcr-read"
-              }
-            ],
             "securityContext": {
               "runAsNonRoot": true,
               "runAsUser": 1000,

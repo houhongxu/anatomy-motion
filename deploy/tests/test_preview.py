@@ -266,6 +266,7 @@ class ManifestTests(unittest.TestCase):
         self.assertEqual(pod["nodeSelector"],{"kubernetes.io/hostname":"vm-12-8-ubuntu"})
         self.assertIn({"key":"node-role","operator":"Equal","value":"control-plane","effect":"NoSchedule"},pod["tolerations"])
         self.assertFalse(pod["automountServiceAccountToken"])
+        self.assertNotIn("imagePullSecrets",pod)
         self.assertEqual(pod["securityContext"]["runAsUser"],1000)
         self.assertEqual(pod["securityContext"]["fsGroup"],1000)
         self.assertEqual(container["securityContext"]["capabilities"]["drop"],["ALL"])
