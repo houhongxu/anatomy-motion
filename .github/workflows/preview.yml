@@ -107,7 +107,10 @@ jobs:
           work="$(mktemp -d "$RUNNER_TEMP/anatomy-preview.XXXXXX")"
           tunnel_pid=""
           cleanup() {
-            if [[ -n "$tunnel_pid" ]]; then kill "$tunnel_pid" 2>/dev/null || true; fi
+            if [[ -n "$tunnel_pid" ]]; then
+              kill "$tunnel_pid" 2>/dev/null || true
+              wait "$tunnel_pid" 2>/dev/null || true
+            fi
             rm -f "$work/ssh-key" "$work/known_hosts" "$work/kubeconfig"
             rmdir "$work" 2>/dev/null || true
           }
@@ -116,11 +119,9 @@ jobs:
           printf '%s\n' "$SSH_KNOWN_HOSTS" > "$work/known_hosts"
           printf '%s\n' "$KUBECONFIG_CONTENT" > "$work/kubeconfig"
           export KUBECONFIG="$work/kubeconfig"
-          ssh -N -i "$work/ssh-key" \
-            -o BatchMode=yes -o StrictHostKeyChecking=yes \
-            -o UserKnownHostsFile="$work/known_hosts" \
-            -o ExitOnForwardFailure=yes -o ServerAliveInterval=30 -o ServerAliveCountMax=3 \
-            -L 127.0.0.1:16443:127.0.0.1:6443 ubuntu@150.158.90.109 &
+          python3 scripts/ci-local-tunnel.py \
+            --identity-file "$work/ssh-key" \
+            --known-hosts-file "$work/known_hosts" &
           tunnel_pid=$!
           ready=false
           for attempt in {1..15}; do

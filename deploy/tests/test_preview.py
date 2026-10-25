@@ -317,7 +317,7 @@ class ManifestTests(unittest.TestCase):
 
     def test_workflow_guards_head_sha_digest_tunnel_and_no_cleanup(self):
         text = (ROOT/".github/workflows/preview.yml").read_text()
-        for required in ["head.repo.full_name == github.repository","vars.PREVIEW_PR_NUMBER","if: vars.PREVIEW_DEPLOY_ENABLED == 'true'","deploy-preview","cancel-in-progress: false","github.event.pull_request.head.sha","steps.image.outputs.digest","StrictHostKeyChecking=yes","127.0.0.1:16443:127.0.0.1:6443","trap cleanup EXIT","sha256sum --check","v1.36.2"]:
+        for required in ["head.repo.full_name == github.repository","vars.PREVIEW_PR_NUMBER","if: vars.PREVIEW_DEPLOY_ENABLED == 'true'","deploy-preview","cancel-in-progress: false","github.event.pull_request.head.sha","steps.image.outputs.digest","python3 scripts/ci-local-tunnel.py","--known-hosts-file","trap cleanup EXIT","sha256sum --check","v1.36.2"]:
             self.assertIn(required,text)
         self.assertNotIn("StrictHostKeyChecking=no",text)
         self.assertNotIn("pull_request_target",text)
