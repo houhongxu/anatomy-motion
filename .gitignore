@@ -1,0 +1,15 @@
+.cache/
+node_modules/
+.env
+.env.*
+!.env.example
+server/data/
+creator/library/
+creator/temp/
+creator/local/
+creator/build/
+creator/profiles/
+*.log
+coverage/
+test-results/
+playwright-report/
