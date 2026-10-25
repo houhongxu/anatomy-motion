@@ -40,16 +40,6 @@ import {
   type LearningData,
   type LearningEntry,
 } from "./learning";
-import {
-  classifyMotionPart,
-  motionForEntry,
-  motionPose,
-  advanceProgress,
-  MOTION_BOUNDS,
-  MOTION_FIT_BOUNDS,
-  type MotionMode,
-  type MotionPart,
-} from "./motion";
 const { ccclass, property } = _decorator;
 type Structure = {
   id: string;
@@ -74,9 +64,6 @@ type Part = {
   min: number[];
   max: number[];
   center: Vec3;
-  staticMaterial: Material;
-  poseMaterial?: Material;
-  motionPart: MotionPart;
 };
 type PainRecord = {
   id: string;
@@ -166,19 +153,6 @@ async function api<T>(
 export class AtlasBootstrap extends Component {
   @property(Material)
   tissueMaterial: Material | null = null;
-  @property(Material)
-  poseMaterial: Material | null = null;
-  private motionMode: MotionMode | null = null;
-  private motionProgress = 0;
-  private motionPlaying = false;
-  private motionActive = false;
-  private motionControls!: HTMLElement;
-  private motionPlayButton!: HTMLButtonElement;
-  private motionRange!: HTMLInputElement;
-  private motionValue!: HTMLElement;
-  private readonly poseAngles = new Vec4();
-  private readonly poseJoints = new Vec4();
-  private readonly poseState = new Vec4();
   private camera!: Camera;
   private keyLight!: Node;
   private renderAspect = 1;
@@ -478,10 +452,7 @@ export class AtlasBootstrap extends Component {
       }),
       button(t("wholeBody"), () => this.resetVisibility()),
     );
-    this.motionControls = el("section", "motion-controls");
-    this.motionControls.dataset.testid = "motion-controls";
     viewport.append(
-      this.motionControls,
       this.groupActions,
       viewportTop,
       this.status,
@@ -550,13 +521,7 @@ export class AtlasBootstrap extends Component {
     ] as const) {
       const item = button(
         "",
-        () => {
-          if (pane === "model" && this.motionActive) {
-            this.restoreStaticMotion(false);
-            this.fit();
-          }
-          this.setMobilePane(pane);
-        },
+        () => this.setMobilePane(pane),
         "mobile-nav-item",
       );
       item.dataset.testid = `mobile-nav-${pane}`;
@@ -583,200 +548,6 @@ export class AtlasBootstrap extends Component {
     );
     this.renderDetail();
     this.renderHistory();
-    this.renderMotionControls();
-  }
-  update(dt: number) {
-    if (!this.motionPlaying || !this.motionMode || !this.motionActive) return;
-    this.motionProgress = advanceProgress(this.motionProgress, dt);
-    this.updatePoseUniforms();
-    this.updateMotionLabels();
-  }
-  private renderMotionControls() {
-    if (!this.motionControls) return;
-    this.motionControls.replaceChildren();
-    this.motionControls.style.display = this.motionMode ? "block" : "none";
-    const viewport = this.overlay.querySelector<HTMLElement>(".viewport");
-    if (viewport) {
-      viewport.dataset.motionActive = String(this.motionActive);
-      viewport.setAttribute(
-        "aria-label",
-        t(this.motionActive ? "poseViewportLabel" : "viewportLabel"),
-      );
-    }
-    if (!this.motionMode) return;
-    const notice = el("p", "motion-notice", t("motionNoticeShort"));
-    notice.title = t("motionDisclaimer");
-    this.motionPlayButton = button(
-      t(this.motionPlaying ? "motionPause" : "motionPlay"),
-      () => {
-        if (this.motionPlaying) {
-          this.motionPlaying = false;
-          this.updateMotionLabels();
-          return;
-        }
-        if (this.activateMotion()) {
-          this.motionPlaying = true;
-          this.updateMotionLabels();
-        }
-      },
-      "motion-play",
-    );
-    this.motionPlayButton.dataset.testid = "motion-play";
-    this.motionRange = input(
-      "range",
-      String(this.motionProgress),
-      "motion-progress",
-    );
-    this.motionRange.min = "0";
-    this.motionRange.max = "1";
-    this.motionRange.step = "0.001";
-    this.motionRange.setAttribute("aria-label", t("motionProgress"));
-    this.motionRange.addEventListener("input", () => {
-      this.motionPlaying = false;
-      this.motionProgress = Number(this.motionRange.value);
-      if (this.activateMotion()) {
-        this.updatePoseUniforms();
-        this.updateMotionLabels();
-      }
-    });
-    this.motionValue = el(
-      "span",
-      "motion-value",
-      `${Math.round(this.motionProgress * 100)}%`,
-    );
-    const progress = el("label", "motion-progress");
-    progress.append(
-      el("span", "", t("motionProgress")),
-      this.motionValue,
-      this.motionRange,
-    );
-    const rest = button(
-      t("motionReturnStatic"),
-      () => {
-        this.restoreStaticMotion(false);
-        this.fit();
-      },
-      "motion-rest",
-    );
-    rest.dataset.testid = "motion-rest";
-    rest.hidden = !this.motionActive;
-    this.motionControls.append(notice, this.motionPlayButton, progress, rest);
-    this.updateMotionLabels();
-  }
-  private updateMotionLabels() {
-    if (this.motionPlayButton) {
-      this.motionPlayButton.textContent = t(
-        this.motionPlaying ? "motionPause" : "motionPlay",
-      );
-      this.motionPlayButton.setAttribute(
-        "aria-pressed",
-        String(this.motionPlaying),
-      );
-    }
-    if (this.motionRange) {
-      this.motionRange.value = String(this.motionProgress);
-      this.motionRange.setAttribute(
-        "aria-valuetext",
-        `${Math.round(this.motionProgress * 100)}%`,
-      );
-    }
-    if (this.motionValue)
-      this.motionValue.textContent = `${Math.round(this.motionProgress * 100)}%`;
-  }
-  private activateMotion(): boolean {
-    if (this.motionActive) return true;
-    if (!this.motionMode || !this.poseMaterial?.passes.length) {
-      this.notify(t("motionUnavailable"));
-      return false;
-    }
-    this.motionActive = true;
-    for (const p of this.parts) {
-      if (!p.poseMaterial) {
-        p.poseMaterial = new Material();
-        p.poseMaterial.copy(this.poseMaterial);
-        p.poseMaterial.setProperty(
-          "partParams",
-          new Vec4(
-            p.motionPart.zone,
-            p.motionPart.rigid ? 1 : 0,
-            p.motionPart.side,
-            0,
-          ),
-        );
-      }
-      p.renderer.setSharedMaterial(p.poseMaterial, 0);
-      p.renderer.model?.createBoundingShape(
-        new Vec3(...MOTION_BOUNDS.min),
-        new Vec3(...MOTION_BOUNDS.max),
-      );
-      p.renderer.model?.updateWorldBound();
-      this.colorPart(p);
-    }
-    this.updatePoseUniforms();
-    this.yaw = 0.6;
-    this.pitch = 0.04;
-    this.fitMotion();
-    const viewport = this.overlay.querySelector<HTMLElement>(".viewport");
-    if (viewport) {
-      viewport.dataset.motionActive = "true";
-      viewport.setAttribute("aria-label", t("poseViewportLabel"));
-    }
-    const rest = this.motionControls.querySelector<HTMLButtonElement>(
-      '[data-testid="motion-rest"]',
-    );
-    if (rest) rest.hidden = false;
-    this.updateMotionLabels();
-    return true;
-  }
-  private updatePoseUniforms() {
-    if (!this.motionMode) return;
-    const pose = motionPose(this.motionMode, this.motionProgress);
-    this.poseAngles.set(...pose.angles);
-    this.poseJoints.set(...pose.joints);
-    this.poseState.set(...pose.state);
-    for (const p of this.parts)
-      if (p.poseMaterial) {
-        p.poseMaterial.setProperty("poseAngles", this.poseAngles);
-        p.poseMaterial.setProperty("poseJoints", this.poseJoints);
-        p.poseMaterial.setProperty("poseState", this.poseState);
-      }
-  }
-  private restoreStaticMotion(clearMode: boolean) {
-    const wasActive = this.motionActive;
-    this.motionPlaying = false;
-    this.motionActive = false;
-    this.motionProgress = 0;
-    if (clearMode) this.motionMode = null;
-    if (wasActive)
-      for (const p of this.parts) {
-        p.renderer.setSharedMaterial(p.staticMaterial, 0);
-        p.renderer.model?.createBoundingShape(
-          new Vec3(p.min[0], p.min[1], p.min[2]),
-          new Vec3(p.max[0], p.max[1], p.max[2]),
-        );
-        p.renderer.model?.updateWorldBound();
-      }
-    this.renderMotionControls();
-  }
-  private fitMotion() {
-    const bounds = MOTION_FIT_BOUNDS[this.motionMode || "squat"];
-    const min = bounds.min,
-      max = bounds.max;
-    this.target.set(
-      (min[0] + max[0]) / 2,
-      (min[1] + max[1]) / 2,
-      (min[2] + max[2]) / 2,
-    );
-    this.distance = fitPerspectiveBounds(
-      min,
-      max,
-      this.yaw,
-      this.pitch,
-      this.camera.fov,
-      this.renderAspect,
-      0.94,
-    );
-    this.updateCamera();
   }
   private changeLocale() {
     const fields = new Map<string, { value: string; disabled: boolean }>();
@@ -871,7 +642,6 @@ export class AtlasBootstrap extends Component {
     this.renderList();
   }
   private selectLearning(entry: LearningEntry) {
-    this.restoreStaticMotion(true);
     if (!this.modelsReady) {
       this.notify(t("loadingAnatomy"));
       return;
@@ -888,7 +658,6 @@ export class AtlasBootstrap extends Component {
     this.isolateGroupIds = null;
     this.hidden.clear();
     this.enabledLayers = new Set(["superficial", "deep", "tendon", "bone"]);
-    this.motionMode = motionForEntry(entry.id);
     this.isolated = null;
     for (const p of this.parts) {
       if (this.highlightedIds.has(p.info.id)) {
@@ -906,7 +675,6 @@ export class AtlasBootstrap extends Component {
     this.applyVisibility();
     this.renderDetail();
     this.renderLearningDetail();
-    this.renderMotionControls();
     this.syncViewport();
     if (result.ids.length) this.fit();
     this.setMobilePane("model");
@@ -939,10 +707,6 @@ export class AtlasBootstrap extends Component {
     );
     if (entry.kind === "condition")
       this.learningDetail.append(el("p", "context-notice", t("contextOnly")));
-    if (motionForEntry(entry.id))
-      this.learningDetail.append(
-        el("p", "context-notice", t("motionDisclaimer")),
-      );
     if (entry.notice)
       this.learningDetail.append(
         el("p", "context-notice", localized(entry.notice)),
@@ -1073,13 +837,11 @@ export class AtlasBootstrap extends Component {
     mat.setProperty("roughness", 0.68);
     mat.setProperty("metallic", 0.02);
     renderer.setSharedMaterial(mat, 0);
-    const part: Part = {
+    const part = {
       info,
       data,
       node,
       renderer,
-      staticMaterial: mat,
-      motionPart: classifyMotionPart(info, min, max),
       min,
       max,
       center: new Vec3(
@@ -1092,6 +854,8 @@ export class AtlasBootstrap extends Component {
     this.colorPart(part);
   }
   private colorPart(part: Part) {
+    const mat = part.renderer.getSharedMaterial(0);
+    if (!mat) return;
     const selected =
       this.selected === part || this.highlightedIds.has(part.info.id);
     const pain = this.todayRecords
@@ -1108,14 +872,11 @@ export class AtlasBootstrap extends Component {
             : part.info.layer === "deep"
               ? new Color(184, 105, 116)
               : new Color(220, 137, 127);
-    for (const mat of [part.staticMaterial, part.poseMaterial])
-      if (mat) {
-        mat.setProperty("mainColor", color);
-        mat.setProperty(
-          "emissive",
-          selected ? new Color(10, 67, 63) : new Color(0, 0, 0),
-        );
-      }
+    mat.setProperty("mainColor", color);
+    mat.setProperty(
+      "emissive",
+      selected ? new Color(10, 67, 63) : new Color(0, 0, 0),
+    );
   }
   private visible(part: Part) {
     const key = part.info.kind === "muscle" ? part.info.layer : part.info.kind;
@@ -1216,7 +977,6 @@ export class AtlasBootstrap extends Component {
       );
   }
   private select(p: Part, reveal = false) {
-    this.restoreStaticMotion(true);
     if (this.activeLearning) {
       this.activeLearning = null;
       this.highlightedIds.clear();
@@ -1749,10 +1509,6 @@ export class AtlasBootstrap extends Component {
     else this.updateCamera();
   }
   private fit() {
-    if (this.motionActive) {
-      this.fitMotion();
-      return;
-    }
     if (!this.parts.length) return;
     const min = [Infinity, Infinity, Infinity],
       max = [-Infinity, -Infinity, -Infinity];
@@ -1792,7 +1548,6 @@ export class AtlasBootstrap extends Component {
     this.updateCamera();
   }
   private resetVisibility() {
-    this.restoreStaticMotion(true);
     this.activeLearning = null;
     this.highlightedIds.clear();
     this.isolateGroupIds = null;
@@ -1809,7 +1564,6 @@ export class AtlasBootstrap extends Component {
     this.fit();
   }
   private pick(clientX: number, clientY: number) {
-    if (this.motionActive) return;
     const canvas = game.canvas;
     if (!canvas) return;
     const rect = canvas.getBoundingClientRect();
@@ -1861,12 +1615,7 @@ export class AtlasBootstrap extends Component {
       pinch = 0,
       multiTouch = false;
     const onDown = (e: PointerEvent) => {
-      if (
-        (e.target as HTMLElement).closest(
-          "button,input,select,textarea,.motion-controls",
-        )
-      )
-        return;
+      if ((e.target as HTMLElement).closest("button")) return;
       viewport.setPointerCapture(e.pointerId);
       if (!points.size) multiTouch = false;
       else multiTouch = true;
@@ -1924,7 +1673,6 @@ export class AtlasBootstrap extends Component {
       if (!points.size) multiTouch = false;
     };
     const onWheel = (e: WheelEvent) => {
-      if ((e.target as HTMLElement).closest(".motion-controls")) return;
       e.preventDefault();
       this.distance = Math.max(
         0.08,
@@ -2008,16 +1756,6 @@ export class AtlasBootstrap extends Component {
       window.visualViewport?.removeEventListener("resize", requestResize);
       window.visualViewport?.removeEventListener("scroll", requestResize);
     });
-    const pauseWhenHidden = () => {
-      if (document.hidden && this.motionPlaying) {
-        this.motionPlaying = false;
-        this.updateMotionLabels();
-      }
-    };
-    document.addEventListener("visibilitychange", pauseWhenHidden);
-    this.cleanup.push(() =>
-      document.removeEventListener("visibilitychange", pauseWhenHidden),
-    );
     resize();
   }
   onDestroy() {
@@ -2025,8 +1763,7 @@ export class AtlasBootstrap extends Component {
     window.clearTimeout(this.toastTimer);
     this.overlay?.remove();
     for (const p of this.parts) {
-      p.staticMaterial.destroy();
-      p.poseMaterial?.destroy();
+      p.renderer.getSharedMaterial(0)?.destroy();
       p.renderer.mesh?.destroy();
     }
   }
@@ -2315,14 +2052,4 @@ h2 { font-size: 18px; line-height: 1.5; }
 .group-actions { top:96px; bottom:auto; left:auto; right:4px; transform:none; flex-direction:column; max-width:34%; gap:5px; white-space:normal; }
 .group-actions button { min-height:44px; padding:8px; font-size:10px; }
 .load-status { top:50%; }
-
-.motion-controls { position:absolute; top:auto; bottom:6px; left:2px; width:112px; padding:8px; border:1px solid #d7e4df; border-radius:11px; background:#ffffffed; max-height:calc(100% - 226px); overflow:auto; pointer-events:auto; }
-.motion-notice { color:#6e827a; font-size:10px; line-height:1.5; margin-bottom:8px; }
-.motion-controls button { width:100%; min-height:44px; font-size:11px; padding:8px; }
-.motion-play { color:#246f60; background:#edf6f0; border-color:#c8dfd1; }
-.motion-progress { display:grid; grid-template-columns:1fr auto; align-items:center; gap:4px; font-size:10px; color:#71887f; margin:9px 0; }
-.motion-progress input { grid-column:1 / -1; min-height:44px; height:44px; padding:0; }
-.motion-value { font-variant-numeric:tabular-nums; }
-.motion-rest { color:#5f7870; background:#f7faf8; font-size:10px!important; }
-@media(max-height:500px) { .motion-controls {top:8px;bottom:auto;left:90px;width:172px;max-height:calc(100% - 16px);} }
 `;

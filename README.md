@@ -36,21 +36,11 @@ Phone browsers are the primary platform; desktop also prioritizes the model view
 
 The initial catalog includes 25 exercises and 10 injury/overuse conditions; see [sources and maintenance](docs/LEARNING_SOURCES.md).
 
-## 动作示意 / Motion demonstrations
-
-深蹲、弯举提供播放／暂停和进度拖动，保留完整人体与肌群高亮。选择其他条目或返回静态会退出示意；模拟过程中可旋转、缩放，返回静态后恢复结构点击与酸痛记录。
-
-Squat and curl demonstrations support play/pause and scrubbing while keeping the whole body and muscle highlights. Selecting another entry or returning to static exits the demonstration. Orbit and zoom remain available; return to static to select structures and record soreness.
-
-这是基于静态解剖网格与近似关节参数的无器械动作示意，不是动作捕捉、精确肌肉收缩或经验证的生物力学仿真。目录中的高脚杯深蹲和杠铃弯举展示基础关节运动，不展示对应器械、负重或握持细节。动作参考：[NASM 深蹲](https://www.nasm.org/resource-center/exercise-library/goblet-squat)、[NASM 弯举](https://www.nasm.org/resource-center/exercise-library/barbell-bicep-curl)。
-
-These are equipment-free illustrations based on static anatomy meshes and approximate joint parameters, not motion capture, precise muscle contraction or validated biomechanical simulations. The goblet squat and barbell curl entries demonstrate basic joint motion without the corresponding equipment, loading or grip details. Movement references: [NASM squat](https://www.nasm.org/resource-center/exercise-library/goblet-squat) and [NASM curl](https://www.nasm.org/resource-center/exercise-library/barbell-bicep-curl).
-
 ## 模型覆盖 / Model coverage
 
-当前包含 617 个独立网格：407 肌肉、8 肌腱、202 骨结构，来自 DBCLS BodyParts3D 4.0。网格数量不等于独立解剖器官数量。模型不是完整肌腱全集，显示分组未经过临床审核；常用肌肉提供中文标注，未审核的条目保留来源英文名称。P0 不包含皮肤和穴位定位。
+当前包含 617 个独立网格：407 肌肉、8 肌腱、202 骨结构，来自 DBCLS BodyParts3D 4.0。网格数量不等于独立解剖器官数量。模型不是完整肌腱全集，显示分组未经过临床审核；常用肌肉提供中文标注，未审核的条目保留来源英文名称。P0 不包含皮肤、动作动画和穴位定位。
 
-Contains 617 meshes: 407 muscle, 8 tendon and 202 bone meshes from DBCLS BodyParts3D 4.0. Mesh count is not a count of distinct anatomical organs. Tendon coverage is incomplete and display categories are not clinically reviewed; common muscles have Chinese labels, while unreviewed entries retain their source English names. P0 excludes skin and acupoint localization.
+Contains 617 meshes: 407 muscle, 8 tendon and 202 bone meshes from DBCLS BodyParts3D 4.0. Mesh count is not a count of distinct anatomical organs. Tendon coverage is incomplete and display categories are not clinically reviewed; common muscles have Chinese labels, while unreviewed entries retain their source English names. P0 excludes skin, motion animation and acupoint localization.
 
 参见 [模型来源与许可 / Model provenance](docs/MODELS.md) 和 [动作与损伤资料 / Exercise and condition sources](docs/LEARNING_SOURCES.md)。P1 见 [穴位与经络 Issue](https://github.com/houhongxu/anatomy-motion/issues/1)。
 

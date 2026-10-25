@@ -74,10 +74,6 @@
     "tissueMaterial": {
       "__uuid__": "ccccc000-0000-4000-8000-000000000004",
       "__expectedType__": "cc.Material"
-    },
-    "poseMaterial": {
-      "__uuid__": "ccccc000-0000-4000-8000-000000000011",
-      "__expectedType__": "cc.Material"
     }
   }
 ]
