@@ -1,8 +1,8 @@
 # 人体运动图谱 / Anatomy Motion
 
-使用 Cocos Creator 3.8.8 构建的真实三维肌肉／肌腱图谱，附带私人每日酸痛记录。
+面向手机浏览器优先设计的亮色三维肌肉／肌腱图谱，使用 Cocos Creator 3.8.8，附带私人每日酸痛记录；PC 提供扩展布局。
 
-A real 3D muscle/tendon atlas built with Cocos Creator 3.8.8, with private daily soreness journals.
+A light, mobile-first 3D muscle/tendon atlas built with Cocos Creator 3.8.8, with private daily soreness journals and an extended desktop layout.
 
 ## 功能 / Features
 
@@ -17,6 +17,12 @@ A real 3D muscle/tendon atlas built with Cocos Creator 3.8.8, with private daily
 - Superficial/deep muscle display groups, tendon and bone toggles.
 - Username/password registration and login; local-date records of muscle/tendon, side, 0–10 soreness and notes, with history filters, editing and deletion.
 - Server-side SQLite persistence, account isolation, scrypt password hashes, HttpOnly sessions and request-origin checks.
+
+## 使用端与界面 / Platforms and interface
+
+手机浏览器是主要使用端，PC 为扩展布局。亮色界面优先保留模型视区，结构选择和日志通过底部入口打开。当前交付为 Web 应用，不包含原生安装包。模型数据仍较大，尚未进行真实手机的帧率、内存或蜂窝网络加载测试。
+
+Phone browsers are the primary platform; desktop uses an extended layout. A light interface prioritizes the model viewport, with bottom navigation for structure selection and the journal. This delivery is a web app, not a native installable package. Model data remains substantial; real-device frame rate, memory and cellular-load testing has not yet been performed.
 
 ## 模型覆盖 / Model coverage
 

@@ -15,6 +15,7 @@ import {
   game,
   view,
   ResolutionPolicy,
+  director,
   screen,
   Size,
 } from "cc";
@@ -25,6 +26,7 @@ import {
   canRecord,
   fitPerspectiveBounds,
 } from "./geometry";
+import { renderingSize, sceneFrame, shouldPick } from "./layout";
 const { ccclass, property } = _decorator;
 type Structure = {
   id: string;
@@ -149,6 +151,7 @@ export class AtlasBootstrap extends Component {
   private pitch = 0.04;
   private distance = 2.65;
   private overlay!: HTMLElement;
+  private mobilePane: "model" | "structures" | "journal" = "model";
   private list!: HTMLElement;
   private detail!: HTMLElement;
   private history!: HTMLElement;
@@ -184,14 +187,25 @@ export class AtlasBootstrap extends Component {
     this.loadUser();
   }
   private setupScene() {
+    // 先清理整个交换链，避免场景视口外保留默认黑色。 / Clear the entire swapchain before the inset scene viewport.
+    const backgroundNode = new Node("Atlas Background Camera");
+    this.node.addChild(backgroundNode);
+    const background = backgroundNode.addComponent(Camera);
+    background.priority = -100;
+    background.visibility = 0;
+    background.rect = new Rect(0, 0, 1, 1);
+    background.clearFlags = Camera.ClearFlag.SOLID_COLOR;
+    background.clearColor = new Color(245, 247, 250, 255);
     const c = new Node("Atlas Camera");
     this.node.addChild(c);
     this.camera = c.addComponent(Camera);
     this.camera.near = 0.01;
     this.camera.far = 30;
+    this.camera.priority = 0;
+    this.camera.clearFlags = Camera.ClearFlag.SOLID_COLOR;
     this.camera.fov = 39;
     this.camera.fovAxis = Camera.FOVAxis.VERTICAL;
-    this.camera.clearColor = new Color(10, 17, 28, 255);
+    this.camera.clearColor = new Color(245, 247, 250, 255);
     const main = new Node("Clinical Key Light");
     this.keyLight = main;
     this.node.addChild(main);
@@ -216,12 +230,23 @@ export class AtlasBootstrap extends Component {
   private buildUI() {
     document.title = "Anatomy Motion · 解剖与疼痛记录";
     document.documentElement.lang = "zh-CN";
+    for (const meta of document.querySelectorAll(
+      'meta[name="screen-orientation"],meta[name="x5-orientation"]',
+    ))
+      meta.remove();
+    const viewportMeta = document.querySelector<HTMLMetaElement>(
+      'meta[name="viewport"]',
+    );
+    if (viewportMeta)
+      viewportMeta.content =
+        "width=device-width, initial-scale=1, viewport-fit=cover";
     const style = el("style");
     style.textContent = STYLE;
     document.head.append(style);
     this.cleanup.push(() => style.remove());
     this.overlay = el("div", "atlas-app");
     this.overlay.dataset.testid = "atlas-app";
+    this.overlay.dataset.mobilePane = "model";
     document.body.append(this.overlay);
     const header = el("header", "atlas-header"),
       brand = el("div", "brand");
@@ -290,9 +315,28 @@ export class AtlasBootstrap extends Component {
     this.list = el("div", "structure-list");
     this.list.dataset.testid = "structure-list";
     left.append(listHead, this.list);
+    const structuresSheetHeader = el("div", "sheet-header");
+    const closeStructures = button(
+      "关闭 / Close",
+      () => this.setMobilePane("model"),
+      "sheet-close",
+    );
+    closeStructures.dataset.testid = "close-structures-sheet";
+    structuresSheetHeader.append(
+      el("strong", "", "身体结构 / Structures"),
+      closeStructures,
+    );
+    left.prepend(structuresSheetHeader);
+    left.dataset.testid = "structures-sheet";
+    left.id = "structures-sheet";
+    left.append(
+      el("p", "model-credit", "模型 / DBCLS BodyParts3D · CC BY 4.0"),
+    );
     const viewport = el("main", "viewport");
     viewport.setAttribute("aria-label", "三维解剖视图 / 3D anatomy viewport");
     viewport.dataset.testid = "viewport";
+    viewport.tabIndex = 0;
+    viewport.id = "atlas-viewport";
     const viewportTop = el("div", "viewport-top");
     viewportTop.append(
       el("span", "live-dot", "●"),
@@ -345,6 +389,20 @@ export class AtlasBootstrap extends Component {
       instructions,
     );
     const right = el("aside", "panel record-panel");
+    right.dataset.testid = "journal-sheet";
+    right.id = "journal-sheet";
+    const journalSheetHeader = el("div", "sheet-header");
+    const closeJournal = button(
+      "关闭 / Close",
+      () => this.setMobilePane("model"),
+      "sheet-close",
+    );
+    closeJournal.dataset.testid = "close-journal-sheet";
+    journalSheetHeader.append(
+      el("strong", "", "身体记录 / Journal"),
+      closeJournal,
+    );
+    right.append(journalSheetHeader);
     this.detail = el("section", "selection-detail");
     right.append(this.detail);
     const historyTitle = el("div", "history-heading");
@@ -385,7 +443,46 @@ export class AtlasBootstrap extends Component {
     );
     this.toast = el("div", "toast");
     this.toast.setAttribute("role", "status");
-    this.overlay.append(header, left, viewport, right, footer, this.toast);
+    const scrim = button("", () => this.setMobilePane("model"), "sheet-scrim");
+    scrim.setAttribute(
+      "aria-label",
+      "关闭面板并返回模型 / Close sheet and return to model",
+    );
+    scrim.tabIndex = -1;
+    const mobileNav = el("nav", "mobile-nav");
+    mobileNav.setAttribute("aria-label", "图谱导航 / Atlas navigation");
+    for (const [pane, zh, en] of [
+      ["model", "模型", "Model"],
+      ["structures", "结构", "Structures"],
+      ["journal", "记录", "Journal"],
+    ] as const) {
+      const item = button(
+        "",
+        () => this.setMobilePane(pane),
+        "mobile-nav-item",
+      );
+      item.dataset.testid = `mobile-nav-${pane}`;
+      item.dataset.mobileTarget = pane;
+      item.setAttribute(
+        "aria-controls",
+        pane === "model"
+          ? "atlas-viewport"
+          : `${pane === "journal" ? "journal" : "structures"}-sheet`,
+      );
+      item.setAttribute("aria-pressed", String(pane === "model"));
+      item.append(el("strong", "", zh), el("small", "", en));
+      mobileNav.append(item);
+    }
+    this.overlay.append(
+      header,
+      scrim,
+      left,
+      viewport,
+      right,
+      footer,
+      this.toast,
+      mobileNav,
+    );
     this.renderDetail();
     this.renderHistory();
   }
@@ -585,6 +682,30 @@ export class AtlasBootstrap extends Component {
     this.renderList();
     this.renderDetail();
     this.updateSelectionChip();
+    if (this.mobilePane === "structures") this.setMobilePane("model");
+  }
+  private setMobilePane(pane: "model" | "structures" | "journal") {
+    this.mobilePane = pane;
+    this.overlay.dataset.mobilePane = pane;
+    for (const b of this.overlay.querySelectorAll<HTMLButtonElement>(
+      "[data-mobile-target]",
+    ))
+      b.setAttribute("aria-pressed", String(b.dataset.mobileTarget === pane));
+    if (window.innerWidth <= 1024) {
+      if (pane === "model")
+        this.overlay
+          .querySelector<HTMLElement>(".viewport")
+          ?.focus({ preventScroll: true });
+      const sheet =
+        pane === "structures"
+          ? this.overlay.querySelector<HTMLElement>(".anatomy-panel")
+          : pane === "journal"
+            ? this.overlay.querySelector<HTMLElement>(".record-panel")
+            : null;
+      sheet
+        ?.querySelector<HTMLButtonElement>(".sheet-close")
+        ?.focus({ preventScroll: true });
+    }
   }
   private updateSelectionChip() {
     this.selectionChip.textContent = this.selected
@@ -933,6 +1054,7 @@ export class AtlasBootstrap extends Component {
             return;
           }
           this.select(p, true);
+          this.setMobilePane("journal");
           this.editing = r.id;
           this.dateInput.value = r.date;
           this.painInput.value = String(r.intensity);
@@ -1155,10 +1277,13 @@ export class AtlasBootstrap extends Component {
       startY = 0,
       moved = false,
       right = false,
-      pinch = 0;
+      pinch = 0,
+      multiTouch = false;
     const onDown = (e: PointerEvent) => {
       if ((e.target as HTMLElement).closest("button")) return;
       viewport.setPointerCapture(e.pointerId);
+      if (!points.size) multiTouch = false;
+      else multiTouch = true;
       points.set(e.pointerId, { x: e.clientX, y: e.clientY });
       startX = e.clientX;
       startY = e.clientY;
@@ -1203,10 +1328,14 @@ export class AtlasBootstrap extends Component {
     const onUp = (e: PointerEvent) => {
       const was = points.size;
       points.delete(e.pointerId);
-      if (!moved && !right && was === 1 && e.type !== "pointercancel")
+      if (
+        !right &&
+        shouldPick(moved, multiTouch, was, e.type === "pointercancel")
+      )
         this.pick(e.clientX, e.clientY);
       if (was > 1) moved = true;
       pinch = 0;
+      if (!points.size) multiTouch = false;
     };
     const onWheel = (e: WheelEvent) => {
       e.preventDefault();
@@ -1232,6 +1361,16 @@ export class AtlasBootstrap extends Component {
       viewport.removeEventListener("contextmenu", onContext);
     });
     const resize = () => {
+      const compact = window.innerWidth <= 1024;
+      const visual = window.visualViewport;
+      this.overlay.style.setProperty(
+        "--app-height",
+        `${visual?.height || window.innerHeight}px`,
+      );
+      this.overlay.style.setProperty(
+        "--app-top",
+        `${compact ? visual?.offsetTop || 0 : 0}px`,
+      );
       screen.windowSize = new Size(
         Math.round(window.innerWidth * screen.devicePixelRatio),
         Math.round(window.innerHeight * screen.devicePixelRatio),
@@ -1241,28 +1380,46 @@ export class AtlasBootstrap extends Component {
         window.innerHeight,
         ResolutionPolicy.SHOW_ALL,
       );
+      const backing = renderingSize(
+        window.innerWidth,
+        window.innerHeight,
+        screen.devicePixelRatio,
+        compact,
+      );
+      director.root?.resize(backing.width, backing.height);
       const canvas = game.canvas!.getBoundingClientRect();
       const r = viewport.getBoundingClientRect();
       const controls = this.overlay
         .querySelector<HTMLElement>(".view-controls")!
         .getBoundingClientRect();
       const chip = this.selectionChip.getBoundingClientRect();
-      const left = r.left + 6,
-        right = r.right - 6;
-      const top = controls.bottom + 10,
-        bottom = Math.max(top + 100, chip.top - 12);
-      this.renderAspect = (right - left) / (bottom - top);
+      const frame = sceneFrame(r, controls, chip, compact);
+      this.renderAspect = frame.width / frame.height;
       this.camera.rect = new Rect(
-        (left - canvas.left) / canvas.width,
-        (canvas.bottom - bottom) / canvas.height,
-        (right - left) / canvas.width,
-        (bottom - top) / canvas.height,
+        (frame.left - canvas.left) / canvas.width,
+        (canvas.bottom - frame.bottom) / canvas.height,
+        frame.width / canvas.width,
+        frame.height / canvas.height,
       );
       if (this.parts.length) this.fit();
       else this.updateCamera();
     };
-    window.addEventListener("resize", resize);
-    this.cleanup.push(() => window.removeEventListener("resize", resize));
+    let resizeFrame = 0;
+    const requestResize = () => {
+      cancelAnimationFrame(resizeFrame);
+      resizeFrame = requestAnimationFrame(resize);
+    };
+    window.addEventListener("resize", requestResize);
+    window.addEventListener("orientationchange", requestResize);
+    window.visualViewport?.addEventListener("resize", requestResize);
+    window.visualViewport?.addEventListener("scroll", requestResize);
+    this.cleanup.push(() => {
+      cancelAnimationFrame(resizeFrame);
+      window.removeEventListener("resize", requestResize);
+      window.removeEventListener("orientationchange", requestResize);
+      window.visualViewport?.removeEventListener("resize", requestResize);
+      window.visualViewport?.removeEventListener("scroll", requestResize);
+    });
     resize();
   }
   onDestroy() {
@@ -1276,9 +1433,223 @@ export class AtlasBootstrap extends Component {
   }
 }
 const STYLE = `
-:root{color-scheme:dark;--bg:#0a111c;--panel:rgba(17,27,41,.96);--line:#263344;--ink:#e8eef4;--muted:#91a1b2;--teal:#58d8c1;--cyan:#8be3e1}*{box-sizing:border-box}html,body{margin:0!important;width:100%;height:100%;overflow:hidden;background:var(--bg)!important}body{font-family:Inter,"Segoe UI","Microsoft YaHei",sans-serif!important;color:var(--ink);font-size:13px}#GameDiv,#Cocos3dGameContainer{position:fixed!important;inset:0!important;width:100%!important;height:100%!important;margin:0!important;padding:0!important;border:0!important;transform:none!important}#GameCanvas{width:100%!important;height:100%!important;display:block}.atlas-app{position:fixed;inset:0;z-index:10;pointer-events:none;background:radial-gradient(ellipse at 49% 44%,transparent 15%,rgba(4,10,17,.15) 75%)}button,input,textarea{font:inherit}button{cursor:pointer;color:var(--ink);border:1px solid var(--line);background:#152336;border-radius:7px;padding:8px 10px;transition:background .18s,border-color .18s}button:hover{background:#203449;border-color:#4b6b7a}button:disabled{opacity:.5;cursor:wait}button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--teal);outline-offset:3px}input,textarea{color:var(--ink);background:#0d1826;border:1px solid var(--line);border-radius:7px;padding:9px 10px;min-width:0;width:100%;accent-color:var(--teal)}input[type=date]{padding:7px 5px;font-size:11px}input[type=checkbox]{width:15px;height:15px;margin:0}input[type=range]{padding:0;border:0;height:20px}textarea{resize:vertical;min-height:55px;max-height:120px}h1,h2,p{margin:0}h1{font-size:27px;line-height:1.4;letter-spacing:1px}h2{font-size:18px;line-height:1.5}.atlas-header{height:76px;position:absolute;inset:0 0 auto;display:flex;align-items:center;justify-content:space-between;padding:0 28px;background:rgba(9,17,28,.96);border-bottom:1px solid var(--line);pointer-events:auto}.brand{display:flex;align-items:center;gap:12px;font-size:15px;font-weight:700;letter-spacing:2px}.brand-mark{width:35px;height:40px;display:grid;place-items:center;border:1px solid #64caba;color:var(--teal);border-radius:10px;font-size:24px;font-weight:500}.brand small{display:block;color:var(--muted);letter-spacing:2px;font-size:9px;margin-top:5px;font-weight:400}.header-nav{display:flex;gap:29px;font-size:12px}.nav-active{color:var(--teal)}.nav-muted{color:#6f8296}.auth-button{border-color:#356659;background:#142b2c;color:#99e7d8;font-size:12px;max-width:240px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.panel{position:absolute;top:96px;bottom:48px;background:var(--panel);border:1px solid var(--line);border-radius:12px;pointer-events:auto;box-shadow:0 12px 40px #0002;overflow:hidden}.anatomy-panel{left:24px;width:250px;padding:22px 17px 0;display:flex;flex-direction:column}.eyebrow{font-size:9px;letter-spacing:1.8px;color:var(--teal);margin-bottom:9px;font-weight:600}.subheading{color:var(--muted);font-size:11px;line-height:1.8;margin:3px 0 17px;white-space:pre-line}.anatomy-panel input[type=search]{font-size:11px;padding:10px;margin-bottom:21px}.section-title,.list-heading{font-size:10px;letter-spacing:.5px;color:#a0adbc;font-weight:600}.toggles{display:grid;grid-template-columns:1fr;gap:11px;margin:13px 0 11px}.toggle{display:flex;align-items:center;gap:10px;cursor:pointer;font-size:11px}.taxonomy-note{font-size:9px;color:#748598;white-space:pre-line;line-height:1.6;margin-bottom:20px}.list-heading{display:flex;justify-content:space-between;padding:13px 0 10px;border-top:1px solid var(--line)}.structure-list{min-height:0;overflow:auto;margin:0 -8px;padding:0 4px 12px}.structure-row{display:flex;width:100%;align-items:center;gap:8px;padding:10px 7px;background:transparent;border:1px solid transparent;border-radius:6px;text-align:left;min-height:48px;font-size:11px}.structure-row.selected{background:#183d3c;border-color:#2a756a;color:#a2f2df}.structure-row.is-hidden{opacity:.5}.structure-row small{font-size:9px;flex-shrink:0;color:#91a1b2}.structure-name{flex:1;line-height:1.5;overflow-wrap:anywhere}.tissue-dot{width:6px;height:6px;background:#cb7b80;border-radius:50%;flex-shrink:0}.tissue-dot.tendon{background:#d1d9d1}.tissue-dot.bone{background:#cac0a7}.tissue-dot.recorded{box-shadow:0 0 0 3px #ed784844;background:#f08b56}.muted{color:var(--muted)}.viewport{position:absolute;top:76px;bottom:35px;left:290px;right:370px;pointer-events:auto;touch-action:none;cursor:grab}.viewport:active{cursor:grabbing}.viewport-top{display:flex;gap:8px;align-items:center;padding:24px 0;font-size:10px;letter-spacing:1px;color:#91a8b5;pointer-events:none}.live-dot{color:var(--teal);font-size:9px}.model-badge{border:1px solid #2a3b4d;color:#7f95a7;font-size:8px;border-radius:4px;padding:4px 5px;margin-left:auto;letter-spacing:.6px}.load-status{position:absolute;top:65px;left:0;right:0;text-align:center;color:#8ba9b8;font-size:11px;pointer-events:none}.load-status.loaded{opacity:.65;font-size:9px}.load-status.failed{pointer-events:auto;display:flex;flex-direction:column;gap:12px;align-items:center;color:#ffac9b;top:35%}.view-controls{display:flex;position:absolute;top:85px;left:50%;transform:translateX(-50%);gap:3px;white-space:nowrap;background:#111f2ebf;padding:4px;border:1px solid #26394b;border-radius:9px}.view-controls button{font-size:9px;padding:6px 8px;border:0;background:transparent;color:#abbecd}.view-controls button:hover{background:#24394b;color:#fff}.orientation{position:absolute;right:0;bottom:91px;font-size:11px;color:#7796a8;white-space:pre;text-align:center;line-height:2;pointer-events:none}.selection-chip{position:absolute;bottom:73px;left:50%;transform:translateX(-50%);max-width:100%;white-space:pre-line;text-align:center;color:#c6e8e4;font-size:11px;line-height:1.8;padding:10px 17px;background:#12232ac7;border:1px solid #2b4f54;border-radius:8px;pointer-events:none;min-width:220px}.viewport-instructions{position:absolute;bottom:18px;left:0;right:0;text-align:center;font-size:9px;color:#6c8294;line-height:1.8;white-space:pre-line;pointer-events:none}.record-panel{right:24px;width:326px;padding:20px 19px 0;overflow:auto}.selection-detail{padding-bottom:22px}.selected-title{font-size:17px;overflow-wrap:anywhere}.structure-meta{font-size:10px;color:var(--muted);line-height:1.7;margin-top:7px}.selection-actions{display:flex;flex-wrap:wrap;gap:5px;margin:14px 0 18px}.selection-actions button{padding:6px 7px;font-size:9px;background:#132435}.selection-empty{font-size:72px;color:#345a66;text-align:center;margin:28px 0 15px;font-weight:200}.empty-state{color:#8b9eaf;font-size:11px;line-height:1.9;white-space:pre-line;text-align:center;padding:18px 2px}.field{display:block;margin-bottom:12px}.field-label{display:block;color:#a1b0bf;font-size:10px;margin-bottom:7px}.pain-header{display:flex;justify-content:space-between;align-items:center;font-size:10px;color:#a1b0bf;margin:13px 0 7px}.pain-value{font-size:15px;color:var(--teal)}.range-labels{display:flex;justify-content:space-between;white-space:pre;font-size:8px;color:#72889b;margin:4px 0 17px}.primary-button{width:100%;background:#56cbb6;color:#082724;font-weight:700;border:1px solid #70ddc7;padding:11px;font-size:11px}.primary-button:hover{background:#74e0ca;border-color:#95f5df}.form-message{font-size:10px;line-height:1.7;color:#f0ae96;min-height:0;margin:6px 0 10px;overflow-wrap:anywhere}.form-message:empty{display:none}.history-heading{display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--line);padding:20px 0 13px}.history-heading h2{font-size:14px}.private-tag{font-size:8px;color:#7f9aa9;border:1px solid #2b4252;padding:4px 5px;border-radius:4px}.date-filters{display:flex;align-items:center;gap:5px;color:#698093}.date-filters input{flex:1;width:0}.history-list{margin-top:12px}.record-item{padding:13px 0;border-bottom:1px solid #243344}.record-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px}.record-date{font-size:10px;color:#9cacbb}.record-intensity{font-size:11px;color:#e5a17c;background:#493226;padding:3px 7px;border-radius:4px}.record-structure{display:block;text-align:left;border:0;border-radius:0;background:transparent;padding:0;font-size:11px;line-height:1.5;color:#d2e0e8;margin-bottom:3px}.record-item small{font-size:9px}.record-note{font-size:11px;color:#92a5b6;line-height:1.7;margin:8px 0;overflow-wrap:anywhere;white-space:pre-wrap}.record-actions{display:flex;gap:12px;margin-top:8px}.record-actions button{border:0;background:transparent;font-size:9px;color:#75cabb;padding:1px 0}.medical-note{font-size:9px;line-height:1.7;color:#647c90;white-space:pre-line;padding:20px 0}.atlas-footer{display:flex;justify-content:space-between;position:absolute;bottom:0;height:30px;left:24px;right:24px;font-size:9px;color:#61788b;align-items:center;pointer-events:auto}.toast{position:absolute;bottom:50px;left:50%;transform:translateX(-50%) translateY(12px);padding:12px 20px;border:1px solid #327d6a;background:#12352f;color:#b4f3df;border-radius:8px;opacity:0;transition:.2s;pointer-events:none;max-width:90%;font-size:12px}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}.auth-backdrop{position:absolute;inset:0;background:#030911b8;backdrop-filter:blur(7px);display:flex;justify-content:center;align-items:center;pointer-events:auto;padding:20px;z-index:30}.auth-dialog{position:relative;width:380px;max-width:100%;background:#142131;border:1px solid #34485a;padding:30px;border-radius:14px;box-shadow:0 30px 80px #0009}.auth-dialog>.primary-button{margin:8px 0 12px}.auth-dialog>button:last-child{width:100%;font-size:11px;border:0;background:transparent;color:#8ddcc9}.dialog-close{position:absolute;right:12px;top:10px;border:0;background:transparent;font-size:24px;color:#8ea5b7}::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:#334b5c;border-radius:3px}::-webkit-scrollbar-track{background:transparent}
-@media(max-width:1100px) and (min-width:761px){.anatomy-panel{left:16px;width:216px;padding:18px 13px 0}.record-panel{right:16px;width:280px;padding:18px 14px 0}.viewport{left:245px;right:310px}.header-nav{gap:15px;font-size:10px}.brand{font-size:12px}.model-badge{display:none}.view-controls{gap:0}.view-controls button{font-size:8px;padding:6px}.record-panel .range-labels{font-size:7px}.structure-row{font-size:10px}}
-@media(max-width:760px){html,body{overflow:auto!important}.atlas-app{overflow:auto;position:fixed;background:transparent;display:grid;grid-template-columns:1fr;grid-template-rows:65px 52vh auto auto 42px;gap:0}.atlas-header{position:relative;height:65px;padding:0 16px;grid-row:1}.brand{font-size:11px;gap:8px;letter-spacing:1px}.brand-mark{width:28px;height:33px;font-size:20px}.brand small{font-size:8px;letter-spacing:1px}.header-nav{display:none}.auth-button{font-size:10px;padding:8px;max-width:148px}.viewport{position:relative;top:auto;left:auto;right:auto;bottom:auto;grid-row:2;min-height:360px;margin:0 16px;background:linear-gradient(0deg,#0a111c 0%,transparent 22%)}.viewport-top{padding-top:17px;font-size:9px}.load-status{top:42px;font-size:9px}.view-controls{top:62px}.selection-chip{bottom:55px;font-size:10px;padding:7px 12px}.viewport-instructions{bottom:10px;font-size:8px}.orientation{bottom:75px;font-size:9px}.panel{position:relative;top:auto;bottom:auto;left:auto;right:auto;width:auto;margin:12px 16px;border-radius:10px}.anatomy-panel{grid-row:3;padding:17px 14px 0;max-height:365px}.anatomy-panel h1{font-size:20px}.anatomy-panel .eyebrow{font-size:8px;margin-bottom:3px}.anatomy-panel .subheading{margin-bottom:10px}.anatomy-panel input[type=search]{margin-bottom:12px}.toggles{grid-template-columns:1fr 1fr;gap:10px;margin:10px 0}.taxonomy-note{font-size:8px;margin-bottom:9px}.section-title{font-size:9px}.structure-list{max-height:135px}.structure-row{min-height:38px;padding:7px;font-size:11px}.record-panel{grid-row:4;padding:20px 18px 0;overflow:visible}.selected-title{font-size:20px}.selection-detail{padding-bottom:15px}.selection-empty{display:none}.record-panel .empty-state{padding:12px}.history-list{max-height:340px;overflow:auto}.range-labels{justify-content:space-between}.atlas-footer{position:relative;grid-row:5;left:auto;right:auto;bottom:auto;padding:0 16px;font-size:7px;gap:12px;height:42px}.auth-backdrop{position:fixed}.toast{position:fixed;bottom:20px;font-size:11px}.date-filters input{font-size:12px}.selection-actions button{font-size:10px}.pain-header,.field-label{font-size:11px}.primary-button{font-size:12px}}
-.delete-confirm{margin-top:12px;border:1px solid #76554b;background:#372922;padding:11px;border-radius:7px;font-size:10px;line-height:1.7;color:#edbba4}.delete-confirm .record-actions{justify-content:flex-end;gap:15px}.delete-confirm .record-actions button:last-child{color:#ffa78e}.delete-confirm .form-message{margin-bottom:5px}
-@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+:root {
+  color-scheme: light;
+  --bg: #f5f7fa;
+  --panel: #ffffff;
+  --line: #e2e8ed;
+  --ink: #20323d;
+  --muted: #687c88;
+  --teal: #247d74;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0 !important; width: 100%; height: 100%; overflow: hidden; background: var(--bg) !important; }
+body { font-family: Inter, "Segoe UI", "Microsoft YaHei", sans-serif !important; color: var(--ink); font-size: 13px; }
+#GameDiv, #Cocos3dGameContainer { position: fixed !important; inset: 0 !important; width: 100% !important; height: 100% !important; margin: 0 !important; padding: 0 !important; border: 0 !important; transform: none !important; }
+#GameCanvas { width: 100% !important; height: 100% !important; display: block; }
+.atlas-app { position: fixed; inset: 0; height: var(--app-height, 100dvh); pointer-events: none; }
+button, input, textarea { font: inherit; }
+button { cursor: pointer; color: var(--ink); border: 1px solid var(--line); background: #fff; border-radius: 9px; padding: 9px 11px; transition: background .15s, border-color .15s; }
+button:hover { background: #eef5f4; border-color: #b4cfca; }
+button:disabled { opacity: .55; cursor: wait; }
+button:focus-visible, input:focus-visible, textarea:focus-visible { outline: 2px solid var(--teal); outline-offset: 3px; }
+input, textarea { color: var(--ink); background: #f8fafb; border: 1px solid #dce4e8; border-radius: 8px; padding: 10px 11px; min-width: 0; width: 100%; accent-color: var(--teal); }
+input[type=date] { padding: 9px 6px; font-size: 12px; }
+input[type=checkbox] { width: 18px; height: 18px; margin: 0; }
+input[type=range] { padding: 0; border: 0; height: 28px; }
+textarea { resize: vertical; min-height: 68px; max-height: 160px; }
+h1, h2, p { margin: 0; }
+h1 { font-size: 26px; line-height: 1.4; letter-spacing: .5px; }
+h2 { font-size: 18px; line-height: 1.5; }
+.atlas-header { height: 76px; position: absolute; inset: 0 0 auto; display: flex; align-items: center; justify-content: space-between; padding: 0 26px; background: #ffffffed; border-bottom: 1px solid var(--line); pointer-events: auto; z-index: 30; }
+.brand { display: flex; align-items: center; gap: 12px; font-size: 14px; font-weight: 700; letter-spacing: 1.5px; }
+.brand-mark { width: 35px; height: 40px; display: grid; place-items: center; border: 1px solid #adcfc5; background: #eff7f4; color: var(--teal); border-radius: 11px; font-size: 24px; font-weight: 500; }
+.brand small { display: block; color: var(--muted); letter-spacing: 1.5px; font-size: 9px; margin-top: 5px; font-weight: 400; }
+.header-nav { display: flex; gap: 28px; font-size: 12px; }
+.nav-active { color: var(--teal); }
+.nav-muted { color: #8a989f; }
+.auth-button { border-color: #c8ded7; background: #f3f9f7; color: #286e62; font-size: 12px; max-width: 230px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.panel { position: absolute; top: 96px; bottom: 46px; background: var(--panel); border: 1px solid var(--line); border-radius: 14px; pointer-events: auto; box-shadow: 0 8px 28px #233e4b06; overflow: hidden; }
+.anatomy-panel { left: 24px; width: 250px; padding: 22px 17px 0; display: flex; flex-direction: column; }
+.eyebrow { font-size: 9px; letter-spacing: 1.6px; color: var(--teal); margin-bottom: 9px; font-weight: 600; }
+.subheading { color: var(--muted); font-size: 11px; line-height: 1.8; margin: 4px 0 17px; white-space: pre-line; }
+.anatomy-panel input[type=search] { font-size: 11px; padding: 11px; margin-bottom: 19px; }
+.section-title, .list-heading { font-size: 10px; letter-spacing: .4px; color: #667c87; font-weight: 600; }
+.toggles { display: grid; gap: 10px; margin: 13px 0 11px; }
+.toggle { display: flex; align-items: center; gap: 10px; cursor: pointer; font-size: 11px; min-height: 25px; }
+.taxonomy-note { font-size: 9px; color: #788b95; white-space: pre-line; line-height: 1.6; margin-bottom: 18px; }
+.list-heading { display: flex; justify-content: space-between; padding: 13px 0 10px; border-top: 1px solid var(--line); }
+.structure-list { min-height: 0; overflow: auto; margin: 0 -8px; padding: 0 4px 12px; }
+.structure-row { display: flex; width: 100%; align-items: center; gap: 9px; padding: 10px 7px; background: transparent; border: 1px solid transparent; border-radius: 8px; text-align: left; min-height: 46px; font-size: 11px; }
+.structure-row.selected { background: #eaf5f1; border-color: #b9d9cf; color: #226a5d; }
+.structure-row.is-hidden { opacity: .55; }
+.structure-row small { font-size: 10px; flex-shrink: 0; color: var(--muted); }
+.structure-name { flex: 1; line-height: 1.5; overflow-wrap: anywhere; }
+.tissue-dot { width: 7px; height: 7px; background: #c97b76; border-radius: 50%; flex-shrink: 0; }
+.tissue-dot.tendon { background: #a4a999; }
+.tissue-dot.bone { background: #c1af89; }
+.tissue-dot.recorded { box-shadow: 0 0 0 3px #e7906e26; background: #dc8059; }
+.muted { color: var(--muted); }
+.viewport { position: absolute; top: 76px; bottom: 35px; left: 290px; right: 370px; pointer-events: auto; touch-action: none; cursor: grab; }
+.viewport:active { cursor: grabbing; }
+.viewport-top { display: flex; gap: 8px; align-items: center; padding: 24px 0; font-size: 10px; letter-spacing: 1px; color: #6f858e; pointer-events: none; }
+.live-dot { color: #49988a; font-size: 9px; }
+.model-badge { border: 1px solid #d8e3e5; color: #7f929a; font-size: 8px; border-radius: 5px; padding: 4px 5px; margin-left: auto; letter-spacing: .6px; }
+.load-status { position: absolute; top: 65px; left: 0; right: 0; text-align: center; color: #637c86; font-size: 11px; pointer-events: none; }
+.load-status.loaded { opacity: .8; font-size: 9px; }
+.load-status.failed { pointer-events: auto; display: flex; flex-direction: column; gap: 12px; align-items: center; color: #a64c3c; top: 35%; }
+.view-controls { display: flex; position: absolute; top: 85px; left: 50%; transform: translateX(-50%); gap: 3px; white-space: nowrap; background: #ffffffef; padding: 4px; border: 1px solid #dfe8ea; border-radius: 12px; }
+.view-controls button { font-size: 10px; padding: 7px 9px; border: 0; background: transparent; color: #657e89; }
+.view-controls button:hover, .view-controls button[aria-pressed=true] { background: #eaf4f0; color: #277867; }
+.orientation { position: absolute; right: 0; bottom: 91px; font-size: 11px; color: #78929c; white-space: pre; text-align: center; line-height: 2; pointer-events: none; }
+.selection-chip { position: absolute; bottom: 73px; left: 50%; transform: translateX(-50%); max-width: 100%; white-space: pre-line; text-align: center; color: #3e6968; font-size: 11px; line-height: 1.8; padding: 10px 17px; background: #ffffffde; border: 1px solid #d8e6e2; border-radius: 11px; pointer-events: none; min-width: 220px; }
+.viewport-instructions { position: absolute; bottom: 18px; left: 0; right: 0; text-align: center; font-size: 9px; color: #748993; line-height: 1.8; white-space: pre-line; pointer-events: none; }
+.record-panel { right: 24px; width: 326px; padding: 20px 19px 0; overflow: auto; }
+.selection-detail { padding-bottom: 22px; }
+.selected-title { font-size: 17px; overflow-wrap: anywhere; }
+.structure-meta { font-size: 10px; color: var(--muted); line-height: 1.7; margin-top: 7px; }
+.selection-actions { display: flex; flex-wrap: wrap; gap: 6px; margin: 14px 0 18px; }
+.selection-actions button { padding: 7px 8px; font-size: 10px; background: #f6f9f9; }
+.selection-empty { font-size: 64px; color: #b6ccc9; text-align: center; margin: 25px 0 13px; font-weight: 200; }
+.empty-state { color: #7b8e97; font-size: 11px; line-height: 1.9; white-space: pre-line; text-align: center; padding: 18px 2px; }
+.field { display: block; margin-bottom: 13px; }
+.field-label { display: block; color: #6b808a; font-size: 11px; margin-bottom: 7px; }
+.pain-header { display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: #657d87; margin: 14px 0 8px; }
+.pain-value { font-size: 16px; color: var(--teal); }
+.range-labels { white-space: pre-wrap; font-size: 9px; color: #7b8d96; margin: 4px 0 17px; }
+.primary-button { width: 100%; background: #2e8373; color: #fff; font-weight: 600; border: 1px solid #2e8373; padding: 12px; font-size: 12px; }
+.primary-button:hover { background: #246e60; border-color: #246e60; }
+.form-message { font-size: 11px; line-height: 1.7; color: #a95a45; margin: 6px 0 10px; overflow-wrap: anywhere; }
+.form-message:empty { display: none; }
+.history-heading { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--line); padding: 20px 0 13px; }
+.history-heading h2 { font-size: 15px; }
+.private-tag { font-size: 9px; color: #6c898a; border: 1px solid #d9e6e3; padding: 4px 6px; border-radius: 5px; }
+.date-filters { display: flex; align-items: center; gap: 6px; color: #83969e; }
+.date-filters input { flex: 1; width: 0; }
+.history-list { margin-top: 12px; }
+.record-item { padding: 14px 0; border-bottom: 1px solid var(--line); }
+.record-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 7px; }
+.record-date { font-size: 11px; color: #7a8e98; }
+.record-intensity { font-size: 12px; color: #a66445; background: #fbefe5; padding: 4px 8px; border-radius: 6px; }
+.record-structure { display: block; text-align: left; border: 0; border-radius: 0; background: transparent; padding: 0; font-size: 12px; line-height: 1.5; color: #385a65; margin-bottom: 4px; }
+.record-item small { font-size: 10px; }
+.record-note { font-size: 12px; color: #788d96; line-height: 1.7; margin: 8px 0; overflow-wrap: anywhere; white-space: pre-wrap; }
+.record-actions { display: flex; gap: 12px; margin-top: 8px; }
+.record-actions button { border: 0; background: transparent; font-size: 10px; color: #317f70; padding: 3px 0; }
+.medical-note { font-size: 10px; line-height: 1.7; color: #83969e; white-space: pre-line; padding: 20px 0; }
+.atlas-footer { display: flex; justify-content: space-between; position: absolute; bottom: 0; height: 30px; left: 24px; right: 24px; font-size: 9px; color: #81959d; align-items: center; pointer-events: auto; }
+.toast { position: absolute; bottom: 50px; left: 50%; transform: translateX(-50%) translateY(12px); padding: 13px 20px; border: 1px solid #b7d8ca; background: #eff8f1; color: #36715a; border-radius: 10px; opacity: 0; transition: .2s; pointer-events: none; max-width: 90%; font-size: 12px; z-index: 50; }
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.auth-backdrop { position: absolute; inset: 0; background: #29424b55; backdrop-filter: blur(5px); display: flex; justify-content: center; align-items: center; pointer-events: auto; padding: 16px; z-index: 60; }
+.auth-dialog { position: relative; width: 400px; max-width: 100%; max-height: calc(var(--app-height, 100dvh) - 32px); overflow: auto; overscroll-behavior: contain; background: white; border: 1px solid #d9e4e7; padding: 28px; border-radius: 18px; box-shadow: 0 20px 80px #26485322; }
+.auth-dialog>.primary-button { margin: 8px 0 12px; }
+.auth-dialog>button:last-child { width: 100%; font-size: 12px; border: 0; background: transparent; color: #358474; }
+.dialog-close { position: absolute; right: 8px; top: 8px; border: 0; background: transparent; font-size: 25px; color: #7a9099; width: 44px; height: 44px; padding: 0; }
+.delete-confirm { margin-top: 12px; border: 1px solid #e8d0c0; background: #fff8f1; padding: 12px; border-radius: 9px; font-size: 11px; line-height: 1.7; color: #9b6750; }
+.delete-confirm .record-actions { justify-content: flex-end; gap: 15px; }
+.delete-confirm .record-actions button:last-child { color: #b86248; }
+.delete-confirm .form-message { margin-bottom: 5px; }
+.model-credit {font-size: 9px; color: #83969e; padding: 10px 0 12px; line-height: 1.6;}
+.mobile-nav, .sheet-header, .sheet-scrim { display: none; }
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-thumb { background: #cbdadf; border-radius: 3px; }
+::-webkit-scrollbar-track { background: transparent; }
+@media (max-width: 1024px) {
+  .atlas-app { top: var(--app-top, 0px); bottom: auto; overflow: hidden; }
+  .atlas-header { height: calc(60px + env(safe-area-inset-top)); padding: env(safe-area-inset-top) 16px 0; }
+  .brand { font-size: 11px; gap: 8px; letter-spacing: .8px; }
+  .brand-mark { width: 29px; height: 33px; font-size: 21px; }
+  .brand small { font-size: 8px; letter-spacing: .7px; }
+  .header-nav { display: none; }
+  .auth-button { font-size: 11px; min-height: 44px; max-width: 145px; padding: 8px 10px; }
+  .viewport { top: calc(60px + env(safe-area-inset-top)); bottom: calc(76px + env(safe-area-inset-bottom)); left: 12px; right: 12px; margin: 0; }
+  .viewport-top { padding: 13px 3px; font-size: 9px; letter-spacing: .5px; }
+  .model-badge { font-size: 7px; padding: 3px 4px; }
+  .load-status { top: 40px; font-size: 10px; }
+  .load-status.loaded { font-size: 9px; }
+  .view-controls { top: 58px; padding: 3px; gap: 2px; }
+  .view-controls button { min-height: 44px; min-width: 64px; padding: 8px 9px; font-size: 11px; }
+  .selection-chip { bottom: 55px; padding: 9px 14px; font-size: 12px; line-height: 1.6; width: max-content; min-width: 220px; max-width: calc(100% - 12px); max-height: 76px; overflow: hidden; }
+  .viewport-instructions { bottom: 10px; font-size: 9px; line-height: 1.6; }
+  .orientation { right: 6px; bottom: 128px; font-size: 10px; }
+  .atlas-footer { display: none; }
+  .mobile-nav { display: grid; grid-template-columns: repeat(3, 1fr); position: absolute; left: 0; right: 0; bottom: 0; height: calc(76px + env(safe-area-inset-bottom)); padding: 7px 16px calc(7px + env(safe-area-inset-bottom)); background: #fffffffa; border-top: 1px solid var(--line); pointer-events: auto; z-index: 40; gap: 10px; }
+  .mobile-nav-item { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; border: 0; background: transparent; min-height: 56px; padding: 6px; border-radius: 12px; color: #83949c; }
+  .mobile-nav-item strong { font-size: 14px; font-weight: 600; }
+  .mobile-nav-item small { font-size: 10px; }
+  .mobile-nav-item[aria-pressed=true] { color: #267d6c; background: #edf7f1; }
+  .panel { display: none; position: absolute; left: 10px; right: 10px; top: auto; bottom: calc(86px + env(safe-area-inset-bottom)); width: auto; margin: 0; padding: 0 18px 15px; max-height: calc(var(--app-height, 100dvh) - 160px - env(safe-area-inset-top) - env(safe-area-inset-bottom)); border-radius: 20px; overflow: auto; overscroll-behavior: contain; box-shadow: 0 -5px 35px #29464a18; z-index: 25; }
+  .atlas-app[data-mobile-pane=structures] .anatomy-panel { display: block; }
+  .atlas-app[data-mobile-pane=journal] .record-panel { display: block; }
+  .sheet-scrim { position: absolute; inset: calc(60px + env(safe-area-inset-top)) 0 calc(76px + env(safe-area-inset-bottom)); background: #31494a18; border: 0; border-radius: 0; z-index: 20; pointer-events: auto; padding: 0; }
+  .atlas-app:not([data-mobile-pane=model]) .sheet-scrim { display: block; }
+  .sheet-header { display: flex; position: sticky; top: 0; z-index: 2; align-items: center; justify-content: space-between; min-height: 62px; padding: 9px 0 6px; background: #fff; border-bottom: 1px solid var(--line); margin-bottom: 18px; flex-shrink: 0; }
+  .sheet-header strong { font-size: 15px; font-weight: 600; }
+  .sheet-close { min-width: 78px; min-height: 44px; border: 0; background: #f1f6f5; font-size: 12px; color: #377b6e; padding: 8px 10px; }
+  .anatomy-panel { min-height: 0; }
+  .anatomy-panel .eyebrow, .anatomy-panel>h1, .anatomy-panel>.subheading { display: none; }
+  .anatomy-panel input[type=search] { font-size: 16px; min-height: 48px; margin-bottom: 17px; }
+  .toggles { grid-template-columns: 1fr 1fr; gap: 6px 10px; margin: 10px 0; }
+  .toggle { min-height: 44px; font-size: 12px; }
+  .toggle input { width: 20px; height: 20px; }
+  .taxonomy-note { font-size: 10px; margin-bottom: 13px; }
+  .list-heading { padding: 12px 0; font-size: 11px; }
+  .structure-list { flex: 1; min-height: 120px; max-height: 34dvh; overflow: auto; margin: 0 -5px; padding-bottom: 4px; }
+  .structure-row { min-height: 52px; font-size: 13px; padding: 11px 8px; }
+  .structure-row small { font-size: 11px; }
+  .selected-title { font-size: 21px; }
+  .selection-detail { padding-bottom: 18px; }
+  .selection-detail .eyebrow { font-size: 9px; }
+  .structure-meta { font-size: 11px; }
+  .selection-actions { gap: 8px; margin: 16px 0 20px; }
+  .selection-actions button { min-height: 44px; font-size: 12px; padding: 10px; flex: 1 1 42%; }
+  .selection-empty { display: none; }
+  .empty-state { font-size: 13px; padding: 18px 5px; }
+  input, textarea, input[type=date] { font-size: 16px; min-height: 46px; padding: 11px; }
+  input[type=range] { min-height: 44px; }
+  .field-label, .pain-header { font-size: 12px; }
+  .pain-value { font-size: 20px; }
+  .range-labels { font-size: 10px; margin-bottom: 20px; }
+  .primary-button { min-height: 48px; font-size: 14px; padding: 13px; }
+  .form-message { font-size: 12px; }
+  .history-heading h2 { font-size: 16px; }
+  .date-filters { gap: 8px; }
+  .date-filters input { font-size: 16px; padding: 10px 5px; }
+  .history-list { max-height: none; overflow: visible; }
+  .record-item { padding: 17px 0; }
+  .record-date { font-size: 12px; }
+  .record-intensity { font-size: 14px; }
+  .record-structure { font-size: 14px; min-height: 44px; padding: 8px 0; }
+  .record-note { font-size: 14px; }
+  .record-actions { gap: 12px; }
+  .record-actions button { min-height: 44px; min-width: 75px; font-size: 12px; padding: 8px 10px; background: #f1f7f4; border-radius: 8px; }
+  .delete-confirm { font-size: 12px; padding: 14px; }
+  .medical-note { font-size: 11px; padding: 20px 0 4px; }
+  .auth-backdrop { align-items: center; padding: 12px; }
+  .auth-dialog { padding: 26px 22px; max-height: calc(var(--app-height, 100dvh) - 24px); border-radius: 18px; }
+  .auth-dialog h2 { font-size: 21px; }
+  .auth-dialog .subheading { font-size: 12px; }
+  .auth-dialog>button:last-child { min-height: 44px; font-size: 13px; }
+  .toast { bottom: calc(92px + env(safe-area-inset-bottom)); font-size: 13px; width: max-content; max-width: calc(100% - 32px); padding: 13px 17px; }
+}
+@media (max-width: 1024px) and (max-height: 500px) {
+  .atlas-header { height: calc(52px + env(safe-area-inset-top)); }
+  .brand small { display: none; }
+  .viewport { top: calc(52px + env(safe-area-inset-top)); bottom: calc(66px + env(safe-area-inset-bottom)); }
+  .viewport-top, .load-status.loaded, .viewport-instructions, .orientation { display: none; }
+  .view-controls { top: 8px; left: 2px; transform: none; display: grid; grid-template-columns: 1fr; padding: 2px; gap: 2px; }
+  .view-controls button { min-height: 44px; min-width: 80px; padding: 7px; font-size: 10px; }
+  .selection-chip { bottom: 9px; left: auto; right: 4px; transform: none; width: 205px; min-width: 0; max-width: 38%; font-size: 10px; padding: 7px 9px; }
+  .mobile-nav { height: calc(66px + env(safe-area-inset-bottom)); padding-top: 4px; padding-bottom: calc(4px + env(safe-area-inset-bottom)); }
+  .mobile-nav-item { min-height: 52px; gap: 2px; }
+  .mobile-nav-item strong { font-size: 13px; }
+  .panel { bottom: calc(72px + env(safe-area-inset-bottom)); max-height: calc(var(--app-height, 100dvh) - 130px - env(safe-area-inset-top) - env(safe-area-inset-bottom)); }
+  .sheet-header { min-height: 54px; margin-bottom: 12px; }
+  .sheet-scrim { top: calc(52px + env(safe-area-inset-top)); bottom: calc(66px + env(safe-area-inset-bottom)); }
+  .anatomy-panel .section-title, .anatomy-panel .taxonomy-note { display: none; }
+  .toggles { gap: 2px 8px; margin: 4px 0; }
+  .structure-list { max-height: 40dvh; }
+  .auth-backdrop { align-items: flex-start; }
+}
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; transition: none !important; } }
 `;
