@@ -2,6 +2,26 @@
 export type Locale = "zh" | "en";
 export type Localized = { zh: string; en: string };
 export const dictionary = {
+  motionPlay: { zh: "播放示意", en: "Play illustration" },
+  motionPause: { zh: "暂停", en: "Pause" },
+  motionProgress: { zh: "动作进度", en: "Motion progress" },
+  motionReturnStatic: { zh: "返回静态查看", en: "Return to static view" },
+  motionNoticeShort: {
+    zh: "近似动作示意 · 无器械",
+    en: "Approximate motion · No equipment",
+  },
+  motionDisclaimer: {
+    zh: "由静态网格程序化关节变换生成的近似示意，不代表精确负重动作、肌肉生理变形或训练指导。",
+    en: "Approximate joint illustration from static meshes. It does not model loaded mechanics or muscle physiology and is not exercise instruction.",
+  },
+  motionUnavailable: {
+    zh: "动作材质暂不可用，请刷新后重试。",
+    en: "Motion material unavailable. Reload and retry.",
+  },
+  poseViewportLabel: {
+    zh: "近似动作示意；可旋转缩放，返回静态后才能选取结构。",
+    en: "Approximate motion. Orbit and zoom remain available; return to static view to select structures.",
+  },
   signIn: {
     zh: "登录",
     en: "Sign in",
