@@ -19,3 +19,6 @@ if path.exists():
 PY
 python3 scripts/prepare-models.py
 python3 scripts/validate-models.py
+
+python3 scripts/prepare-learning.py
+python3 scripts/validate-learning.py

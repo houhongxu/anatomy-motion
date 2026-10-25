@@ -3,9 +3,14 @@
 import csv, hashlib, json, math, zipfile
 from collections import defaultdict, Counter
 from pathlib import Path
+from anatomy_names import chinese_name
 ROOT=Path(__file__).resolve().parents[1]
 CACHE=ROOT/'.cache'
 OUT=ROOT/'models'
+# 固定 v1 参考系，新增结构不能移动已有网格。
+# Freeze the v1 reference frame so expanding the imported subset cannot move existing meshes.
+REFERENCE_CENTER=[0.010500000000007503,-108.08885000000001,781.72995]
+REFERENCE_SCALE=0.0009946871419309136
 
 def read_table(name):
     return list(csv.DictReader((CACHE/name).open(encoding='utf-8-sig'), delimiter='\t'))
@@ -38,7 +43,14 @@ def main():
     tendons=set(elements['FMA9721'])
     for cid,name in names.items():
         if 'tendon' in name and 'sheath' not in name: tendons.update(elements[cid])
-    groups={'muscle':elements['FMA5022']-tendons, 'tendon':tendons, 'bone':elements['FMA5018']-tendons}
+    # 肌器官、肌区和肌头在来源 IS-A 中属于不同分支，必须明确合并。
+    # Muscle organs, zones and heads occupy disjoint IS-A branches; explicitly union these muscle-only roots.
+    muscle_roots=('FMA5022','FMA10474','FMA85453')
+    # 斜方肌升部/降部在来源中绕过肌区分支，仅纳入这两个已核实的概念。
+    # Source trapezius ascending/descending portions bypass the muscle-zone root; include only these verified concepts.
+    explicit_muscle_portions=('FMA32555','FMA32557')
+    muscle_ids=set().union(*(elements[root] for root in muscle_roots+explicit_muscle_portions))
+    groups={'muscle':muscle_ids-tendons, 'tendon':tendons, 'bone':elements['FMA5018']-tendons}
     meshes={}; metadata=[]
     superficial=('trapezius','deltoid','pectoralis major','latissimus dorsi','biceps brachii','triceps brachii','brachioradialis','external oblique','rectus abdominis','gluteus maximus','sartorius','rectus femoris','vastus lateralis','vastus medialis','gastrocnemius','tibialis anterior','sternocleidomastoid','platysma','frontalis','occipitalis','orbicularis','masseter')
     missing=[]
@@ -51,9 +63,7 @@ def main():
             side='right' if 'right' in name else 'left' if 'left' in name else 'midline'
             meshes[fid]=obj_geometry(archive.read(paths[fid]).decode())
             metadata.append({'id':fid,'conceptId':cid,'name':name,'nameEn':name,'kind':kind,'side':side,'layer':'support' if kind=='bone' else ('superficial' if any(s in name for s in superficial) else 'deep'),'file':f'meshes/{fid}.json','source':'BodyParts3D 4.0','sourceElement':fid,'sourceMirrored':fid.endswith('M'),'componentOfCompound':len(elements[cid])>1})
-    coords=[v for verts,_ in meshes.values() for v in verts]
-    low=[min(v[i] for v in coords) for i in range(3)]; high=[max(v[i] for v in coords) for i in range(3)]
-    center=[(a+b)/2 for a,b in zip(low,high)]; scale=1.7/(high[2]-low[2])
+    center=list(REFERENCE_CENTER); scale=REFERENCE_SCALE
     (OUT/'meshes').mkdir(parents=True,exist_ok=True)
     for item in metadata:
         verts,indices=meshes[item['id']]
@@ -82,6 +92,9 @@ def main():
         else:
             unique.append(item);by_hash[item['sha256']]=item
     metadata=unique
+    for item in metadata:
+        name_zh=chinese_name(item['nameEn'],item['side'])
+        if name_zh: item['nameZh']=name_zh
     manifest={'version':1,'source':'BodyParts3D 4.0','license':'CC BY 4.0','attribution':'BodyParts3D, © The Database Center for Life Science licensed under CC Attribution 4.0 International','sourceUrl':'https://dbarchive.biosciencedbc.jp/en/bodyparts3d/download.html','sourceArchiveSha256':hashlib.sha256(source.read_bytes()).hexdigest(),'coordinateTransform':{'sourceCenter':center,'scale':scale,'mapping':'(x,z,-y)'},'layerNotice':'显示分组为项目维护的近似分类，不代表临床解剖层次认证。 Display groups are approximate editorial categories, not clinically certified anatomical layers.','missingSourceElements':missing,'structures':metadata}
     (OUT/'manifest.json').write_text(json.dumps(manifest,ensure_ascii=False,indent=2))
     (ROOT/'shared').mkdir(exist_ok=True)

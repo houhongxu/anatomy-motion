@@ -6,7 +6,7 @@
   "scripts": {
     "setup": "npm ci --prefix server && npm ci --prefix creator",
     "start": "npm start --prefix server",
-    "test": "npm test --prefix server && npm test --prefix creator && python3 scripts/validate-models.py",
+    "test": "npm test --prefix server && npm test --prefix creator && python3 scripts/validate-models.py && python3 scripts/validate-learning.py && python3 scripts/test-learning.py",
     "models:fetch": "bash scripts/fetch-models.sh"
   },
   "engines": { "node": ">=20" }

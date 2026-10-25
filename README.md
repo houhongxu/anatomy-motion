@@ -1,10 +1,18 @@
 # 人体运动图谱 / Anatomy Motion
 
-面向手机浏览器优先设计的亮色三维肌肉／肌腱图谱，使用 Cocos Creator 3.8.8，附带私人每日酸痛记录；PC 提供扩展布局。
+面向手机浏览器优先设计的亮色三维肌肉／肌腱图谱，使用 Cocos Creator 3.8.8，附带私人每日酸痛记录；同时支持 PC。
 
-A light, mobile-first 3D muscle/tendon atlas built with Cocos Creator 3.8.8, with private daily soreness journals and an extended desktop layout.
+A light, mobile-first 3D muscle/tendon atlas built with Cocos Creator 3.8.8, with private daily soreness journals and desktop support.
 
 ## 功能 / Features
+
+- 界面使用中英文切换，同一时刻只展示一种语言；文档仍保留双语。
+- 手机和 PC 均优先保留模型空间，目录与记录面板按需打开。
+- 动作与运动损伤目录可定位相关肌群，附来源及模型覆盖说明；损伤关联只用于学习解剖位置，不用于自我诊断。
+
+- The interface switches between Chinese and English, displaying one language at a time; documentation remains bilingual.
+- Both phone and desktop prioritize model space with on-demand explorer and journal panels.
+- Exercise and sports-injury entries locate related muscle groups with sources and coverage notes; injury associations explain anatomy and are not a self-diagnosis tool.
 
 - 鼠标／触摸旋转、缩放和平移；正面、背面、侧面与适应视图。
 - 搜索、三角形精确点击、选中高亮、聚焦、隐藏与独显。
@@ -20,17 +28,21 @@ A light, mobile-first 3D muscle/tendon atlas built with Cocos Creator 3.8.8, wit
 
 ## 使用端与界面 / Platforms and interface
 
-手机浏览器是主要使用端，PC 为扩展布局。亮色界面优先保留模型视区，结构选择和日志通过底部入口打开。当前交付为 Web 应用，不包含原生安装包。模型数据仍较大，尚未进行真实手机的帧率、内存或蜂窝网络加载测试。
+手机浏览器是主要使用端，PC 同样采用模型优先的布局。亮色界面优先保留模型视区，结构选择和日志通过底部入口打开。当前交付为 Web 应用，不包含原生安装包。模型数据仍较大，尚未进行真实手机的帧率、内存或蜂窝网络加载测试。
 
-Phone browsers are the primary platform; desktop uses an extended layout. A light interface prioritizes the model viewport, with bottom navigation for structure selection and the journal. This delivery is a web app, not a native installable package. Model data remains substantial; real-device frame rate, memory and cellular-load testing has not yet been performed.
+Phone browsers are the primary platform; desktop also prioritizes the model viewport. A light interface prioritizes the model viewport, with bottom navigation for structure selection and the journal. This delivery is a web app, not a native installable package. Model data remains substantial; real-device frame rate, memory and cellular-load testing has not yet been performed.
+
+首批目录包含25个动作、10类损伤与劳损，来源及维护方法见 [资料说明 / Sources](docs/LEARNING_SOURCES.md)。
+
+The initial catalog includes 25 exercises and 10 injury/overuse conditions; see [sources and maintenance](docs/LEARNING_SOURCES.md).
 
 ## 模型覆盖 / Model coverage
 
-当前包含 533 个独立网格：323 肌肉、8 肌腱、202 骨结构，来自 DBCLS BodyParts3D 4.0。网格数量不等于独立解剖器官数量。模型不是完整肌腱全集，显示分组未经过临床审核；名称保留来源英文术语。P0 不包含皮肤、动作动画和穴位定位。
+当前包含 617 个独立网格：407 肌肉、8 肌腱、202 骨结构，来自 DBCLS BodyParts3D 4.0。网格数量不等于独立解剖器官数量。模型不是完整肌腱全集，显示分组未经过临床审核；常用肌肉提供中文标注，未审核的条目保留来源英文名称。P0 不包含皮肤、动作动画和穴位定位。
 
-Contains 533 meshes: 323 muscle, 8 tendon and 202 bone meshes from DBCLS BodyParts3D 4.0. Mesh count is not a count of distinct anatomical organs. Tendon coverage is incomplete and display categories are not clinically reviewed; source English names are retained. P0 excludes skin, motion animation and acupoint localization.
+Contains 617 meshes: 407 muscle, 8 tendon and 202 bone meshes from DBCLS BodyParts3D 4.0. Mesh count is not a count of distinct anatomical organs. Tendon coverage is incomplete and display categories are not clinically reviewed; common muscles have Chinese labels, while unreviewed entries retain their source English names. P0 excludes skin, motion animation and acupoint localization.
 
-参见 [模型来源与许可 / Model provenance](docs/MODELS.md)。P1 见 [穴位与经络 Issue](https://github.com/houhongxu/anatomy-motion/issues/1)。
+参见 [模型来源与许可 / Model provenance](docs/MODELS.md) 和 [动作与损伤资料 / Exercise and condition sources](docs/LEARNING_SOURCES.md)。P1 见 [穴位与经络 Issue](https://github.com/houhongxu/anatomy-motion/issues/1)。
 
 ## 本地运行 / Local setup
 
@@ -72,9 +84,9 @@ See [server documentation](server/README.md) for environment variables, API and 
 
 ## 开发与验证 / Development and verification
 
-`npm test` 执行后端集成测试、前端几何／日期测试和全部模型哈希与网格校验。Cocos 严格类型检查见 [前端说明 / Creator guide](creator/README.md)。GitHub Actions 验证这些自动化检查；官方编辑器构建和浏览器交互验收属于本地检查，不假称已在无编辑器的 Linux CI 中完成。
+`npm test` 执行后端集成测试、前端几何／日期／界面逻辑测试、全部模型哈希与网格校验及目录关联校验。Cocos 严格类型检查见 [前端说明 / Creator guide](creator/README.md)。GitHub Actions 验证这些自动化检查；官方编辑器构建和浏览器交互验收属于本地检查，不假称已在无编辑器的 Linux CI 中完成。
 
-`npm test` runs backend integration tests, frontend geometry/date tests, and all model digest/geometry checks. See the [Creator guide](creator/README.md) for strict Cocos typechecking. GitHub Actions runs automated checks; the official editor build and browser acceptance are local checks, not claimed as Linux CI checks without an editor.
+`npm test` runs backend integration tests, frontend geometry/date/interface tests, model digest/geometry checks and catalog-reference validation. See the [Creator guide](creator/README.md) for strict Cocos typechecking. GitHub Actions runs automated checks; the official editor build and browser acceptance are local checks, not claimed as Linux CI checks without an editor.
 
 ## 许可 / Licensing
 

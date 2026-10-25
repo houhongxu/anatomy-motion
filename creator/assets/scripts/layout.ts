@@ -20,19 +20,18 @@ export function renderingSize(
     ratio,
   };
 }
+/** 控件作为边缘浮层，不缩小模型取景区域。 / Edge overlays do not shrink the model framing area. */
 export function sceneFrame(
   viewport: Bounds,
-  controls: Bounds,
-  chip: Bounds,
-  compact: boolean,
+  _controls: Bounds,
+  _chip: Bounds,
+  _compact: boolean,
 ) {
-  const short = compact && viewport.height < 330;
-  const left = viewport.left + (short ? 100 : 6);
-  const right = Math.max(left + 64, viewport.right - 6);
-  const top = short ? viewport.top + 8 : controls.bottom + 10;
-  const bottom = short
-    ? viewport.bottom - 8
-    : Math.max(top + 64, chip.top - 12);
+  const inset = Math.min(6, viewport.width / 8, viewport.height / 8);
+  const left = viewport.left + inset,
+    right = viewport.right - inset;
+  const top = viewport.top + inset,
+    bottom = viewport.bottom - inset;
   return {
     left,
     right,

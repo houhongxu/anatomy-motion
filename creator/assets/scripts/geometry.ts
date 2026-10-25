@@ -67,7 +67,7 @@ export function fitPerspectiveBounds(
   pitch: number,
   verticalFov: number,
   aspect: number,
-  occupancy = 0.92,
+  occupancy = 0.94,
 ): number {
   const back = [
     Math.sin(yaw) * Math.cos(pitch),

@@ -27,6 +27,19 @@ import {
   fitPerspectiveBounds,
 } from "./geometry";
 import { renderingSize, sceneFrame, shouldPick } from "./layout";
+import {
+  t,
+  getLocale,
+  setLocale,
+  localized,
+  apiErrorMessage,
+  type Localized,
+} from "./i18n";
+import {
+  matchLearningEntry,
+  type LearningData,
+  type LearningEntry,
+} from "./learning";
 const { ccclass, property } = _decorator;
 type Structure = {
   id: string;
@@ -64,16 +77,8 @@ type User = {
   id: string;
   username: string;
 };
-const sides: Record<string, string> = {
-  left: "左侧 Left",
-  right: "右侧 Right",
-  midline: "中线 Midline",
-};
-const kinds: Record<string, string> = {
-  muscle: "肌肉 Muscle",
-  tendon: "肌腱 Tendon",
-  bone: "骨骼 Bone",
-};
+const sideLabel = (side: string) => t(`side_${side}` as "side_left");
+const kindLabel = (kind: string) => t(`kind_${kind}` as "kind_muscle");
 function el<K extends keyof HTMLElementTagNameMap>(
   tag: K,
   className = "",
@@ -106,8 +111,15 @@ function input(type: string, value = "", testId = ""): HTMLInputElement {
   if (testId) e.dataset.testid = testId;
   return e;
 }
+function displayError(error: unknown): string {
+  return (error as any)?.localized
+    ? (error as Error).message
+    : t("requestFailed");
+}
 function title(s: Structure): string {
-  return s.nameZh ? `${s.nameZh} · ${s.nameEn || s.name}` : s.name;
+  return getLocale() === "zh"
+    ? s.nameZh || s.nameEn || s.name
+    : s.nameEn || s.name;
 }
 async function api<T>(
   path: string,
@@ -119,16 +131,19 @@ async function api<T>(
     credentials: "same-origin",
     headers: body ? { "Content-Type": "application/json" } : undefined,
     body: body ? JSON.stringify(body) : undefined,
+  }).catch(() => {
+    const error = new Error(t("networkError"));
+    (error as any).localized = true;
+    throw error;
   });
   let data: any = {};
   try {
     data = await r.json();
   } catch {}
   if (!r.ok) {
-    const e = new Error(
-      data.error?.message || `请求失败 / Request failed (${r.status})`,
-    );
+    const e = new Error(apiErrorMessage(data.error?.code || "", r.status));
     (e as any).status = r.status;
+    (e as any).localized = true;
     throw e;
   }
   return data;
@@ -143,6 +158,19 @@ export class AtlasBootstrap extends Component {
   private renderAspect = 1;
   private parts: Part[] = [];
   private selected: Part | null = null;
+  private learning: LearningData | null = null;
+  private learningFailed = false;
+  private modelsReady = false;
+  private modelTotal = 0;
+  private explorerTab: "structures" | "exercise" | "condition" = "structures";
+  private activeLearning: LearningEntry | null = null;
+  private highlightedIds = new Set<string>();
+  private isolateGroupIds: Set<string> | null = null;
+  private learningDetail!: HTMLElement;
+  private groupActions!: HTMLElement;
+  private authRegister = false;
+  private syncViewport: () => void = () => {};
+
   private hidden = new Set<string>();
   private isolated: string | null = null;
   private enabledLayers = new Set(["superficial", "deep", "tendon", "bone"]);
@@ -184,6 +212,7 @@ export class AtlasBootstrap extends Component {
     this.buildUI();
     this.bindControls();
     this.load();
+    this.loadLearning();
     this.loadUser();
   }
   private setupScene() {
@@ -228,8 +257,8 @@ export class AtlasBootstrap extends Component {
     this.updateCamera();
   }
   private buildUI() {
-    document.title = "Anatomy Motion · 解剖与疼痛记录";
-    document.documentElement.lang = "zh-CN";
+    document.title = t("pageTitle");
+    document.documentElement.lang = getLocale() === "zh" ? "zh-CN" : "en";
     for (const meta of document.querySelectorAll(
       'meta[name="screen-orientation"],meta[name="x5-orientation"]',
     ))
@@ -254,40 +283,77 @@ export class AtlasBootstrap extends Component {
       el("span", "brand-mark", "A"),
       el("div", "", "ANATOMY / MOTION"),
     );
-    brand.lastElementChild?.append(el("small", "", "身体图谱 · BODY ATLAS"));
+    brand.lastElementChild?.append(el("small", "", t("brandSub")));
     const nav = el("div", "header-nav");
     nav.append(
-      el("span", "nav-active", "交互图谱 / Atlas"),
-      el("span", "nav-muted", "动作 · 经络 / P1 规划"),
+      el("span", "nav-active", t("atlas")),
+      el("span", "nav-muted", t("roadmap")),
     );
     this.authButton = button(
-      "登录 / Sign in",
+      t("signIn"),
       () => (this.user ? this.logout() : this.openAuth()),
       "auth-button",
     );
     this.authButton.dataset.testid = "auth-button";
-    header.append(brand, nav, this.authButton);
+    const headerActions = el("div", "header-actions");
+    const language = button(
+      getLocale() === "zh" ? "English" : "中文",
+      () => this.changeLocale(),
+      "language-button",
+    );
+    language.dataset.testid = "locale-switch";
+    language.setAttribute("aria-label", t("languageLabel"));
+    headerActions.append(language, this.authButton);
+    if (this.user)
+      this.authButton.textContent = t("signOutUser", {
+        username: this.user.username,
+      });
+    header.append(brand, nav, headerActions);
     const left = el("aside", "panel anatomy-panel");
     left.append(
-      el("div", "eyebrow", "EXPLORE THE HUMAN BODY"),
-      el("h1", "", "身体结构"),
-      el("p", "subheading", "Anatomical explorer"),
+      el("div", "eyebrow", t("exploreEyebrow")),
+      el("h1", "", t("structures")),
+      el("p", "subheading", t("anatomicalExplorer")),
     );
-    const search = input("search", "", "structure-search");
-    search.placeholder = "搜索名称 / Search structures";
-    search.setAttribute("aria-label", "搜索结构 / Search structures");
+    const libraryTabs = el("div", "explorer-tabs");
+    libraryTabs.setAttribute("role", "tablist");
+    libraryTabs.setAttribute("aria-label", t("explorerTabs"));
+    for (const [tab, label] of [
+      ["structures", t("tabStructures")],
+      ["exercise", t("tabExercises")],
+      ["condition", t("tabConditions")],
+    ] as const) {
+      const b = button(label, () => {
+        this.explorerTab = tab;
+        left.dataset.explorerTab = tab;
+        for (const other of libraryTabs.querySelectorAll<HTMLButtonElement>(
+          "button",
+        ))
+          other.setAttribute("aria-selected", String(other === b));
+        this.renderList();
+      });
+      b.setAttribute("role", "tab");
+      b.setAttribute("aria-selected", String(tab === this.explorerTab));
+      b.dataset.testid = `explorer-tab-${tab}`;
+      libraryTabs.append(b);
+    }
+    left.dataset.explorerTab = this.explorerTab;
+    left.append(libraryTabs);
+    const search = input("search", this.search, "structure-search");
+    search.placeholder = t("search");
+    search.setAttribute("aria-label", t("searchLabel"));
     search.addEventListener("input", () => {
       this.search = search.value.toLowerCase();
       this.renderList();
     });
     left.append(search);
-    const layerTitle = el("div", "section-title", "显示组织 / VISIBLE TISSUES"),
+    const layerTitle = el("div", "section-title", t("tissues")),
       toggles = el("div", "toggles");
     for (const [key, label] of [
-      ["superficial", "浅层肌肉 / Surface"],
-      ["deep", "深层肌肉 / Deep"],
-      ["tendon", "肌腱 / Tendons"],
-      ["bone", "骨骼 / Bones"],
+      ["superficial", t("surface")],
+      ["deep", t("deep")],
+      ["tendon", t("tendons")],
+      ["bone", t("bones")],
     ]) {
       const row = el("label", "toggle");
       const check = input("checkbox");
@@ -303,84 +369,91 @@ export class AtlasBootstrap extends Component {
       toggles.append(row);
     }
     left.append(layerTitle, toggles);
-    const disclaimer = el(
-      "p",
-      "taxonomy-note",
-      "层级用于显示筛选，未经临床验证。\nDisplay layers are not clinically validated.",
-    );
+    const disclaimer = el("p", "taxonomy-note", t("layerNotice"));
     left.append(disclaimer);
+    this.learningDetail = el("section", "learning-detail");
+    this.learningDetail.dataset.testid = "learning-detail";
+    left.append(this.learningDetail);
     const listHead = el("div", "list-heading");
     this.count = el("span", "muted", "0");
-    listHead.append(el("span", "", "结构目录 / STRUCTURES"), this.count);
+    listHead.append(el("span", "", t("structureDirectory")), this.count);
     this.list = el("div", "structure-list");
     this.list.dataset.testid = "structure-list";
     left.append(listHead, this.list);
     const structuresSheetHeader = el("div", "sheet-header");
     const closeStructures = button(
-      "关闭 / Close",
+      t("close"),
       () => this.setMobilePane("model"),
       "sheet-close",
     );
     closeStructures.dataset.testid = "close-structures-sheet";
     structuresSheetHeader.append(
-      el("strong", "", "身体结构 / Structures"),
+      el("strong", "", t("explorer")),
       closeStructures,
     );
     left.prepend(structuresSheetHeader);
     left.dataset.testid = "structures-sheet";
     left.id = "structures-sheet";
-    left.append(
-      el("p", "model-credit", "模型 / DBCLS BodyParts3D · CC BY 4.0"),
-    );
+    left.append(el("p", "model-credit", t("modelCredit")));
     const viewport = el("main", "viewport");
-    viewport.setAttribute("aria-label", "三维解剖视图 / 3D anatomy viewport");
+    viewport.setAttribute("aria-label", t("viewportLabel"));
     viewport.dataset.testid = "viewport";
     viewport.tabIndex = 0;
     viewport.id = "atlas-viewport";
     const viewportTop = el("div", "viewport-top");
     viewportTop.append(
       el("span", "live-dot", "●"),
-      el("span", "", "三维解剖 / 3D ATLAS"),
+      el("span", "", t("atlas3d")),
       el("span", "model-badge", "BODYPARTS3D"),
     );
-    this.status = el(
-      "div",
-      "load-status",
-      "正在加载真实解剖模型… / Loading anatomy…",
-    );
+    this.status = el("div", "load-status", t("loadingAnatomy"));
     this.status.setAttribute("role", "status");
     const controls = el("div", "view-controls");
     for (const [label, fn] of [
-      ["正面 / Front", () => this.preset(0)],
-      ["背面 / Back", () => this.preset(Math.PI)],
-      ["侧面 / Side", () => this.preset(Math.PI / 2)],
-      ["适应 / Fit", () => this.fit()],
+      [t("front"), () => this.preset(0)],
+      [t("back"), () => this.preset(Math.PI)],
+      [t("side"), () => this.preset(Math.PI / 2)],
+      [t("fit"), () => this.fit()],
     ] as [string, () => void][]) {
       const b = button(label, fn);
-      if (label !== "适应 / Fit") {
+      if (label !== t("fit")) {
         b.dataset.viewYaw = String(
-          label === "正面 / Front"
+          label === t("front")
             ? 0
-            : label === "背面 / Back"
+            : label === t("back")
               ? Math.PI
               : Math.PI / 2,
         );
-        b.setAttribute("aria-pressed", String(label === "正面 / Front"));
+        b.setAttribute("aria-pressed", String(label === t("front")));
       }
       controls.append(b);
     }
     const gizmo = el("div", "orientation", "Y ↑\nZ ⊙  X →");
-    this.selectionChip = el(
-      "div",
-      "selection-chip",
-      "点击模型中的肌肉或从目录选择\nSelect a structure to explore",
-    );
-    const instructions = el(
-      "div",
-      "viewport-instructions",
-      "拖动旋转 · 滚轮缩放 · 右键 / 双指平移\nDrag to rotate · Scroll to zoom · Right drag / two fingers to pan",
+    this.selectionChip = el("div", "selection-chip", t("selectHint"));
+    const instructions = el("div", "viewport-instructions", t("gestureHint"));
+    this.groupActions = el("div", "group-actions");
+    this.groupActions.append(
+      button(t("entryDetails"), () => {
+        if (this.activeLearning) {
+          this.explorerTab = this.activeLearning.kind;
+          this.setMobilePane("structures");
+          this.overlay.querySelector<HTMLElement>(
+            ".anatomy-panel",
+          )!.dataset.explorerTab = this.explorerTab;
+          for (const tab of this.overlay.querySelectorAll<HTMLButtonElement>(
+            ".explorer-tabs button",
+          ))
+            tab.setAttribute(
+              "aria-selected",
+              String(tab.dataset.testid === `explorer-tab-${this.explorerTab}`),
+            );
+          this.renderList();
+        }
+      }),
+      button(t("wholeBody"), () => this.resetVisibility()),
     );
     viewport.append(
+      this.groupActions,
       viewportTop,
       this.status,
       controls,
@@ -393,13 +466,13 @@ export class AtlasBootstrap extends Component {
     right.id = "journal-sheet";
     const journalSheetHeader = el("div", "sheet-header");
     const closeJournal = button(
-      "关闭 / Close",
+      t("close"),
       () => this.setMobilePane("model"),
       "sheet-close",
     );
     closeJournal.dataset.testid = "close-journal-sheet";
     journalSheetHeader.append(
-      el("strong", "", "身体记录 / Journal"),
+      el("strong", "", t("journalTitle")),
       closeJournal,
     );
     right.append(journalSheetHeader);
@@ -407,15 +480,15 @@ export class AtlasBootstrap extends Component {
     right.append(this.detail);
     const historyTitle = el("div", "history-heading");
     historyTitle.append(
-      el("h2", "", "我的记录 / Journal"),
-      el("span", "private-tag", "私密 / PRIVATE"),
+      el("h2", "", t("myJournal")),
+      el("span", "private-tag", t("private")),
     );
     right.append(historyTitle);
     const dateFilters = el("div", "date-filters");
     const from = input("date", this.from, "history-from"),
       to = input("date", this.to, "history-to");
-    from.setAttribute("aria-label", "记录起始日期 / From");
-    to.setAttribute("aria-label", "记录结束日期 / To");
+    from.setAttribute("aria-label", t("from"));
+    to.setAttribute("aria-label", t("to"));
     from.addEventListener("change", () => {
       this.from = from.value;
       this.loadRecords();
@@ -428,33 +501,23 @@ export class AtlasBootstrap extends Component {
     right.append(dateFilters);
     this.history = el("div", "history-list");
     this.history.dataset.testid = "history-list";
-    right.append(
-      this.history,
-      el(
-        "p",
-        "medical-note",
-        "仅用于身体学习与个人记录，不构成诊断或治疗建议。\nFor learning and personal tracking; not medical advice.",
-      ),
-    );
+    right.append(this.history, el("p", "medical-note", t("medicalNotice")));
     const footer = el("footer", "atlas-footer");
     footer.append(
-      el("span", "", "P0 / 交互解剖与疼痛日志"),
-      el("span", "", "模型来源 / BodyParts3D · DBCLS · CC BY 4.0"),
+      el("span", "", t("footer")),
+      el("span", "", t("sourceCredit")),
     );
     this.toast = el("div", "toast");
     this.toast.setAttribute("role", "status");
     const scrim = button("", () => this.setMobilePane("model"), "sheet-scrim");
-    scrim.setAttribute(
-      "aria-label",
-      "关闭面板并返回模型 / Close sheet and return to model",
-    );
+    scrim.setAttribute("aria-label", t("closeSheet"));
     scrim.tabIndex = -1;
     const mobileNav = el("nav", "mobile-nav");
-    mobileNav.setAttribute("aria-label", "图谱导航 / Atlas navigation");
-    for (const [pane, zh, en] of [
-      ["model", "模型", "Model"],
-      ["structures", "结构", "Structures"],
-      ["journal", "记录", "Journal"],
+    mobileNav.setAttribute("aria-label", t("navLabel"));
+    for (const [pane, label] of [
+      ["model", t("model")],
+      ["structures", t("explore")],
+      ["journal", t("journal")],
     ] as const) {
       const item = button(
         "",
@@ -470,7 +533,7 @@ export class AtlasBootstrap extends Component {
           : `${pane === "journal" ? "journal" : "structures"}-sheet`,
       );
       item.setAttribute("aria-pressed", String(pane === "model"));
-      item.append(el("strong", "", zh), el("small", "", en));
+      item.append(el("strong", "", label));
       mobileNav.append(item);
     }
     this.overlay.append(
@@ -486,16 +549,216 @@ export class AtlasBootstrap extends Component {
     this.renderDetail();
     this.renderHistory();
   }
+  private changeLocale() {
+    const fields = new Map<string, { value: string; disabled: boolean }>();
+    for (const field of this.overlay.querySelectorAll<
+      HTMLInputElement | HTMLTextAreaElement
+    >("input[data-testid],textarea[data-testid]"))
+      fields.set(field.dataset.testid!, {
+        value: field.value,
+        disabled: field.disabled,
+      });
+    const scroll = new Map<string, number>();
+    for (const name of ["anatomy-panel", "record-panel", "structure-list"])
+      scroll.set(
+        name,
+        this.overlay.querySelector<HTMLElement>(`.${name}`)?.scrollTop || 0,
+      );
+    const focused = (document.activeElement as HTMLElement)?.dataset.testid;
+    const savePending = this.saveButton?.disabled;
+    const authOpen = !!this.overlay.querySelector(".auth-backdrop");
+    const pane = this.mobilePane,
+      position = this.target.clone(),
+      distance = this.distance;
+    const search = this.search;
+    setLocale(getLocale() === "zh" ? "en" : "zh");
+    for (const cleanup of this.cleanup) cleanup();
+    this.cleanup = [];
+    this.overlay.remove();
+    this.syncViewport = () => {};
+    this.buildUI();
+    this.bindControls();
+    this.search = search;
+    this.renderList();
+    this.applyVisibility();
+    this.updateSelectionChip();
+    for (const check of this.overlay.querySelectorAll<HTMLInputElement>(
+      "[data-layer]",
+    ))
+      check.checked = this.enabledLayers.has(check.dataset.layer!);
+    this.setMobilePane(pane);
+    if (authOpen) this.openAuth();
+    for (const field of this.overlay.querySelectorAll<
+      HTMLInputElement | HTMLTextAreaElement
+    >("input[data-testid],textarea[data-testid]")) {
+      const saved = fields.get(field.dataset.testid!);
+      if (saved) {
+        field.value = saved.value;
+        field.disabled = saved.disabled;
+      }
+    }
+    if (this.painLabel && fields.has("record-intensity"))
+      this.painLabel.textContent = `${fields.get("record-intensity")!.value} / 10`;
+    if (this.saveButton) this.saveButton.disabled = !!savePending;
+    if (focused)
+      this.overlay
+        .querySelector<HTMLElement>(`[data-testid="${focused}"]`)
+        ?.focus({ preventScroll: true });
+    if (this.editing && this.saveButton)
+      this.saveButton.textContent = t("saveChanges");
+    for (const [name, top] of scroll) {
+      const node = this.overlay.querySelector<HTMLElement>(`.${name}`);
+      if (node) node.scrollTop = top;
+    }
+    this.target.set(position);
+    this.distance = distance;
+    this.updateCamera();
+    if (!this.modelsReady)
+      this.status.textContent = t("loadingCount", {
+        done: this.parts.length + this.loadErrors,
+        total: this.modelTotal,
+      });
+    if (this.modelsReady) {
+      this.status.classList.add("loaded");
+      this.status.textContent = t(
+        this.loadErrors ? "loadFailed" : "loadedCount",
+        { count: this.loadErrors || this.parts.length },
+      );
+    }
+  }
+  private async loadLearning() {
+    try {
+      const data = await api<LearningData>("/models/learning.json");
+      if (
+        data.version !== 1 ||
+        !Array.isArray(data.groups) ||
+        !Array.isArray(data.entries)
+      )
+        throw new Error(t("learningUnavailable"));
+      this.learning = data;
+    } catch {
+      this.learningFailed = true;
+    }
+    this.renderList();
+  }
+  private selectLearning(entry: LearningEntry) {
+    if (!this.modelsReady) {
+      this.notify(t("loadingAnatomy"));
+      return;
+    }
+    const result = matchLearningEntry(
+      entry,
+      this.learning?.groups || [],
+      new Set(this.parts.map((p) => p.info.id)),
+    );
+    this.activeLearning = entry;
+    this.selected = null;
+    this.editing = null;
+    this.highlightedIds = new Set(result.ids);
+    this.isolateGroupIds = result.ids.length ? new Set(result.ids) : null;
+    this.isolated = null;
+    for (const p of this.parts) {
+      if (this.highlightedIds.has(p.info.id)) {
+        this.hidden.delete(p.info.id);
+        this.enabledLayers.add(
+          p.info.kind === "muscle" ? p.info.layer : p.info.kind,
+        );
+      }
+      this.colorPart(p);
+    }
+    for (const c of this.overlay.querySelectorAll<HTMLInputElement>(
+      "[data-layer]",
+    ))
+      c.checked = this.enabledLayers.has(c.dataset.layer!);
+    this.applyVisibility();
+    this.renderDetail();
+    this.renderLearningDetail();
+    this.syncViewport();
+    if (result.ids.length) this.fit();
+    this.setMobilePane("model");
+  }
+  private renderLearningDetail() {
+    if (!this.learningDetail) return;
+    this.learningDetail.replaceChildren();
+    if (!this.activeLearning || this.explorerTab === "structures") return;
+    const entry = this.activeLearning,
+      result = matchLearningEntry(
+        entry,
+        this.learning?.groups || [],
+        new Set(this.parts.map((p) => p.info.id)),
+      );
+    this.learningDetail.append(
+      el("h2", "", localized(entry.name)),
+      el("p", "", localized(entry.summary)),
+      el(
+        "strong",
+        "coverage",
+        t(
+          result.coverage === "none"
+            ? "coverageNone"
+            : result.coverage === "partial"
+              ? "coveragePartial"
+              : "coverageComplete",
+          { count: result.ids.length },
+        ),
+      ),
+    );
+    if (entry.kind === "condition")
+      this.learningDetail.append(el("p", "context-notice", t("contextOnly")));
+    if (entry.notice)
+      this.learningDetail.append(
+        el("p", "context-notice", localized(entry.notice)),
+      );
+    this.learningDetail.append(el("h3", "", t("relatedGroups")));
+    for (const group of result.related)
+      this.learningDetail.append(
+        el("p", "related-group", localized(group.name)),
+      );
+    if (result.coverage !== "complete") {
+      this.learningDetail.append(el("h3", "", t("missingCoverage")));
+      for (const group of result.incompleteGroups)
+        this.learningDetail.append(
+          el(
+            "p",
+            "coverage-missing",
+            `${localized(group.name)}: ${group.missing ? localized(group.missing) : t("missingGroup", { id: group.id })}`,
+          ),
+        );
+      for (const id of result.missingIds)
+        this.learningDetail.append(
+          el("p", "coverage-missing", t("learningMissingId", { id })),
+        );
+      for (const id of result.missingGroups)
+        this.learningDetail.append(
+          el("p", "coverage-missing", t("missingGroup", { id })),
+        );
+    }
+    this.learningDetail.append(el("h3", "", t("sources")));
+    for (const source of entry.sources) {
+      try {
+        const url = new URL(source.url);
+        if (!["https:", "http:"].includes(url.protocol)) continue;
+        const label = source.label ? localized(source.label) : source.title;
+        const a = el("a", "source-link", label);
+        a.href = url.href;
+        a.target = "_blank";
+        a.rel = "noopener noreferrer";
+        a.setAttribute("aria-label", t("sourceLink", { title: label }));
+        this.learningDetail.append(a);
+      } catch {}
+    }
+  }
   private async load() {
     try {
       const manifest = await api<{
         structures: Structure[];
       }>("/models/manifest.json");
       if (!Array.isArray(manifest.structures) || !manifest.structures.length)
-        throw new Error("模型清单为空 / Empty model manifest");
+        throw new Error(t("emptyManifest"));
       let next = 0,
         done = 0;
       const total = manifest.structures.length;
+      this.modelTotal = total;
       const worker = async () => {
         while (next < total) {
           const info = manifest.structures[next++];
@@ -505,7 +768,7 @@ export class AtlasBootstrap extends Component {
               new URL("/models/", location.origin),
             );
             if (file.origin !== location.origin)
-              throw new Error("模型必须同源 / Models must be same origin");
+              throw new Error(t("sameOrigin"));
             const data = await api<MeshData>(file.pathname);
             this.addPart(info, data);
           } catch (e) {
@@ -513,12 +776,12 @@ export class AtlasBootstrap extends Component {
             console.warn("Model load failed:", info.id, e);
           }
           done++;
-          this.status.textContent = `加载解剖结构 / Loading anatomy ${done} / ${total}`;
+          this.status.textContent = t("loadingCount", { done, total });
         }
       };
       await Promise.all(Array.from({ length: 6 }, worker));
-      if (!this.parts.length)
-        throw new Error("没有可显示的解剖模型 / No anatomy meshes loaded");
+      if (!this.parts.length) throw new Error(t("noMeshes"));
+      this.modelsReady = true;
       this.parts.sort((a, b) =>
         title(a.info).localeCompare(title(b.info), "zh-CN"),
       );
@@ -526,15 +789,15 @@ export class AtlasBootstrap extends Component {
       this.applyVisibility();
       this.fit();
       this.status.textContent = this.loadErrors
-        ? `${this.loadErrors} 个结构加载失败，请刷新重试 / Structures failed to load`
-        : `${this.parts.length} 个真实解剖结构 / anatomical structures`;
+        ? t("loadFailed", { count: this.loadErrors })
+        : t("loadedCount", { count: this.parts.length });
       this.status.classList.add("loaded");
       if (this.records.length) this.renderHistory();
     } catch (e) {
       this.status.classList.add("failed");
       this.status.replaceChildren(
-        el("span", "", (e as Error).message),
-        button("重新加载 / Retry", () => location.reload()),
+        el("span", "", this.parts.length ? t("requestFailed") : t("noMeshes")),
+        button(t("retry"), () => location.reload()),
       );
     }
   }
@@ -566,7 +829,7 @@ export class AtlasBootstrap extends Component {
       indices: data.indices,
     });
     if (!this.tissueMaterial || !this.tissueMaterial.passes.length)
-      throw new Error("基础解剖材质未加载 / Anatomy material is not loaded");
+      throw new Error(t("materialMissing"));
     const mat = new Material();
     mat.copy(this.tissueMaterial);
     mat.setProperty("roughness", 0.68);
@@ -591,7 +854,8 @@ export class AtlasBootstrap extends Component {
   private colorPart(part: Part) {
     const mat = part.renderer.getSharedMaterial(0);
     if (!mat) return;
-    const selected = this.selected === part;
+    const selected =
+      this.selected === part || this.highlightedIds.has(part.info.id);
     const pain = this.todayRecords
       .filter((r) => r.structureId === part.info.id)
       .sort((a, b) => b.intensity - a.intensity)[0];
@@ -617,7 +881,8 @@ export class AtlasBootstrap extends Component {
     return (
       this.enabledLayers.has(key) &&
       !this.hidden.has(part.info.id) &&
-      (!this.isolated || this.isolated === part.info.id)
+      (!this.isolated || this.isolated === part.info.id) &&
+      (!this.isolateGroupIds || this.isolateGroupIds.has(part.info.id))
     );
   }
   private applyVisibility() {
@@ -627,6 +892,56 @@ export class AtlasBootstrap extends Component {
   }
   private renderList() {
     this.list.replaceChildren();
+    this.renderLearningDetail();
+    const heading = this.overlay.querySelector<HTMLElement>(
+      ".list-heading span:first-child",
+    );
+    if (heading)
+      heading.textContent = t(
+        this.explorerTab === "structures"
+          ? "structureDirectory"
+          : this.explorerTab === "exercise"
+            ? "tabExercises"
+            : "tabConditions",
+      );
+    if (this.explorerTab !== "structures") {
+      const entries =
+        this.learning?.entries.filter(
+          (entry) =>
+            entry.kind === this.explorerTab &&
+            `${localized(entry.name)} ${localized(entry.summary)} ${entry.id}`
+              .toLowerCase()
+              .includes(this.search),
+        ) || [];
+      this.count.textContent = String(entries.length);
+      for (const entry of entries) {
+        const row = button(
+          "",
+          () => this.selectLearning(entry),
+          "learning-row",
+        );
+        row.dataset.learningId = entry.id;
+        row.disabled = !this.modelsReady;
+        row.append(
+          el("strong", "", localized(entry.name)),
+          el("span", "", localized(entry.summary)),
+        );
+        this.list.append(row);
+      }
+      if (!entries.length)
+        this.list.append(
+          el(
+            "p",
+            "empty-state",
+            this.learningFailed
+              ? t("learningUnavailable")
+              : this.learning
+                ? t("noMatches")
+                : t("learningLoading"),
+          ),
+        );
+      return;
+    }
     const filtered = this.parts.filter((p) =>
       `${title(p.info)} ${p.info.id} ${p.info.side} ${p.info.kind}`
         .toLowerCase()
@@ -645,7 +960,7 @@ export class AtlasBootstrap extends Component {
       b.append(
         el("span", "tissue-dot " + p.info.kind + (today ? " recorded" : "")),
         name,
-        el("small", "", sides[p.info.side]?.split(" ")[0] || p.info.side),
+        el("small", "", sideLabel(p.info.side)),
       );
       if (!this.visible(p)) b.classList.add("is-hidden");
       this.list.append(b);
@@ -655,13 +970,19 @@ export class AtlasBootstrap extends Component {
         el(
           "div",
           "empty-state",
-          this.parts.length
-            ? "没有匹配的结构 / No matches"
-            : "模型加载后显示目录 / Loading structures",
+          this.parts.length ? t("noMatches") : t("loadingStructures"),
         ),
       );
   }
   private select(p: Part, reveal = false) {
+    if (this.activeLearning) {
+      this.activeLearning = null;
+      this.highlightedIds.clear();
+      this.isolateGroupIds = null;
+      this.parts.forEach((part) => this.colorPart(part));
+      this.applyVisibility();
+    }
+
     const prev = this.selected;
     this.selected = p;
     this.editing = null;
@@ -691,7 +1012,7 @@ export class AtlasBootstrap extends Component {
       "[data-mobile-target]",
     ))
       b.setAttribute("aria-pressed", String(b.dataset.mobileTarget === pane));
-    if (window.innerWidth <= 1024) {
+    {
       if (pane === "model")
         this.overlay
           .querySelector<HTMLElement>(".viewport")
@@ -708,62 +1029,88 @@ export class AtlasBootstrap extends Component {
     }
   }
   private updateSelectionChip() {
+    const viewport = this.overlay.querySelector<HTMLElement>(".viewport");
+    if (viewport) viewport.dataset.groupActive = String(!!this.activeLearning);
+    this.groupActions.style.display = this.activeLearning ? "flex" : "none";
+    if (this.activeLearning) {
+      const result = matchLearningEntry(
+        this.activeLearning,
+        this.learning?.groups || [],
+        new Set(this.parts.map((p) => p.info.id)),
+      );
+      this.selectionChip.textContent = `${localized(this.activeLearning.name)}\n${t(result.coverage === "none" ? "coverageNone" : result.coverage === "partial" ? "coveragePartial" : "coverageComplete", { count: result.ids.length })}`;
+      this.syncViewport();
+      return;
+    }
     this.selectionChip.textContent = this.selected
-      ? `${title(this.selected.info)}\n${sides[this.selected.info.side]} · ${kinds[this.selected.info.kind]}${this.visible(this.selected) ? "" : " · 已隐藏 / Hidden"}`
-      : "点击模型中的肌肉或从目录选择\nSelect a structure to explore";
+      ? `${title(this.selected.info)}\n${sideLabel(this.selected.info.side)} · ${kindLabel(this.selected.info.kind)}${this.visible(this.selected) ? "" : ` · ${t("hidden")}`}`
+      : t("selectHint");
+    this.syncViewport();
   }
   private renderDetail() {
-    this.detail.replaceChildren(
-      el("div", "eyebrow", "STRUCTURE & PAIN TRACKING"),
-    );
+    this.detail.replaceChildren(el("div", "eyebrow", t("structurePain")));
+    if (this.activeLearning) {
+      this.detail.append(
+        el("h2", "", localized(this.activeLearning.name)),
+        el("p", "empty-state", t("singleRecordHint")),
+        button(t("entryDetails"), () => {
+          this.explorerTab = this.activeLearning!.kind;
+          this.overlay.querySelector<HTMLElement>(
+            ".anatomy-panel",
+          )!.dataset.explorerTab = this.explorerTab;
+          this.setMobilePane("structures");
+          this.renderList();
+        }),
+      );
+      return;
+    }
     if (!this.selected) {
       this.detail.append(
-        el("h2", "", "了解你的身体"),
-        el("p", "subheading", "Know your body, track how you feel."),
+        el("h2", "", t("knowBody")),
+        el("p", "subheading", t("knowBodyHint")),
         el("div", "selection-empty", "◎"),
-        el(
-          "p",
-          "empty-state",
-          "选择肌肉或肌腱，记录今天的身体感受。\nSelect a muscle or tendon to begin.",
-        ),
+        el("p", "empty-state", t("selectToRecord")),
       );
       return;
     }
     const p = this.selected;
+    const related =
+      this.learning?.groups.filter((group) =>
+        group.structureIds.includes(p.info.id),
+      ) || [];
+    if (related.length)
+      this.detail.append(
+        el(
+          "p",
+          "related-groups",
+          `${t("relatedGroups")}: ${related.map((group) => localized(group.name)).join(" · ")}`,
+        ),
+      );
     this.detail.append(
       el("h2", "selected-title", title(p.info)),
       el(
         "p",
         "structure-meta",
-        `${sides[p.info.side]} · ${kinds[p.info.kind]} · ${p.info.id}`,
+        `${sideLabel(p.info.side)} · ${kindLabel(p.info.kind)} · ${p.info.id}`,
       ),
     );
     const actions = el("div", "selection-actions");
     actions.append(
-      button("聚焦 / Focus", () => this.focus(p)),
-      button("隐藏 / Hide", () => {
+      button(t("focus"), () => this.focus(p)),
+      button(t("hide"), () => {
         this.hidden.add(p.info.id);
         this.applyVisibility();
       }),
-      button(
-        this.isolated ? "显示全部 / Show all" : "单独显示 / Isolate",
-        () => {
-          this.isolated = this.isolated ? null : p.info.id;
-          this.applyVisibility();
-          this.renderDetail();
-        },
-      ),
-      button("重置 / Reset", () => this.resetVisibility()),
+      button(this.isolated ? t("wholeBody") : t("isolate"), () => {
+        this.isolated = this.isolated ? null : p.info.id;
+        this.applyVisibility();
+        this.renderDetail();
+      }),
+      button(t("reset"), () => this.resetVisibility()),
     );
     this.detail.append(actions);
     if (!canRecord(p.info.kind)) {
-      this.detail.append(
-        el(
-          "p",
-          "empty-state",
-          "骨骼供定位参考。疼痛记录适用于肌肉与肌腱。\nRecords are available for muscles and tendons.",
-        ),
-      );
+      this.detail.append(el("p", "empty-state", t("boneHint")));
       return;
     }
     const form = el("form", "pain-form");
@@ -781,33 +1128,27 @@ export class AtlasBootstrap extends Component {
       () => (this.painLabel.textContent = `${this.painInput.value} / 10`),
     );
     const painHeader = el("div", "pain-header");
-    painHeader.append(el("span", "", "疼痛强度 / Intensity"), this.painLabel);
+    painHeader.append(el("span", "", t("intensity")), this.painLabel);
     this.noteInput = el("textarea");
     this.noteInput.dataset.testid = "record-note";
     this.noteInput.rows = 2;
     this.noteInput.maxLength = 2000;
-    this.noteInput.placeholder = "何时出现？有什么感受？ / Add a short note";
+    this.noteInput.placeholder = t("notePlaceholder");
     this.formMessage = el("p", "form-message");
     this.formMessage.setAttribute("role", "status");
     this.saveButton = el(
       "button",
       "primary-button",
-      this.user
-        ? "保存当天记录 / Save record"
-        : "登录后记录 / Sign in to record",
+      this.user ? t("saveRecord") : t("signInRecord"),
     );
     this.saveButton.type = "submit";
     this.saveButton.dataset.testid = "save-record";
     form.append(
-      field("日期 / Date", this.dateInput),
+      field(t("date"), this.dateInput),
       painHeader,
       this.painInput,
-      el(
-        "div",
-        "range-labels",
-        "0 无疼痛 / None                         10 剧烈 / Severe",
-      ),
-      field("备注 / Notes", this.noteInput),
+      el("div", "range-labels", t("range")),
+      field(t("notes"), this.noteInput),
       this.formMessage,
       this.saveButton,
     );
@@ -827,11 +1168,12 @@ export class AtlasBootstrap extends Component {
         user: User;
       }>("/api/auth/me");
       this.user = d.user;
-      this.authButton.textContent = `${this.user.username} · 退出 / Sign out`;
+      this.authButton.textContent = t("signOutUser", {
+        username: this.user.username,
+      });
       await this.loadRecords();
     } catch (e) {
-      if ((e as any).status !== 401)
-        this.notify("账户状态读取失败 / Could not load account");
+      if ((e as any).status !== 401) this.notify(t("accountError"));
     }
     this.renderDetail();
     this.renderHistory();
@@ -843,14 +1185,14 @@ export class AtlasBootstrap extends Component {
       this.records = [];
       this.todayRecords = [];
       this.historyRequest++;
-      this.authButton.textContent = "登录 / Sign in";
+      this.authButton.textContent = t("signIn");
       this.parts.forEach((p) => this.colorPart(p));
       this.renderList();
       this.renderDetail();
       this.renderHistory();
-      this.notify("已退出 / Signed out");
+      this.notify(t("signedOut"));
     } catch (e) {
-      this.notify((e as Error).message);
+      this.notify(displayError(e));
     }
   }
   private openAuth() {
@@ -859,28 +1201,26 @@ export class AtlasBootstrap extends Component {
     const dialog = el("form", "auth-dialog");
     dialog.setAttribute("role", "dialog");
     dialog.setAttribute("aria-modal", "true");
-    dialog.setAttribute("aria-label", "账户登录 / Account sign in");
-    const heading = el("h2", "", "欢迎回来 / Welcome back");
-    const modeButton = button("创建账户 / Create account", () => {
+    dialog.setAttribute("aria-label", t("accountLabel"));
+    const heading = el("h2", "", t("welcome"));
+    const modeButton = button(t("createAccount"), () => {
       register = !register;
-      heading.textContent = register
-        ? "创建账户 / Create account"
-        : "欢迎回来 / Welcome back";
-      submit.textContent = register ? "注册 / Register" : "登录 / Sign in";
+      this.authRegister = register;
+      heading.textContent = register ? t("createAccount") : t("welcome");
+      submit.textContent = register ? t("register") : t("signIn");
       modeButton.textContent = register
-        ? "已有账户 / Sign in instead"
-        : "创建账户 / Create account";
+        ? t("signInInstead")
+        : t("createAccount");
       password.autocomplete = register ? "new-password" : "current-password";
       message.textContent = "";
     });
-    let register = false;
+    let register = this.authRegister;
     const username = input("text", "", "auth-username");
     username.required = true;
     username.minLength = 3;
     username.maxLength = 32;
     username.pattern = "[A-Za-z0-9_]{3,32}";
-    username.title =
-      "3–32 位字母、数字或下划线 / 3–32 letters, digits or underscores";
+    username.title = t("usernameRules");
     username.autocomplete = "username";
     const password = input("password", "", "auth-password");
     password.required = true;
@@ -889,29 +1229,33 @@ export class AtlasBootstrap extends Component {
     password.autocomplete = "current-password";
     const message = el("p", "form-message");
     message.setAttribute("role", "alert");
-    const submit = el("button", "primary-button", "登录 / Sign in");
+    const submit = el("button", "primary-button", t("signIn"));
     submit.type = "submit";
     const close = button("×", () => backdrop.remove(), "dialog-close");
-    close.setAttribute("aria-label", "关闭 / Close");
+    close.setAttribute("aria-label", t("close"));
     dialog.append(
       close,
-      el("div", "eyebrow", "YOUR PRIVATE BODY JOURNAL"),
+      el("div", "eyebrow", t("privateEyebrow")),
       heading,
-      el(
-        "p",
-        "subheading",
-        "保存每日记录，回顾身体变化。\nSave your daily observations securely.",
-      ),
-      field("用户名 / Username", username),
-      field("密码 / Password · 10–128 位 / 10–128 characters", password),
+      el("p", "subheading", t("authHint")),
+      field(t("username"), username),
+      field(t("password"), password),
       message,
       submit,
       modeButton,
     );
+    const authLanguage = button(
+      getLocale() === "zh" ? "English" : "中文",
+      () => this.changeLocale(),
+      "language-button auth-language-button",
+    );
+    authLanguage.dataset.testid = "auth-locale-switch";
+    authLanguage.setAttribute("aria-label", t("languageLabel"));
+    dialog.append(authLanguage);
     dialog.addEventListener("submit", async (e) => {
       e.preventDefault();
       submit.disabled = true;
-      message.textContent = "正在处理 / Please wait…";
+      message.textContent = t("pleaseWait");
       try {
         const d = await api<{
           user: User;
@@ -921,16 +1265,24 @@ export class AtlasBootstrap extends Component {
         });
         this.user = d.user;
         backdrop.remove();
-        this.authButton.textContent = `${d.user.username} · 退出 / Sign out`;
+        this.authButton.textContent = t("signOutUser", {
+          username: d.user.username,
+        });
         this.renderDetail();
         await this.loadRecords();
-        this.notify("已登录 / Signed in");
+        this.notify(t("signedIn"));
       } catch (e) {
-        message.textContent = (e as Error).message;
+        message.textContent = displayError(e);
       } finally {
         submit.disabled = false;
       }
     });
+    if (register) {
+      heading.textContent = t("createAccount");
+      submit.textContent = t("register");
+      modeButton.textContent = t("signInInstead");
+      password.autocomplete = "new-password";
+    }
     backdrop.append(dialog);
     backdrop.addEventListener("click", (e) => {
       if (e.target === backdrop) backdrop.remove();
@@ -963,18 +1315,10 @@ export class AtlasBootstrap extends Component {
     }
     const request = ++this.historyRequest;
     if (!this.from || !this.to || this.from > this.to) {
-      this.history.replaceChildren(
-        el(
-          "p",
-          "form-message",
-          "请选择有效日期区间 / Choose a valid date range",
-        ),
-      );
+      this.history.replaceChildren(el("p", "form-message", t("validRange")));
       return;
     }
-    this.history.replaceChildren(
-      el("p", "empty-state", "正在读取记录 / Loading records…"),
-    );
+    this.history.replaceChildren(el("p", "empty-state", t("loadingRecords")));
     try {
       const d = await api<{
         records: PainRecord[];
@@ -999,31 +1343,19 @@ export class AtlasBootstrap extends Component {
     } catch (e) {
       if (request !== this.historyRequest) return;
       this.history.replaceChildren(
-        el("p", "form-message", (e as Error).message),
-        button("重试 / Retry", () => this.loadRecords()),
+        el("p", "form-message", displayError(e)),
+        button(t("retryRecords"), () => this.loadRecords()),
       );
     }
   }
   private renderHistory() {
     this.history.replaceChildren();
     if (!this.user) {
-      this.history.append(
-        el(
-          "div",
-          "empty-state",
-          "登录以查看私人历史记录。\nSign in to see your private journal.",
-        ),
-      );
+      this.history.append(el("div", "empty-state", t("privateJournalHint")));
       return;
     }
     if (!this.records.length) {
-      this.history.append(
-        el(
-          "div",
-          "empty-state",
-          "这个日期区间还没有记录。\nNo records in this date range.",
-        ),
-      );
+      this.history.append(el("div", "empty-state", t("noRecords")));
       return;
     }
     for (const r of [...this.records].sort((a, b) =>
@@ -1044,13 +1376,13 @@ export class AtlasBootstrap extends Component {
         },
         "record-structure",
       );
-      row.append(top, choose, el("small", "muted", sides[r.side] || r.side));
+      row.append(top, choose, el("small", "muted", sideLabel(r.side)));
       if (r.note) row.append(el("p", "record-note", r.note));
       const actions = el("div", "record-actions");
       actions.append(
-        button("编辑 / Edit", () => {
+        button(t("edit"), () => {
           if (!p) {
-            this.notify("对应模型尚未加载 / Model not loaded");
+            this.notify(t("modelNotLoaded"));
             return;
           }
           this.select(p, true);
@@ -1060,10 +1392,10 @@ export class AtlasBootstrap extends Component {
           this.painInput.value = String(r.intensity);
           this.painLabel.textContent = `${r.intensity} / 10`;
           this.noteInput.value = r.note;
-          this.saveButton.textContent = "保存修改 / Save changes";
+          this.saveButton.textContent = t("saveChanges");
           this.detail.scrollIntoView({ behavior: "smooth", block: "nearest" });
         }),
-        button("删除 / Delete", () => this.requestDelete(r, row)),
+        button(t("delete"), () => this.requestDelete(r, row)),
       );
       row.append(actions);
       this.history.append(row);
@@ -1072,7 +1404,7 @@ export class AtlasBootstrap extends Component {
   private async saveRecord() {
     if (!this.selected || !this.user) return;
     this.saveButton.disabled = true;
-    this.formMessage.textContent = "正在保存 / Saving…";
+    this.formMessage.textContent = t("saving");
     const body = {
       date: this.dateInput.value,
       structureId: this.selected.info.id,
@@ -1089,12 +1421,12 @@ export class AtlasBootstrap extends Component {
         body,
       );
       this.editing = null;
-      this.formMessage.textContent = "已保存 / Saved";
-      this.saveButton.textContent = "保存当天记录 / Save record";
+      this.formMessage.textContent = t("saved");
+      this.saveButton.textContent = t("saveRecord");
       await this.loadRecords();
-      this.notify("疼痛记录已保存 / Record saved");
+      this.notify(t("recordSaved"));
     } catch (e) {
-      this.formMessage.textContent = (e as Error).message;
+      this.formMessage.textContent = displayError(e);
     } finally {
       this.saveButton.disabled = false;
     }
@@ -1103,29 +1435,25 @@ export class AtlasBootstrap extends Component {
     if (row.querySelector(".delete-confirm")) return;
     const group = el("div", "delete-confirm");
     group.setAttribute("role", "group");
-    group.setAttribute("aria-label", "确认删除记录 / Confirm record deletion");
-    const question = el(
-      "p",
-      "",
-      `确定删除 ${r.date} 的记录？ / Delete this record?`,
-    );
+    group.setAttribute("aria-label", t("confirmDeleteLabel"));
+    const question = el("p", "", t("deleteQuestion", { date: r.date }));
     const message = el("p", "form-message");
     message.setAttribute("role", "alert");
     const actions = el("div", "record-actions");
-    const cancel = button("取消 / Cancel", () => {
+    const cancel = button(t("cancel"), () => {
       group.remove();
       row
         .querySelector<HTMLButtonElement>(".record-actions button:last-child")
         ?.focus();
     });
-    const confirmButton = button("确认删除 / Confirm delete", async () => {
+    const confirmButton = button(t("confirmDelete"), async () => {
       confirmButton.disabled = true;
       cancel.disabled = true;
-      message.textContent = "正在删除 / Deleting…";
+      message.textContent = t("deleting");
       try {
         await this.deleteRecord(r);
       } catch (e) {
-        message.textContent = (e as Error).message;
+        message.textContent = displayError(e);
         confirmButton.disabled = false;
         cancel.disabled = false;
       }
@@ -1143,7 +1471,7 @@ export class AtlasBootstrap extends Component {
       this.renderDetail();
     }
     await this.loadRecords();
-    this.notify("记录已删除 / Record deleted");
+    this.notify(t("recordDeleted"));
   }
   private notify(message: string) {
     this.toast.textContent = message;
@@ -1218,6 +1546,10 @@ export class AtlasBootstrap extends Component {
     this.updateCamera();
   }
   private resetVisibility() {
+    this.activeLearning = null;
+    this.highlightedIds.clear();
+    this.isolateGroupIds = null;
+    this.parts.forEach((p) => this.colorPart(p));
     this.hidden.clear();
     this.isolated = null;
     this.enabledLayers = new Set(["superficial", "deep", "tendon", "bone"]);
@@ -1227,6 +1559,7 @@ export class AtlasBootstrap extends Component {
       c.checked = true;
     this.applyVisibility();
     this.renderDetail();
+    this.fit();
   }
   private pick(clientX: number, clientY: number) {
     const canvas = game.canvas;
@@ -1290,7 +1623,7 @@ export class AtlasBootstrap extends Component {
       moved = false;
       right = e.button === 2 || e.shiftKey;
       if (points.size === 2) {
-        const p = [...points.values()];
+        const p = Array.from(points.values());
         pinch = Math.hypot(p[0].x - p[1].x, p[0].y - p[1].y);
       }
     };
@@ -1308,7 +1641,7 @@ export class AtlasBootstrap extends Component {
         dy = e.clientY - old.y;
       if (Math.hypot(e.clientX - startX, e.clientY - startY) > 5) moved = true;
       if (points.size === 2) {
-        const p = [...points.values()],
+        const p = Array.from(points.values()),
           now = Math.hypot(p[0].x - p[1].x, p[0].y - p[1].y);
         if (pinch > 0)
           this.distance = Math.max(
@@ -1360,7 +1693,7 @@ export class AtlasBootstrap extends Component {
       viewport.removeEventListener("wheel", onWheel);
       viewport.removeEventListener("contextmenu", onContext);
     });
-    const resize = () => {
+    const resize = (refit = true) => {
       const compact = window.innerWidth <= 1024;
       const visual = window.visualViewport;
       this.overlay.style.setProperty(
@@ -1393,7 +1726,7 @@ export class AtlasBootstrap extends Component {
         .querySelector<HTMLElement>(".view-controls")!
         .getBoundingClientRect();
       const chip = this.selectionChip.getBoundingClientRect();
-      const frame = sceneFrame(r, controls, chip, compact);
+      const frame = sceneFrame(r, controls, chip, true);
       this.renderAspect = frame.width / frame.height;
       this.camera.rect = new Rect(
         (frame.left - canvas.left) / canvas.width,
@@ -1401,13 +1734,14 @@ export class AtlasBootstrap extends Component {
         frame.width / canvas.width,
         frame.height / canvas.height,
       );
-      if (this.parts.length) this.fit();
+      if (refit && this.parts.length) this.fit();
       else this.updateCamera();
     };
+    this.syncViewport = () => resize(false);
     let resizeFrame = 0;
     const requestResize = () => {
       cancelAnimationFrame(resizeFrame);
-      resizeFrame = requestAnimationFrame(resize);
+      resizeFrame = requestAnimationFrame(() => resize());
     };
     window.addEventListener("resize", requestResize);
     window.addEventListener("orientationchange", requestResize);
@@ -1554,7 +1888,7 @@ h2 { font-size: 18px; line-height: 1.5; }
 ::-webkit-scrollbar { width: 4px; }
 ::-webkit-scrollbar-thumb { background: #cbdadf; border-radius: 3px; }
 ::-webkit-scrollbar-track { background: transparent; }
-@media (max-width: 1024px) {
+@media (min-width: 0px) {
   .atlas-app { top: var(--app-top, 0px); bottom: auto; overflow: hidden; }
   .atlas-header { height: calc(60px + env(safe-area-inset-top)); padding: env(safe-area-inset-top) 16px 0; }
   .brand { font-size: 11px; gap: 8px; letter-spacing: .8px; }
@@ -1632,7 +1966,7 @@ h2 { font-size: 18px; line-height: 1.5; }
   .auth-dialog>button:last-child { min-height: 44px; font-size: 13px; }
   .toast { bottom: calc(92px + env(safe-area-inset-bottom)); font-size: 13px; width: max-content; max-width: calc(100% - 32px); padding: 13px 17px; }
 }
-@media (max-width: 1024px) and (max-height: 500px) {
+@media (max-height: 500px) {
   .atlas-header { height: calc(52px + env(safe-area-inset-top)); }
   .brand small { display: none; }
   .viewport { top: calc(52px + env(safe-area-inset-top)); bottom: calc(66px + env(safe-area-inset-bottom)); }
@@ -1652,4 +1986,68 @@ h2 { font-size: 18px; line-height: 1.5; }
   .auth-backdrop { align-items: flex-start; }
 }
 @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; transition: none !important; } }
+.header-actions { display:flex; align-items:center; gap:6px; }
+.language-button { min-height:44px; padding:8px 10px; font-size:11px; background:#fff; color:#4f716e; }
+.explorer-tabs { display:grid; grid-template-columns:repeat(3,1fr); gap:6px; margin:0 0 16px; }
+.explorer-tabs button { min-height:44px; font-size:13px; padding:8px 4px; background:#f6f9f9; border-color:transparent; }
+.explorer-tabs button[aria-selected=true] { background:#eaf5ef; color:#246f60; border-color:#c5e0d2; }
+.anatomy-panel:not([data-explorer-tab=structures]) .toggles,
+.anatomy-panel:not([data-explorer-tab=structures]) .section-title,
+.anatomy-panel:not([data-explorer-tab=structures]) .taxonomy-note { display:none; }
+.learning-detail:empty { display:none; }
+.learning-detail { padding:16px 0 18px; border-bottom:1px solid var(--line); margin-bottom:14px; }
+.learning-detail h2 { margin-bottom:10px; font-size:20px; }
+.learning-detail h3 { margin:18px 0 9px; font-size:13px; font-weight:600; }
+.learning-detail p { font-size:13px; line-height:1.8; color:#607a84; }
+.learning-detail .coverage { display:block; margin:14px 0; font-size:13px; color:#277969; }
+.learning-detail .coverage-missing { color:#9c6a44; font-size:12px; padding:3px 0; }
+.context-notice { background:#f8f7ef; border-radius:9px; padding:12px; margin:10px 0; }
+.source-link { display:block; min-height:44px; padding:11px 0; color:#277867; font-size:12px; line-height:1.7; overflow-wrap:anywhere; }
+.learning-row { display:flex; flex-direction:column; gap:7px; min-height:72px; width:100%; text-align:left; margin:5px 0; padding:14px 12px; border:1px solid #e3ebea; background:white; }
+.learning-row strong { color:#355c63; font-size:14px; font-weight:600; }
+.learning-row>span { font-size:12px; color:#7a8d94; line-height:1.6; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+.related-groups { font-size:12px; color:#527e73; padding:10px 0; line-height:1.7; }
+.group-actions { display:none; position:absolute; left:50%; transform:translateX(-50%); bottom:48px; gap:8px; white-space:nowrap; }
+.group-actions button { min-height:44px; font-size:12px; padding:10px 14px; background:#fff; border-color:#cddfd9; }
+.viewport[data-group-active=true] .selection-chip { bottom:107px; }
+.brand { font-size:10px; letter-spacing:.5px; }
+.auth-button { max-width:114px; }
+.atlas-header { padding-left:12px; padding-right:12px; }
+.viewport-top { display:none; }
+.load-status.loaded { display:none; }
+.view-controls { top:8px; }
+.selection-chip { bottom:40px; max-height:none; font-size:11px; max-width:min(430px,calc(100% - 12px)); }
+.viewport-instructions { bottom:7px; font-size:9px; }
+@media (min-width:1025px) {
+  .atlas-header { padding:0 24px; }
+  .brand { font-size:13px; }
+  .language-button { font-size:12px; }
+  .auth-button { max-width:230px; }
+  .panel { bottom:98px; max-height:calc(var(--app-height,100dvh) - 180px); }
+  .anatomy-panel { width:470px; left:22px; right:auto; }
+  .record-panel { width:400px; right:22px; left:auto; }
+  .mobile-nav { width:360px; height:70px; left:50%; right:auto; transform:translateX(-50%); bottom:12px; border:1px solid #dce7e3; border-radius:17px; padding:5px; box-shadow:0 8px 30px #27473c0c; }
+  .mobile-nav-item { min-height:58px; }
+  .viewport { bottom:90px; }
+  .sheet-scrim { bottom:90px; }
+}
+@media (max-height:500px) {
+  .view-controls { top:8px; }
+  .viewport[data-group-active=true] .selection-chip { bottom:67px; max-width:210px; right:6px; }
+  .group-actions { left:auto; right:6px; bottom:10px; transform:none; }
+  .group-actions button { font-size:10px; padding:8px; }
+  .selection-chip { bottom:9px; font-size:10px; }
+  .viewport-instructions { display:none; }
+}
+
+/* 边缘浮层保留完整取景。 / Edge overlays preserve full framing. */
+.view-controls { top:8px; left:2px; transform:none; display:grid; grid-template-columns:1fr; padding:3px; gap:3px; max-width:78px; }
+.view-controls button { min-height:44px; min-width:64px; padding:8px 7px; font-size:10px; }
+.viewport-instructions, .orientation { display:none; }
+.selection-chip { display:none; top:8px; bottom:auto; left:auto; right:4px; transform:none; width:max-content; min-width:0; max-width:36%; max-height:77px; overflow:hidden; font-size:10px; line-height:1.5; text-align:right; padding:6px 8px; background:#ffffffdc; }
+.atlas-app:has(.structure-row.selected) .selection-chip, .viewport[data-group-active=true] .selection-chip { display:block; }
+.viewport[data-group-active=true] .selection-chip { top:8px; bottom:auto; }
+.group-actions { top:96px; bottom:auto; left:auto; right:4px; transform:none; flex-direction:column; max-width:34%; gap:5px; white-space:normal; }
+.group-actions button { min-height:44px; padding:8px; font-size:10px; }
+.load-status { top:50%; }
 `;

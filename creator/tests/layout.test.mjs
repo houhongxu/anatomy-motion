@@ -42,22 +42,28 @@ test("紧凑布局实际像素尺寸不超过1.5倍 / Compact backing size stays
   });
   assert.equal(renderingSize(390, 844, 1, true).ratio, 1);
 });
-test("竖屏避开顶部控件，横屏改用侧边控件空间 / Portrait and landscape framing preserve visible model space", () => {
-  const portrait = rect(12, 60, 366, 708),
-    controls = rect(55, 118, 280, 52),
-    chip = rect(50, 653, 290, 60);
-  const p = sceneFrame(portrait, controls, chip, true);
-  assert.ok(p.top > controls.bottom);
-  assert.ok(p.bottom < chip.top);
-  assert.ok(p.left >= portrait.left && p.right <= portrait.right);
-  assert.ok(p.height > 400);
-  const landscape = rect(12, 52, 820, 272),
-    sideControls = rect(14, 60, 86, 188),
-    label = rect(620, 275, 205, 40);
-  const l = sceneFrame(landscape, sideControls, label, true);
-  assert.ok(l.left > sideControls.right);
-  assert.ok(l.height >= 250);
-  assert.ok(l.top >= landscape.top && l.bottom <= landscape.bottom);
+test("边缘控件不挤占取景 / Edge controls preserve full framing", () => {
+  for (const viewport of [
+    rect(12, 60, 366, 708),
+    rect(12, 60, 336, 504),
+    rect(12, 60, 1256, 650),
+    rect(12, 52, 820, 272),
+  ]) {
+    const frame = sceneFrame(
+      viewport,
+      rect(14, 68, 76, 190),
+      rect(240, 68, 130, 60),
+      true,
+    );
+    assert.equal(frame.height, viewport.height - 12);
+    assert.equal(frame.width, viewport.width - 12);
+    assert.ok(
+      frame.left >= viewport.left &&
+        frame.right <= viewport.right &&
+        frame.top >= viewport.top &&
+        frame.bottom <= viewport.bottom,
+    );
+  }
 });
 test("双指或取消的手势不触发点击选取 / Multi-touch and cancellation never select a mesh", () => {
   assert.equal(shouldPick(false, false, 1, false), true);
