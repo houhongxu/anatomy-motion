@@ -1,0 +1,30 @@
+{
+  "__type__": "cc.Material",
+  "_name": "Tissue",
+  "_objFlags": 0,
+  "_native": "",
+  "_effectAsset": {
+    "__uuid__": "c8f66d17-351a-48da-a12c-0212d28575c4",
+    "__expectedType__": "cc.EffectAsset"
+  },
+  "_techIdx": 0,
+  "_defines": [
+    {
+      "USE_ALBEDO_MAP": false
+    }
+  ],
+  "_states": [],
+  "_props": [
+    {
+      "mainColor": {
+        "__type__": "cc.Color",
+        "r": 190,
+        "g": 100,
+        "b": 105,
+        "a": 255
+      },
+      "roughness": 0.68,
+      "metallic": 0.02
+    }
+  ]
+}

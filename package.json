@@ -1,0 +1,13 @@
+{
+  "name": "anatomy-motion",
+  "version": "0.1.0",
+  "private": true,
+  "description": "肌肉肌腱三维图谱 / Cocos muscle and tendon atlas",
+  "scripts": {
+    "setup": "npm ci --prefix server && npm ci --prefix creator",
+    "start": "npm start --prefix server",
+    "test": "npm test --prefix server && npm test --prefix creator && python3 scripts/validate-models.py",
+    "models:fetch": "bash scripts/fetch-models.sh"
+  },
+  "engines": { "node": ">=20" }
+}
