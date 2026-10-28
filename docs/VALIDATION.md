@@ -20,3 +20,11 @@
 以上为桌面浏览器及手机尺寸模拟，不等于iOS／Android真机认证。真实多点触摸、软键盘、安全区、帧率、峰值内存及蜂窝网络仍需真机验证。部分肌肉与肌腱缺少来源网格，条目会显示部分覆盖；关联仅用于解剖学习，不提供诊断或治疗建议。
 
 These are desktop browser and phone-sized checks, not physical iOS/Android certification. Hardware multi-touch, keyboards, safe areas, frame rate, peak memory and cellular loading still need device testing. Some muscles/tendons lack source meshes and are explicitly marked as partial coverage; associations teach anatomy and do not provide diagnosis or treatment advice.
+
+## 皮肤穴位经络增量 / Skin and meridian increment (2026-10-28)
+
+- Cocos Creator 3.8.8 官方构建退出码36，官方声明类型检查与37项部署回归通过。实际官方 bundle 检查执行皮肤分块、十四条经络生成和穴位选择辅助逻辑；不将构建成功等同于视觉验收。/ The official Cocos Creator 3.8.8 build exited36; official declaration checking and37 deployment regression tests passed. Bundle checks execute skin partitioning, all fourteen route meshes and selection helpers; build success does not imply visual acceptance.
+- 浏览器交互验证了ST36左右检索、LI经络筛选、LI4定位、独立皮肤／经络开关、详情来源、中英文切换，以及返回杠铃弯举仍匹配4个结构。390×844和1280×800尺寸下检查了对应交互。/ Browser interactions verified ST36 side-specific search, LI filtering, LI4 selection, independent skin/meridian toggles, detail sources, locale switching and returning to the biceps curl with4 matches, at390×844 and1280×800 viewport sizes.
+- 本轮浏览器截图接口不可用，因此尚未完成三维覆盖层的像素级视觉验收、直接点选画布或真机验证；列表交互和官方编译模块检查不替代这些检查。/ The browser screenshot interface was unavailable, so pixel-level3D overlay inspection, direct canvas picking and physical-device validation remain unverified; list interactions and compiled-module checks do not replace them.
+
+- 最终测试：后端6项、前端19项、学习映射8项、穴位数据6项全部通过；617个原解剖网格校验通过，8674个经络采样点与线段中点通过贴肤及外侧检查。/ Final tests passed:6 backend,19 frontend,8 learning-mapping and6 acupuncture-data checks, plus617 original anatomy meshes and surface/outward checks of8674 route samples and their segment midpoints.

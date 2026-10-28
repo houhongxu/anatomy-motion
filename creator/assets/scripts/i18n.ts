@@ -2,6 +2,45 @@
 export type Locale = "zh" | "en";
 export type Localized = { zh: string; en: string };
 export const dictionary = {
+  tabAcupuncture: { zh: "穴位经络", en: "Points & meridians" },
+  skin: { zh: "皮肤", en: "Skin" },
+  surfacePoints: { zh: "穴位", en: "Points" },
+  meridians: { zh: "经络", en: "Meridians" },
+  allMeridians: { zh: "全部经络", en: "All meridians" },
+  meridianFilter: { zh: "筛选经络", en: "Filter meridians" },
+  acupunctureDirectory: { zh: "穴位目录", en: "Point directory" },
+  acupunctureNotice: {
+    zh: "体表路径与穴位为示意，未经专业校核，不用于诊断或治疗。",
+    en: "Surface paths and points are illustrative and professionally unreviewed. They are not for diagnosis or treatment.",
+  },
+  acupunctureScope: {
+    zh: "当前展示 {points} 个代表穴位、{meridians} 条经络，并非完整穴位图谱。",
+    en: "Showing {points} representative point codes and {meridians} meridians, not a complete point atlas.",
+  },
+  acupunctureLoading: {
+    zh: "正在加载皮肤与穴位经络…",
+    en: "Loading skin, points and meridians\u2026",
+  },
+  acupunctureUnavailable: {
+    zh: "穴位经络加载失败，基础图谱仍可使用。",
+    en: "Surface atlas unavailable. The anatomy atlas is still available.",
+  },
+  acupunctureSelect: {
+    zh: "选择穴位，探索对应体表经络",
+    en: "Select a point to explore its surface meridian",
+  },
+  acupunctureRecordNotice: {
+    zh: "穴位选择仅用于图谱探索；酸痛记录请选择肌肉或肌腱。",
+    en: "Point selection is for atlas exploration. Select a muscle or tendon to record soreness.",
+  },
+  acupunctureDetails: { zh: "穴位信息", en: "Point information" },
+  surfaceLayers: { zh: "体表图层", en: "Surface layers" },
+  surfaceSource: { zh: "参考来源", en: "References" },
+  skinCredit: {
+    zh: "皮肤模型：BodyParts3D · CC BY 4.0",
+    en: "Skin model: BodyParts3D \u00b7 CC BY 4.0",
+  },
+
   signIn: {
     zh: "登录",
     en: "Sign in",
@@ -15,16 +54,16 @@ export const dictionary = {
     en: "Interactive atlas",
   },
   roadmap: {
-    zh: "动作与经络 · 后续规划",
-    en: "Motion & meridians · Planned",
+    zh: "动作与体表探索",
+    en: "Movement & surface atlas",
   },
   structures: {
     zh: "身体结构",
     en: "Structures",
   },
   search: {
-    zh: "搜索结构、动作或病症",
-    en: "Search structures, exercises or conditions",
+    zh: "搜索结构、动作、病症或穴位",
+    en: "Search structures, exercises, conditions or points",
   },
   searchLabel: {
     zh: "搜索图谱内容",

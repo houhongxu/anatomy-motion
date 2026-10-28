@@ -17,12 +17,14 @@ A light, mobile-first 3D muscle/tendon atlas built with Cocos Creator 3.8.8, wit
 - 鼠标／触摸旋转、缩放和平移；正面、背面、侧面与适应视图。
 - 搜索、三角形精确点击、选中高亮、聚焦、隐藏与独显。
 - 肌肉表层／深层显示分组、肌腱及骨骼开关。
+- 真实皮肤网格、十四经络体表示意与代表穴位；支持独立图层、经络筛选、中英文名称／编码搜索和点击定位。
 - 用户名密码注册登录；按本地日期记录肌肉或肌腱、侧别、0–10 酸痛程度和备注，支持历史筛选、编辑、删除。
 - 服务端 SQLite 持久化、账号数据隔离、scrypt 密码哈希、HttpOnly 会话及请求来源检查。
 
 - Mouse/touch orbit, zoom and pan; front, back, side and fit views.
 - Search, triangle-accurate selection, highlighting, focus, hide and isolate.
 - Superficial/deep muscle display groups, tendon and bone toggles.
+- A real skin mesh, fourteen surface-meridian diagrams and representative acupoints, with independent layers, meridian filtering, localized name/code search and selection.
 - Username/password registration and login; local-date records of muscle/tendon, side, 0–10 soreness and notes, with history filters, editing and deletion.
 - Server-side SQLite persistence, account isolation, scrypt password hashes, HttpOnly sessions and request-origin checks.
 
@@ -38,11 +40,11 @@ The initial catalog includes 25 exercises and 10 injury/overuse conditions; see 
 
 ## 模型覆盖 / Model coverage
 
-当前包含 617 个独立网格：407 肌肉、8 肌腱、202 骨结构，来自 DBCLS BodyParts3D 4.0。网格数量不等于独立解剖器官数量。模型不是完整肌腱全集，显示分组未经过临床审核；常用肌肉提供中文标注，未审核的条目保留来源英文名称。P0 不包含皮肤、动作动画和穴位定位。
+当前包含 617 个独立网格：407 肌肉、8 肌腱、202 骨结构，来自 DBCLS BodyParts3D 4.0。网格数量不等于独立解剖器官数量。模型不是完整肌腱全集，显示分组未经过临床审核；常用肌肉提供中文标注，未审核的条目保留来源英文名称。另提供独立皮肤网格及穴位经络示意层；体表坐标和路径尚未专业校核，不代表完整穴位集或临床定位。动作动画单独维护。
 
-Contains 617 meshes: 407 muscle, 8 tendon and 202 bone meshes from DBCLS BodyParts3D 4.0. Mesh count is not a count of distinct anatomical organs. Tendon coverage is incomplete and display categories are not clinically reviewed; common muscles have Chinese labels, while unreviewed entries retain their source English names. P0 excludes skin, motion animation and acupoint localization.
+Contains 617 meshes: 407 muscle, 8 tendon and 202 bone meshes from DBCLS BodyParts3D 4.0. Mesh count is not a count of distinct anatomical organs. Tendon coverage is incomplete and display categories are not clinically reviewed; common muscles have Chinese labels, while unreviewed entries retain their source English names. A separate skin mesh and illustrative acupoint/meridian layer are also provided. Surface coordinates and paths are not professionally reviewed and do not represent a complete point set or clinical localization. Motion animation is maintained separately.
 
-参见 [模型来源与许可 / Model provenance](docs/MODELS.md) 和 [动作与损伤资料 / Exercise and condition sources](docs/LEARNING_SOURCES.md)。P1 见 [穴位与经络 Issue](https://github.com/houhongxu/anatomy-motion/issues/1)。
+参见 [模型来源与许可 / Model provenance](docs/MODELS.md) 和 [动作与损伤资料 / Exercise and condition sources](docs/LEARNING_SOURCES.md)。穴位数据与维护方法见 [穴位与经络 / Acupoints and meridians](docs/ACUPUNCTURE.md)。
 
 ## 本地运行 / Local setup
 

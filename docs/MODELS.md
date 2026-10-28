@@ -62,3 +62,18 @@ English: To regenerate, run `python3 scripts/prepare-models.py` followed by `pyt
 中文：新增斜方肌分部改变了所选网格的包围盒；若重新计算中心，全部既有网格会产生位移。因此导入器固定 v1 参考中心 `[0.010500000000007503,-108.08885000000001,781.72995]` 和比例 `0.0009946871419309136`，不再从当前导入子集动态计算。新增网格使用同一参考系，原有网格保持逐字节一致。
 
 English: Added trapezius portions change the selected meshes’ bounding box; recomputing its center would shift every existing mesh. The importer therefore freezes the v1 reference center `[0.010500000000007503,-108.08885000000001,781.72995]` and scale `0.0009946871419309136` instead of deriving them from the current subset. New meshes use that same reference frame, preserving existing meshes byte for byte.
+
+## 独立皮肤与穴位层 / Separate skin and acupoint layer
+
+中文：新增 `models/skin.json` 来自同一来源 ZIP 的真实皮肤 `FMA7163 / FJ2810`，保留来源全部 102467 顶点、203382 三角面、CC BY 4.0 与署名。它沿用固定 v1 转换，不加入原 617 结构清单。新增 `models/acupuncture.json` 是项目原创、未经专业审核的体表示意：14 类经络、26 条独立侧别分支、56 个穴位代码／104 个实例。命名与区域参考 WHO 原出版物；三维坐标与路线并非 WHO 数据，也不代表完整循行或临床定位。细节、来源摘要、权限边界和验证证据见 [ACUPUNCTURE.md](ACUPUNCTURE.md)。
+
+English: The separate `models/skin.json` imports real skin `FMA7163 / FJ2810` from the same source ZIP, retaining all 102467 vertices and 203382 triangles, CC BY 4.0 and attribution. It uses the fixed v1 transform and stays outside the existing 617-structure catalogue. The original, professionally unreviewed `models/acupuncture.json` illustrates 14 meridian categories, 26 independent sided branches and 56 point codes / 104 instances. Names/regions refer to the original WHO publication; 3D coordinates and routes are not WHO data, full channel courses or clinical locations. See [ACUPUNCTURE.md](ACUPUNCTURE.md) for provenance, hashes, boundaries and checks.
+
+```bash
+python3 scripts/prepare-acupuncture.py
+python3 scripts/test-acupuncture.py
+```
+
+中文：此生成器需要现有来源缓存；常规测试仅需已提交资产，有缓存时额外核对来源。生成前后会比较原两个 manifest 与 617 个网格的摘要，保持既有记录结构 ID 不变。源皮肤包含内外壳；布点和路径仅走外壳。模型 +Z 为前方、+X 为身体左侧，已用现有胸前／背部和手足骨肌地标核对。源索引超过 16 位，加载器须无损分块或支持 32 位索引。
+
+English: Generation needs the existing source cache; regular tests need only committed assets and add source verification when cached. Before/after hashes cover the two original manifests and 617 meshes, preserving record structure IDs. The skin has inner/outer shells; positioning and routes use only the outer shell. +Z is anterior and +X is anatomical left, corroborated by existing chest/back and hand/foot meshes. Source indices exceed 16 bits; loaders must split without loss or support 32-bit indices.

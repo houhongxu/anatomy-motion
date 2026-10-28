@@ -6,8 +6,11 @@
   "scripts": {
     "setup": "npm ci --prefix server && npm ci --prefix creator",
     "start": "npm start --prefix server",
-    "test": "npm test --prefix server && npm test --prefix creator && python3 scripts/validate-models.py && python3 scripts/validate-learning.py && python3 scripts/test-learning.py",
-    "models:fetch": "bash scripts/fetch-models.sh"
+    "test": "npm test --prefix server && npm test --prefix creator && python3 scripts/validate-models.py && python3 scripts/validate-learning.py && python3 scripts/test-learning.py && python3 scripts/test-acupuncture.py",
+    "models:fetch": "bash scripts/fetch-models.sh",
+    "acupuncture:prepare": "python3 scripts/prepare-acupuncture.py && python3 scripts/test-acupuncture.py"
   },
-  "engines": { "node": ">=20" }
+  "engines": {
+    "node": ">=20"
+  }
 }
