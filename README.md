@@ -93,3 +93,9 @@ See [server documentation](server/README.md) for environment variables, API and 
 应用代码 MIT。模型 CC BY 4.0，保留署名：BodyParts3D, © The Database Center for Life Science licensed under CC Attribution 4.0 International。用户记录不属于开源仓库内容。
 
 Application code: MIT. Models: CC BY 4.0 with attribution: BodyParts3D, © The Database Center for Life Science licensed under CC Attribution 4.0 International. Private user records are not part of the open-source repository.
+
+## K3s 预览部署 / K3s preview deployment
+
+部署配置与维护流程见 [部署说明 / Deployment guide](docs/DEPLOYMENT.md)。预览使用独立 Namespace 和单一域名 `preview.anatomy-motion.zeropress.site`，与生产环境分离。
+
+See the [deployment guide](docs/DEPLOYMENT.md) for configuration and maintenance. Preview uses a dedicated namespace and the single host `preview.anatomy-motion.zeropress.site`, separate from production.

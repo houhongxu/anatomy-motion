@@ -1,0 +1,138 @@
+name: Anatomy Motion Preview / 解剖运动预览
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, labeled]
+permissions:
+  contents: read
+  pull-requests: read
+  packages: write
+concurrency:
+  group: anatomy-motion-preview
+  cancel-in-progress: false
+jobs:
+  preview:
+    if: >-
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      contains(github.event.pull_request.labels.*.name, 'deploy-preview') &&
+      format('{0}', github.event.pull_request.number) == vars.PREVIEW_PR_NUMBER
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment:
+      name: preview
+      url: https://preview.anatomy-motion.zeropress.site
+    env:
+      PR_NUMBER: ${{ github.event.pull_request.number }}
+      SOURCE_SHA: ${{ github.event.pull_request.head.sha }}
+      IMAGE_REPOSITORY: ghcr.io/houhongxu/anatomy-motion
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Checkout PR head / 检出 PR 源提交
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Set up Node / 配置 Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: |
+            server/package-lock.json
+            creator/package-lock.json
+      - name: Install and test / 安装并验证
+        run: |
+          npm run setup
+          npm test
+          python3 -m unittest discover -s deploy/tests -v
+      - name: Recheck live PR head / 重新核验 PR
+        run: |
+          python3 - <<'PY'
+          import importlib.util, os
+          spec = importlib.util.spec_from_file_location("preview", "scripts/deploy-preview.py")
+          module = importlib.util.module_from_spec(spec)
+          spec.loader.exec_module(module)
+          data = module.read_pull_request(os.environ["GITHUB_REPOSITORY"], os.environ["PR_NUMBER"])
+          module.verify_pr(data, os.environ["GITHUB_REPOSITORY"], os.environ["SOURCE_SHA"])
+          PY
+      - name: Verify official web bundle / 校验官方网页构建
+        run: python3 deploy/prepare-web.py
+      - name: Set up image builder / 配置镜像构建
+        uses: docker/setup-buildx-action@v3
+      - name: Login to GHCR / 登录 GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ github.token }}
+      - name: Build and push immutable image / 构建并推送不可变镜像
+        id: image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          platforms: linux/amd64
+          tags: ghcr.io/houhongxu/anatomy-motion:sha-${{ github.event.pull_request.head.sha }}
+          labels: |
+            org.opencontainers.image.source=https://github.com/houhongxu/anatomy-motion
+            org.opencontainers.image.revision=${{ github.event.pull_request.head.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+      - name: Verify kubectl download / 校验 kubectl 下载
+        shell: bash
+        run: |
+          set -euo pipefail
+          binary_dir="$RUNNER_TEMP/anatomy-kubectl"
+          mkdir -p "$binary_dir"
+          base="https://dl.k8s.io/release/v1.36.2/bin/linux/amd64/kubectl"
+          curl --fail --silent --show-error --location "$base" -o "$binary_dir/kubectl"
+          curl --fail --silent --show-error --location "$base.sha256" -o "$binary_dir/kubectl.sha256"
+          printf '%s  %s\n' "$(cat "$binary_dir/kubectl.sha256")" "$binary_dir/kubectl" | sha256sum --check -
+          chmod 0755 "$binary_dir/kubectl"
+          echo "$binary_dir" >> "$GITHUB_PATH"
+      - name: Image prepared; deployment disabled / 镜像已准备，部署未启用
+        if: vars.PREVIEW_DEPLOY_ENABLED != 'true'
+        run: echo "Image built; PREVIEW_DEPLOY_ENABLED is not true / 镜像已构建，部署开关未开启"
+      - name: Deploy through restricted TLS tunnel / 通过受限 TLS 隧道部署
+        if: vars.PREVIEW_DEPLOY_ENABLED == 'true'
+        env:
+          KUBECONFIG_CONTENT: ${{ secrets.K3S_PREVIEW_KUBECONFIG }}
+          SSH_KEY: ${{ secrets.K3S_PREVIEW_SSH_KEY }}
+          SSH_KNOWN_HOSTS: ${{ secrets.K3S_PREVIEW_KNOWN_HOSTS }}
+          IMAGE_DIGEST: ${{ steps.image.outputs.digest }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          work="$(mktemp -d "$RUNNER_TEMP/anatomy-preview.XXXXXX")"
+          tunnel_pid=""
+          cleanup() {
+            if [[ -n "$tunnel_pid" ]]; then
+              kill "$tunnel_pid" 2>/dev/null || true
+              wait "$tunnel_pid" 2>/dev/null || true
+            fi
+            rm -f "$work/ssh-key" "$work/known_hosts" "$work/kubeconfig"
+            rmdir "$work" 2>/dev/null || true
+          }
+          trap cleanup EXIT
+          printf '%s\n' "$SSH_KEY" > "$work/ssh-key"
+          printf '%s\n' "$SSH_KNOWN_HOSTS" > "$work/known_hosts"
+          printf '%s\n' "$KUBECONFIG_CONTENT" > "$work/kubeconfig"
+          export KUBECONFIG="$work/kubeconfig"
+          python3 scripts/ci-local-tunnel.py \
+            --identity-file "$work/ssh-key" \
+            --known-hosts-file "$work/known_hosts" &
+          tunnel_pid=$!
+          ready=false
+          for attempt in {1..15}; do
+            kill -0 "$tunnel_pid"
+            if kubectl -n anatomy-motion --request-timeout=5s get configmap preview-selection -o name >/dev/null 2>&1; then
+              ready=true
+              break
+            fi
+            sleep 2
+          done
+          [[ "$ready" == true ]] || { echo "Kubernetes tunnel did not become ready / 隧道未就绪"; exit 1; }
+          python3 scripts/deploy-preview.py \
+            --sha "$SOURCE_SHA" --pr "$PR_NUMBER" --run-id "$GITHUB_RUN_ID" \
+            --image "$IMAGE_REPOSITORY@$IMAGE_DIGEST" --repository "$GITHUB_REPOSITORY"

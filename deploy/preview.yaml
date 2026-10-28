@@ -1,0 +1,251 @@
+{
+  "apiVersion": "v1",
+  "kind": "List",
+  "items": [
+    {
+      "apiVersion": "v1",
+      "kind": "PersistentVolumeClaim",
+      "metadata": {
+        "name": "anatomy-motion-data",
+        "namespace": "anatomy-motion",
+        "labels": {
+          "app.kubernetes.io/name": "anatomy-motion",
+          "app.kubernetes.io/instance": "preview"
+        }
+      },
+      "spec": {
+        "accessModes": [
+          "ReadWriteOnce"
+        ],
+        "storageClassName": "local-path",
+        "resources": {
+          "requests": {
+            "storage": "1Gi"
+          }
+        }
+      }
+    },
+    {
+      "apiVersion": "apps/v1",
+      "kind": "Deployment",
+      "metadata": {
+        "name": "anatomy-motion-preview",
+        "namespace": "anatomy-motion",
+        "labels": {
+          "app.kubernetes.io/name": "anatomy-motion",
+          "app.kubernetes.io/instance": "preview"
+        }
+      },
+      "spec": {
+        "replicas": 1,
+        "strategy": {
+          "type": "Recreate"
+        },
+        "revisionHistoryLimit": 3,
+        "progressDeadlineSeconds": 180,
+        "selector": {
+          "matchLabels": {
+            "app.kubernetes.io/name": "anatomy-motion",
+            "app.kubernetes.io/instance": "preview"
+          }
+        },
+        "template": {
+          "metadata": {
+            "labels": {
+              "app.kubernetes.io/name": "anatomy-motion",
+              "app.kubernetes.io/instance": "preview"
+            }
+          },
+          "spec": {
+            "automountServiceAccountToken": false,
+            "nodeSelector": {
+              "kubernetes.io/hostname": "vm-12-8-ubuntu"
+            },
+            "tolerations": [
+              {
+                "key": "node-role",
+                "operator": "Equal",
+                "value": "control-plane",
+                "effect": "NoSchedule"
+              }
+            ],
+            "securityContext": {
+              "runAsNonRoot": true,
+              "runAsUser": 1000,
+              "runAsGroup": 1000,
+              "fsGroup": 1000,
+              "fsGroupChangePolicy": "OnRootMismatch",
+              "seccompProfile": {
+                "type": "RuntimeDefault"
+              }
+            },
+            "terminationGracePeriodSeconds": 30,
+            "containers": [
+              {
+                "name": "app",
+                "image": "ghcr.io/houhongxu/anatomy-motion:sha-0000000000000000000000000000000000000000",
+                "imagePullPolicy": "IfNotPresent",
+                "ports": [
+                  {
+                    "name": "http",
+                    "containerPort": 3000
+                  }
+                ],
+                "env": [
+                  {
+                    "name": "HOST",
+                    "value": "0.0.0.0"
+                  },
+                  {
+                    "name": "PORT",
+                    "value": "3000"
+                  },
+                  {
+                    "name": "NODE_ENV",
+                    "value": "production"
+                  },
+                  {
+                    "name": "APP_ORIGIN",
+                    "value": "https://preview.anatomy-motion.zeropress.site"
+                  },
+                  {
+                    "name": "WEB_ROOT",
+                    "value": "/app/web"
+                  },
+                  {
+                    "name": "DATABASE_PATH",
+                    "value": "/data/anatomy.sqlite"
+                  }
+                ],
+                "securityContext": {
+                  "allowPrivilegeEscalation": false,
+                  "readOnlyRootFilesystem": true,
+                  "capabilities": {
+                    "drop": [
+                      "ALL"
+                    ]
+                  }
+                },
+                "resources": {
+                  "requests": {
+                    "cpu": "100m",
+                    "memory": "256Mi"
+                  },
+                  "limits": {
+                    "cpu": "1000m",
+                    "memory": "768Mi"
+                  }
+                },
+                "volumeMounts": [
+                  {
+                    "name": "data",
+                    "mountPath": "/data"
+                  }
+                ],
+                "startupProbe": {
+                  "httpGet": {
+                    "path": "/api/health",
+                    "port": "http"
+                  },
+                  "periodSeconds": 5,
+                  "failureThreshold": 30
+                },
+                "readinessProbe": {
+                  "httpGet": {
+                    "path": "/api/health",
+                    "port": "http"
+                  },
+                  "periodSeconds": 5,
+                  "timeoutSeconds": 3
+                },
+                "livenessProbe": {
+                  "httpGet": {
+                    "path": "/api/health",
+                    "port": "http"
+                  },
+                  "periodSeconds": 15,
+                  "timeoutSeconds": 3,
+                  "failureThreshold": 3
+                }
+              }
+            ],
+            "volumes": [
+              {
+                "name": "data",
+                "persistentVolumeClaim": {
+                  "claimName": "anatomy-motion-data"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "Service",
+      "metadata": {
+        "name": "anatomy-motion-preview",
+        "namespace": "anatomy-motion"
+      },
+      "spec": {
+        "type": "ClusterIP",
+        "selector": {
+          "app.kubernetes.io/name": "anatomy-motion",
+          "app.kubernetes.io/instance": "preview"
+        },
+        "ports": [
+          {
+            "name": "http",
+            "port": 3000,
+            "targetPort": "http"
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "networking.k8s.io/v1",
+      "kind": "Ingress",
+      "metadata": {
+        "name": "anatomy-motion-preview",
+        "namespace": "anatomy-motion",
+        "annotations": {
+          "traefik.ingress.kubernetes.io/router.entrypoints": "websecure",
+          "traefik.ingress.kubernetes.io/router.tls": "true",
+          "traefik.ingress.kubernetes.io/router.tls.certresolver": "zeropress"
+        }
+      },
+      "spec": {
+        "ingressClassName": "traefik",
+        "tls": [
+          {
+            "hosts": [
+              "preview.anatomy-motion.zeropress.site"
+            ]
+          }
+        ],
+        "rules": [
+          {
+            "host": "preview.anatomy-motion.zeropress.site",
+            "http": {
+              "paths": [
+                {
+                  "path": "/",
+                  "pathType": "Prefix",
+                  "backend": {
+                    "service": {
+                      "name": "anatomy-motion-preview",
+                      "port": {
+                        "number": 3000
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

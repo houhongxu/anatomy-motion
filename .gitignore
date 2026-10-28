@@ -16,3 +16,6 @@ playwright-report/
 
 __pycache__/
 *.pyc
+
+# 部署暂存产物 / Deployment staging artifacts
+.build/
