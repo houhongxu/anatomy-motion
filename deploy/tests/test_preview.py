@@ -310,7 +310,10 @@ class ManifestTests(unittest.TestCase):
 
     def test_container_keeps_code_and_model_license_texts(self):
         docker = (ROOT/"Dockerfile").read_text()
-        self.assertEqual(docker.count("FROM node:22-bookworm-slim"),2)
+        self.assertIn("COPY --from=frontend --chown=node:node /build/web/dist/ ./web/",docker)
+        self.assertIn("COPY --chown=node:node models/web ./models/web",docker)
+        self.assertNotIn(".build/web",docker)
+        self.assertNotIn("COPY --chown=node:node models ./models",docker)
         self.assertIn("LICENSE ./LICENSE",docker)
         self.assertIn("CC-BY-4.0.txt ./models/LICENSE-CC-BY-4.0.txt",docker)
         self.assertTrue((ROOT/"deploy/licenses/CC-BY-4.0.txt").read_text().startswith("Attribution 4.0 International"))

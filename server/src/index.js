@@ -6,7 +6,7 @@ import { createApp } from "./app.js";
 const { app, close } = createApp();
 const webRoot = process.env.WEB_ROOT
   ? resolve(process.env.WEB_ROOT)
-  : fileURLToPath(new URL("../../creator/build/web-desktop", import.meta.url));
+  : fileURLToPath(new URL("../../web/dist", import.meta.url));
 const modelRoot = fileURLToPath(new URL("../../models", import.meta.url));
 app.use(
   "/models",

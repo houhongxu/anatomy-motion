@@ -19,3 +19,6 @@ __pycache__/
 
 # 部署暂存产物 / Deployment staging artifacts
 .build/
+
+# React 网页构建 / React web build
+web/dist/

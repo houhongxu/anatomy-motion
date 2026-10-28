@@ -24,14 +24,15 @@ EXPECTED_NAMES = {
  "hamstrings": ("long head of biceps femoris","short head of biceps femoris","semitendinosus","semimembranosus"),
  "hip-adductors": ("adductor brevis","adductor longus","adductor magnus","gracilis","pectineus"),
  "gastrocnemius": ("lateral head of gastrocnemius","medial head of gastrocnemius"),
- "soleus": ("soleus",), "obliques": ("external oblique",),
+ "soleus": ("soleus",), "obliques": ("external oblique","internal oblique"),
+ "latissimus-dorsi": ("latissimus dorsi",), "rectus-abdominis": ("rectus abdominis",), "quadratus-lumborum": ("quadratus lumborum",),
  "erector-spinae": ("iliocostalis cervicis","iliocostalis lumborum","iliocostalis thoracis","longissimus capitis","longissimus cervicis","longissimus thoracis","spinalis","spinalis thoracis"),
  "rotator-cuff-muscles": ("supraspinatus","infraspinatus muscle","subscapularis","teres minor"),
  "ecrb-muscle": ("extensor carpi radialis brevis",),
  "flexor-pronator-muscles": ("humeral head of pronator teres","ulnar head of pronator teres","flexor carpi radialis","palmaris longus","flexor digitorum superficialis","humeral head of flexor carpi ulnaris","ulnar head of flexor carpi ulnaris"),
  "achilles-tendon": ("calcaneal tendon",),
 }
-MISSING_ONLY = {"latissimus-dorsi","rectus-abdominis","transversus-abdominis","multifidus","quadratus-lumborum","patellar-tendon","biceps-long-head-tendon","rotator-cuff-tendons","ecrb-tendon","common-flexor-tendon"}
+MISSING_ONLY = {"transversus-abdominis","multifidus","patellar-tendon","biceps-long-head-tendon","rotator-cuff-tendons","ecrb-tendon","common-flexor-tendon"}
 
 def require(condition, message):
     if not condition:
@@ -113,6 +114,7 @@ def validate(catalog, manifest, verify_meshes=False):
 def main():
     manifest = json.loads((ROOT/"shared/anatomy-manifest.json").read_text())
     require(manifest == json.loads((ROOT/"models/manifest.json").read_text()), "Model/shared manifests differ")
+    manifest["structures"] += json.loads((ROOT/"shared/supplemental-manifest.json").read_text())["structures"]
     catalog = json.loads((ROOT/"models/learning.json").read_text())
     print(json.dumps(validate(catalog,manifest,verify_meshes=True),ensure_ascii=False))
 if __name__ == "__main__":

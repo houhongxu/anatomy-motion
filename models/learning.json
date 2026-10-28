@@ -133,11 +133,10 @@
         "zh": "背阔肌",
         "en": "Latissimus dorsi"
       },
-      "structureIds": [],
-      "missing": {
-        "zh": "来源元素清单未提供背阔肌网格，不能高亮。",
-        "en": "The source element table provides no latissimus dorsi mesh; highlighting is unavailable."
-      }
+      "structureIds": [
+        "BP3D3_FMA13358",
+        "BP3D3_FMA13359"
+      ]
     },
     {
       "id": "quadriceps",
@@ -233,11 +232,10 @@
         "zh": "腹直肌",
         "en": "Rectus abdominis"
       },
-      "structureIds": [],
-      "missing": {
-        "zh": "来源元素清单未提供腹直肌网格，不能高亮。",
-        "en": "The source element table provides no rectus abdominis mesh; highlighting is unavailable."
-      }
+      "structureIds": [
+        "BP3D3_FMA13377",
+        "BP3D3_FMA13378"
+      ]
     },
     {
       "id": "transversus-abdominis",
@@ -254,17 +252,15 @@
     {
       "id": "obliques",
       "name": {
-        "zh": "腹斜肌群（仅腹外斜肌网格）",
-        "en": "Obliques (external oblique mesh only)"
+        "zh": "腹斜肌群",
+        "en": "Obliques"
       },
       "structureIds": [
         "FJ1452",
-        "FJ1452M"
-      ],
-      "missing": {
-        "zh": "仅腹外斜肌有网格，腹内斜肌缺失。",
-        "en": "Only external oblique meshes are available; internal oblique is absent."
-      }
+        "FJ1452M",
+        "BP3D3_FMA13892",
+        "BP3D3_FMA13893"
+      ]
     },
     {
       "id": "erector-spinae",
@@ -309,11 +305,10 @@
         "zh": "腰方肌",
         "en": "Quadratus lumborum"
       },
-      "structureIds": [],
-      "missing": {
-        "zh": "来源元素清单未提供腰方肌网格，不能高亮。",
-        "en": "The source element table provides no quadratus lumborum mesh; highlighting is unavailable."
-      }
+      "structureIds": [
+        "BP3D3_FMA22348",
+        "BP3D3_FMA22349"
+      ]
     },
     {
       "id": "rotator-cuff-muscles",
@@ -682,11 +677,7 @@
           },
           "url": "https://www.nasm.org/resource-center/exercise-library/pull-up"
         }
-      ],
-      "notice": {
-        "zh": "部分相关结构缺少来源网格；高亮仅展示已有结构，不能代表完整肌肉参与情况。",
-        "en": "Some involved structures lack source meshes. Highlights show available structures, not complete muscle involvement."
-      }
+      ]
     },
     {
       "id": "seated-machine-row-close-grip",
@@ -715,11 +706,7 @@
           },
           "url": "https://www.nasm.org/resource-center/exercise-library/seated-machine-row-close-grip"
         }
-      ],
-      "notice": {
-        "zh": "部分相关结构缺少来源网格；高亮仅展示已有结构，不能代表完整肌肉参与情况。",
-        "en": "Some involved structures lack source meshes. Highlights show available structures, not complete muscle involvement."
-      }
+      ]
     },
     {
       "id": "goblet-squat",
@@ -862,11 +849,7 @@
           },
           "url": "https://www.nasm.org/resource-center/exercise-library/barbell-deadlift"
         }
-      ],
-      "notice": {
-        "zh": "部分相关结构缺少来源网格；高亮仅展示已有结构，不能代表完整肌肉参与情况。",
-        "en": "Some involved structures lack source meshes. Highlights show available structures, not complete muscle involvement."
-      }
+      ]
     },
     {
       "id": "dumbbell-romanian-deadlift",
@@ -1057,11 +1040,7 @@
           },
           "url": "https://www.nasm.org/resource-center/exercise-library/side-plank"
         }
-      ],
-      "notice": {
-        "zh": "部分相关结构缺少来源网格；高亮仅展示已有结构，不能代表完整肌肉参与情况。",
-        "en": "Some involved structures lack source meshes. Highlights show available structures, not complete muscle involvement."
-      }
+      ]
     },
     {
       "id": "bird-dog",

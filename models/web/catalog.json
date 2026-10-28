@@ -1,0 +1,4383 @@
+{
+  "version": 1,
+  "coordinateSystem": "bodyparts3d-v1",
+  "source": {
+    "name": "BodyParts3D 4.0",
+    "license": "CC BY 4.0",
+    "attribution": "BodyParts3D, © The Database Center for Life Science licensed under CC Attribution 4.0 International",
+    "url": "https://dbarchive.biosciencedbc.jp/en/bodyparts3d/download.html",
+    "archiveSha256": "40665852c49f218326590e204db91064a1ecfc3c6f8cbd7bbbcaac62c7cd409e"
+  },
+  "supplementalSources": [
+    {
+      "id": "bodyparts3d-v3",
+      "name": "BodyParts3D 3.0",
+      "license": "CC BY-SA 2.1 JP",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.1/jp/",
+      "attribution": "BodyParts3D, Copyright© ライフサイエンス統合データベースセンター licensed by CC表示－継承2.1 日本 / BodyParts3D, © The Database Center for Life Science, CC BY-SA 2.1 JP.",
+      "sourceUrl": "https://dbarchive.biosciencedbc.jp/data/bodyparts3d/20110915/BodyParts3D_3.0_obj_99.zip",
+      "sourceCatalogUrl": "https://dbarchive.biosciencedbc.jp/data/bodyparts3d/20110915/parts_list_e.txt",
+      "licenseEvidenceUrl": "https://dbarchive.biosciencedbc.jp/data/bodyparts3d/20110915/README.html",
+      "archiveETag": "\"7fe684e-4aca5cf385740\"",
+      "archiveBytes": 134113358,
+      "extractionMethod": "HTTP byte ranges; ZIP CRC32 and entry sizes verified; archive SHA256 not claimed",
+      "coordinateSystem": "bodyparts3d-v1",
+      "coordinateTransform": {
+        "sourceCenter": [
+          0.010500000000007503,
+          -108.08885000000001,
+          781.72995
+        ],
+        "scale": 0.0009946871419309136,
+        "mapping": "(x,z,-y)"
+      },
+      "modifications": {
+        "zh": "从官方ZIP提取八个原始OBJ；沿用v1固定坐标变换，重算法线，量化并用Meshopt压缩为独立GLB。",
+        "en": "Extracted eight original OBJs from the official ZIP; applied the fixed v1 coordinate transform, recomputed normals, quantized and Meshopt-compressed into independent GLBs."
+      }
+    }
+  ],
+  "groups": [
+    {
+      "id": "trapezius",
+      "name": {
+        "zh": "斜方肌",
+        "en": "Trapezius"
+      },
+      "region": "neck",
+      "layer": "superficial",
+      "structureIds": [
+        "FJ1520",
+        "FJ1520M",
+        "FJ1521",
+        "FJ1521M",
+        "FJ1554",
+        "FJ1554M"
+      ]
+    },
+    {
+      "id": "sternocleidomastoid",
+      "name": {
+        "zh": "胸锁乳突肌",
+        "en": "Sternocleidomastoid"
+      },
+      "region": "neck",
+      "layer": "superficial",
+      "structureIds": [
+        "FJ1573",
+        "FJ1595"
+      ]
+    },
+    {
+      "id": "levator-scapulae",
+      "name": {
+        "zh": "肩胛提肌",
+        "en": "Levator scapulae"
+      },
+      "region": "neck",
+      "layer": "deep",
+      "structureIds": [
+        "FJ1532",
+        "FJ1532M"
+      ]
+    },
+    {
+      "id": "deltoid",
+      "name": {
+        "zh": "三角肌",
+        "en": "Deltoid"
+      },
+      "region": "shoulder",
+      "layer": "superficial",
+      "structureIds": [
+        "FJ1467",
+        "FJ1467M",
+        "FJ1468",
+        "FJ1468M",
+        "FJ1513",
+        "FJ1513M"
+      ]
+    },
+    {
+      "id": "supraspinatus",
+      "name": {
+        "zh": "冈上肌",
+        "en": "Supraspinatus"
+      },
+      "region": "shoulder",
+      "layer": "deep",
+      "structureIds": [
+        "FJ1506",
+        "FJ1506M"
+      ]
+    },
+    {
+      "id": "infraspinatus",
+      "name": {
+        "zh": "冈下肌",
+        "en": "Infraspinatus"
+      },
+      "region": "shoulder",
+      "layer": "deep",
+      "structureIds": [
+        "FJ1500",
+        "FJ1500M"
+      ]
+    },
+    {
+      "id": "teres-minor",
+      "name": {
+        "zh": "小圆肌",
+        "en": "Teres minor"
+      },
+      "region": "shoulder",
+      "layer": "deep",
+      "structureIds": [
+        "FJ1508",
+        "FJ1508M"
+      ]
+    },
+    {
+      "id": "subscapularis",
+      "name": {
+        "zh": "肩胛下肌",
+        "en": "Subscapularis"
+      },
+      "region": "shoulder",
+      "layer": "deep",
+      "structureIds": [
+        "FJ1504",
+        "FJ1504M"
+      ]
+    },
+    {
+      "id": "latissimus-dorsi",
+      "name": {
+        "zh": "背阔肌",
+        "en": "Latissimus dorsi"
+      },
+      "region": "shoulder",
+      "layer": "superficial",
+      "structureIds": [
+        "BP3D3_FMA13358",
+        "BP3D3_FMA13359"
+      ]
+    },
+    {
+      "id": "rhomboids",
+      "name": {
+        "zh": "菱形肌群",
+        "en": "Rhomboids"
+      },
+      "region": "shoulder",
+      "layer": "deep",
+      "structureIds": [
+        "FJ1536",
+        "FJ1536M",
+        "FJ1537",
+        "FJ1537M"
+      ]
+    },
+    {
+      "id": "pectoralis-major",
+      "name": {
+        "zh": "胸大肌",
+        "en": "Pectoralis major"
+      },
+      "region": "torso",
+      "layer": "superficial",
+      "structureIds": [
+        "FJ1446",
+        "FJ1446M",
+        "FJ1447",
+        "FJ1447M",
+        "FJ1464",
+        "FJ1464M"
+      ]
+    },
+    {
+      "id": "serratus-anterior",
+      "name": {
+        "zh": "前锯肌",
+        "en": "Serratus anterior"
+      },
+      "region": "torso",
+      "layer": "superficial",
+      "structureIds": [
+        "FJ1459",
+        "FJ1459M"
+      ]
+    },
+    {
+      "id": "rectus-abdominis",
+      "name": {
+        "zh": "腹直肌",
+        "en": "Rectus abdominis"
+      },
+      "region": "torso",
+      "layer": "superficial",
+      "structureIds": [
+        "BP3D3_FMA13377",
+        "BP3D3_FMA13378"
+      ]
+    },
+    {
+      "id": "external-oblique",
+      "name": {
+        "zh": "腹外斜肌",
+        "en": "External oblique"
+      },
+      "region": "torso",
+      "layer": "superficial",
+      "structureIds": [
+        "FJ1452",
+        "FJ1452M"
+      ]
+    },
+    {
+      "id": "internal-oblique",
+      "name": {
+        "zh": "腹内斜肌",
+        "en": "Internal oblique"
+      },
+      "region": "torso",
+      "layer": "deep",
+      "structureIds": [
+        "BP3D3_FMA13892",
+        "BP3D3_FMA13893"
+      ]
+    },
+    {
+      "id": "erector-spinae",
+      "name": {
+        "zh": "竖脊肌群",
+        "en": "Erector spinae"
+      },
+      "region": "torso",
+      "layer": "deep",
+      "structureIds": [
+        "FJ1526",
+        "FJ1526M",
+        "FJ1527",
+        "FJ1527M",
+        "FJ1528",
+        "FJ1528M",
+        "FJ1533",
+        "FJ1533M",
+        "FJ1534",
+        "FJ1534M",
+        "FJ1535",
+        "FJ1535M",
+        "FJ1543",
+        "FJ1543M",
+        "FJ1544",
+        "FJ1544M"
+      ]
+    },
+    {
+      "id": "quadratus-lumborum",
+      "name": {
+        "zh": "腰方肌",
+        "en": "Quadratus lumborum"
+      },
+      "region": "torso",
+      "layer": "deep",
+      "structureIds": [
+        "BP3D3_FMA22348",
+        "BP3D3_FMA22349"
+      ]
+    },
+    {
+      "id": "biceps-brachii",
+      "name": {
+        "zh": "肱二头肌",
+        "en": "Biceps brachii"
+      },
+      "region": "arm",
+      "layer": "superficial",
+      "structureIds": [
+        "FJ1478",
+        "FJ1478M",
+        "FJ1512",
+        "FJ1512M"
+      ]
+    },
+    {
+      "id": "brachialis",
+      "name": {
+        "zh": "肱肌",
+        "en": "Brachialis"
+      },
+      "region": "arm",
+      "layer": "deep",
+      "structureIds": [
+        "FJ1486",
+        "FJ1486M"
+      ]
+    },
+    {
+      "id": "triceps-brachii",
+      "name": {
+        "zh": "肱三头肌",
+        "en": "Triceps brachii"
+      },
+      "region": "arm",
+      "layer": "superficial",
+      "structureIds": [
+        "FJ1477",
+        "FJ1477M",
+        "FJ1479",
+        "FJ1479M",
+        "FJ1480",
+        "FJ1480M"
+      ]
+    },
+    {
+      "id": "brachioradialis",
+      "name": {
+        "zh": "肱桡肌",
+        "en": "Brachioradialis"
+      },
+      "region": "arm",
+      "layer": "superficial",
+      "structureIds": [
+        "FJ1487",
+        "FJ1487M"
+      ]
+    },
+    {
+      "id": "wrist-flexors",
+      "name": {
+        "zh": "腕屈肌群",
+        "en": "Wrist flexors"
+      },
+      "region": "arm",
+      "layer": "superficial",
+      "structureIds": [
+        "FJ1473",
+        "FJ1473M",
+        "FJ1496",
+        "FJ1496M",
+        "FJ1502",
+        "FJ1502M",
+        "FJ1518",
+        "FJ1518M"
+      ]
+    },
+    {
+      "id": "wrist-extensors",
+      "name": {
+        "zh": "腕伸肌群",
+        "en": "Wrist extensors"
+      },
+      "region": "arm",
+      "layer": "superficial",
+      "structureIds": [
+        "FJ1472",
+        "FJ1472M",
+        "FJ1489",
+        "FJ1489M",
+        "FJ1490",
+        "FJ1490M",
+        "FJ1517",
+        "FJ1517M"
+      ]
+    },
+    {
+      "id": "gluteus-maximus",
+      "name": {
+        "zh": "臀大肌",
+        "en": "Gluteus maximus"
+      },
+      "region": "hip",
+      "layer": "superficial",
+      "structureIds": [
+        "FJ1418",
+        "FJ1418M"
+      ]
+    },
+    {
+      "id": "gluteus-medius",
+      "name": {
+        "zh": "臀中肌",
+        "en": "Gluteus medius"
+      },
+      "region": "hip",
+      "layer": "deep",
+      "structureIds": [
+        "FJ1419",
+        "FJ1419M"
+      ]
+    },
+    {
+      "id": "gluteus-minimus",
+      "name": {
+        "zh": "臀小肌",
+        "en": "Gluteus minimus"
+      },
+      "region": "hip",
+      "layer": "deep",
+      "structureIds": [
+        "FJ1420",
+        "FJ1420M"
+      ]
+    },
+    {
+      "id": "iliopsoas",
+      "name": {
+        "zh": "髂腰肌",
+        "en": "Iliopsoas"
+      },
+      "region": "hip",
+      "layer": "deep",
+      "structureIds": [
+        "FJ1422",
+        "FJ1422M",
+        "FJ1431",
+        "FJ1431M"
+      ]
+    },
+    {
+      "id": "piriformis",
+      "name": {
+        "zh": "梨状肌",
+        "en": "Piriformis"
+      },
+      "region": "hip",
+      "layer": "deep",
+      "structureIds": [
+        "FJ1428",
+        "FJ1428M"
+      ]
+    },
+    {
+      "id": "hip-adductors",
+      "name": {
+        "zh": "髋内收肌群",
+        "en": "Hip adductors"
+      },
+      "region": "hip",
+      "layer": "deep",
+      "structureIds": [
+        "FJ1401",
+        "FJ1401M",
+        "FJ1402",
+        "FJ1402M",
+        "FJ1403",
+        "FJ1403M",
+        "FJ1404",
+        "FJ1404M",
+        "FJ1421",
+        "FJ1421M",
+        "FJ1427",
+        "FJ1427M"
+      ]
+    },
+    {
+      "id": "rectus-femoris",
+      "name": {
+        "zh": "股直肌",
+        "en": "Rectus femoris"
+      },
+      "region": "thigh",
+      "layer": "superficial",
+      "structureIds": [
+        "FJ1433",
+        "FJ1433M"
+      ]
+    },
+    {
+      "id": "vastus-lateralis",
+      "name": {
+        "zh": "股外侧肌",
+        "en": "Vastus lateralis"
+      },
+      "region": "thigh",
+      "layer": "superficial",
+      "structureIds": [
+        "FJ1442",
+        "FJ1442M"
+      ]
+    },
+    {
+      "id": "vastus-medialis",
+      "name": {
+        "zh": "股内侧肌",
+        "en": "Vastus medialis"
+      },
+      "region": "thigh",
+      "layer": "superficial",
+      "structureIds": [
+        "FJ1443",
+        "FJ1443M"
+      ]
+    },
+    {
+      "id": "vastus-intermedius",
+      "name": {
+        "zh": "股中间肌",
+        "en": "Vastus intermedius"
+      },
+      "region": "thigh",
+      "layer": "deep",
+      "structureIds": [
+        "FJ1441",
+        "FJ1441M"
+      ]
+    },
+    {
+      "id": "biceps-femoris",
+      "name": {
+        "zh": "股二头肌",
+        "en": "Biceps femoris"
+      },
+      "region": "thigh",
+      "layer": "superficial",
+      "structureIds": [
+        "FJ1395",
+        "FJ1395M",
+        "FJ1444",
+        "FJ1444M"
+      ]
+    },
+    {
+      "id": "semitendinosus",
+      "name": {
+        "zh": "半腱肌",
+        "en": "Semitendinosus"
+      },
+      "region": "thigh",
+      "layer": "superficial",
+      "structureIds": [
+        "FJ1436",
+        "FJ1436M"
+      ]
+    },
+    {
+      "id": "semimembranosus",
+      "name": {
+        "zh": "半膜肌",
+        "en": "Semimembranosus"
+      },
+      "region": "thigh",
+      "layer": "deep",
+      "structureIds": [
+        "FJ1435",
+        "FJ1435M"
+      ]
+    },
+    {
+      "id": "gastrocnemius",
+      "name": {
+        "zh": "腓肠肌",
+        "en": "Gastrocnemius"
+      },
+      "region": "leg",
+      "layer": "superficial",
+      "structureIds": [
+        "FJ1394",
+        "FJ1394M",
+        "FJ1397",
+        "FJ1397M"
+      ]
+    },
+    {
+      "id": "soleus",
+      "name": {
+        "zh": "比目鱼肌",
+        "en": "Soleus"
+      },
+      "region": "leg",
+      "layer": "deep",
+      "structureIds": [
+        "FJ1437",
+        "FJ1437M"
+      ]
+    },
+    {
+      "id": "tibialis-anterior",
+      "name": {
+        "zh": "胫骨前肌",
+        "en": "Tibialis anterior"
+      },
+      "region": "leg",
+      "layer": "superficial",
+      "structureIds": [
+        "FJ1439",
+        "FJ1439M"
+      ]
+    },
+    {
+      "id": "fibularis",
+      "name": {
+        "zh": "腓骨肌群",
+        "en": "Fibularis"
+      },
+      "region": "leg",
+      "layer": "deep",
+      "structureIds": [
+        "FJ1409",
+        "FJ1409M",
+        "FJ1410",
+        "FJ1410M",
+        "FJ1411",
+        "FJ1411M"
+      ]
+    }
+  ],
+  "regions": [
+    {
+      "id": "neck",
+      "name": {
+        "zh": "颈部",
+        "en": "Neck"
+      }
+    },
+    {
+      "id": "shoulder",
+      "name": {
+        "zh": "肩背",
+        "en": "Shoulder and upper back"
+      }
+    },
+    {
+      "id": "torso",
+      "name": {
+        "zh": "躯干",
+        "en": "Torso"
+      }
+    },
+    {
+      "id": "arm",
+      "name": {
+        "zh": "上肢",
+        "en": "Arm"
+      }
+    },
+    {
+      "id": "hip",
+      "name": {
+        "zh": "髋臀",
+        "en": "Hip"
+      }
+    },
+    {
+      "id": "thigh",
+      "name": {
+        "zh": "大腿",
+        "en": "Thigh"
+      }
+    },
+    {
+      "id": "leg",
+      "name": {
+        "zh": "小腿",
+        "en": "Lower leg"
+      }
+    }
+  ],
+  "structures": {
+    "FJ1520": {
+      "id": "FJ1520",
+      "name": {
+        "zh": "右侧斜方肌升部",
+        "en": "ascending part of right trapezius"
+      },
+      "kind": "muscle",
+      "side": "right",
+      "region": "neck",
+      "layer": "superficial",
+      "asset": "/models/web/structures/FJ1520.glb",
+      "bounds": {
+        "min": [
+          -0.147807,
+          0.2708335,
+          -0.1319309
+        ],
+        "max": [
+          0.0032266,
+          0.5582583,
+          -0.0608004
+        ]
+      }
+    },
+    "FJ1520M": {
+      "id": "FJ1520M",
+      "name": {
+        "zh": "左侧斜方肌升部",
+        "en": "ascending part of left trapezius"
+      },
+      "kind": "muscle",
+      "side": "left",
+      "region": "neck",
+      "layer": "superficial",
+      "asset": "/models/web/structures/FJ1520M.glb",
+      "bounds": {
+        "min": [
+          -0.0032475,
+          0.2708335,
+          -0.1319308
+        ],
+        "max": [
+          0.1477861,
+          0.5582583,
+          -0.0608004
+        ]
+      }
+    },
+    "FJ1521": {
+      "id": "FJ1521",
+      "name": {
+        "zh": "右侧斜方肌降部",
+        "en": "descending part of right trapezius"
+      },
+      "kind": "muscle",
+      "side": "right",
+      "region": "neck",
+      "layer": "superficial",
+      "asset": "/models/web/structures/FJ1521.glb",
+      "bounds": {
+        "min": [
+          -0.1301553,
+          0.5558909,
+          -0.0999416
+        ],
+        "max": [
+          0.0034594,
+          0.7206608,
+          -0.0073894
+        ]
+      }
+    },
+    "FJ1521M": {
+      "id": "FJ1521M",
+      "name": {
+        "zh": "左侧斜方肌降部",
+        "en": "descending part of left trapezius"
+      },
+      "kind": "muscle",
+      "side": "left",
+      "region": "neck",
+      "layer": "superficial",
+      "asset": "/models/web/structures/FJ1521M.glb",
+      "bounds": {
+        "min": [
+          -0.0034803,
+          0.5558909,
+          -0.0999416
+        ],
+        "max": [
+          0.1301344,
+          0.7206608,
+          -0.0073894
+        ]
+      }
+    },
+    "FJ1554": {
+      "id": "FJ1554",
+      "name": {
+        "zh": "右侧斜方肌横部",
+        "en": "transverse part of right trapezius"
+      },
+      "kind": "muscle",
+      "side": "right",
+      "region": "neck",
+      "layer": "superficial",
+      "asset": "/models/web/structures/FJ1554.glb",
+      "bounds": {
+        "min": [
+          -0.1623852,
+          0.5191173,
+          -0.1181586
+        ],
+        "max": [
+          0.0038417,
+          0.5971903,
+          -0.0382308
+        ]
+      }
+    },
+    "FJ1554M": {
+      "id": "FJ1554M",
+      "name": {
+        "zh": "左侧斜方肌横部",
+        "en": "transverse part of left trapezius"
+      },
+      "kind": "muscle",
+      "side": "left",
+      "region": "neck",
+      "layer": "superficial",
+      "asset": "/models/web/structures/FJ1554M.glb",
+      "bounds": {
+        "min": [
+          -0.0038626,
+          0.5191273,
+          -0.1181586
+        ],
+        "max": [
+          0.1623643,
+          0.5971903,
+          -0.0382308
+        ]
+      }
+    },
+    "FJ1573": {
+      "id": "FJ1573",
+      "name": {
+        "zh": "左侧胸锁乳突肌",
+        "en": "left sternocleidomastoid"
+      },
+      "kind": "muscle",
+      "side": "left",
+      "region": "neck",
+      "layer": "superficial",
+      "asset": "/models/web/structures/FJ1573.glb",
+      "bounds": {
+        "min": [
+          0.0005661,
+          0.517496,
+          -0.0703221
+        ],
+        "max": [
+          0.0613274,
+          0.7174579,
+          0.0484583
+        ]
+      }
+    },
+    "FJ1595": {
+      "id": "FJ1595",
+      "name": {
+        "zh": "右侧胸锁乳突肌",
+        "en": "right sternocleidomastoid"
+      },
+      "kind": "muscle",
+      "side": "right",
+      "region": "neck",
+      "layer": "superficial",
+      "asset": "/models/web/structures/FJ1595.glb",
+      "bounds": {
+        "min": [
+          -0.0627155,
+          0.5174761,
+          -0.0704586
+        ],
+        "max": [
+          0.0610683,
+          0.717627,
+          0.0485588
+        ]
+      }
+    },
+    "FJ1532": {
+      "id": "FJ1532",
+      "name": {
+        "zh": "右侧肩胛提肌",
+        "en": "right levator scapulae"
+      },
+      "kind": "muscle",
+      "side": "right",
+      "region": "neck",
+      "layer": "deep",
+      "asset": "/models/web/structures/FJ1532.glb",
+      "bounds": {
+        "min": [
+          -0.0806583,
+          0.524787,
+          -0.0954915
+        ],
+        "max": [
+          -0.0209733,
+          0.683181,
+          -0.0254992
+        ]
+      }
+    },
+    "FJ1532M": {
+      "id": "FJ1532M",
+      "name": {
+        "zh": "左侧肩胛提肌",
+        "en": "left levator scapulae"
+      },
+      "kind": "muscle",
+      "side": "left",
+      "region": "neck",
+      "layer": "deep",
+      "asset": "/models/web/structures/FJ1532M.glb",
+      "bounds": {
+        "min": [
+          0.0209524,
+          0.524787,
+          -0.0954915
+        ],
+        "max": [
+          0.0806374,
+          0.683181,
+          -0.0254992
+        ]
+      }
+    },
+    "FJ1467": {
+      "id": "FJ1467",
+      "name": {
+        "zh": "右侧三角肌肩峰部",
+        "en": "acromial part of right deltoid"
+      },
+      "kind": "muscle",
+      "side": "right",
+      "region": "shoulder",
+      "layer": "superficial",
+      "asset": "/models/web/structures/FJ1467.glb",
+      "bounds": {
+        "min": [
+          -0.2260312,
+          0.4211108,
+          -0.0668945
+        ],
+        "max": [
+          -0.1458177,
+          0.5644751,
+          -0.0047256
+        ]
+      }
+    },
+    "FJ1467M": {
+      "id": "FJ1467M",
+      "name": {
+        "zh": "左侧三角肌肩峰部",
+        "en": "acromial part of left deltoid"
+      },
+      "kind": "muscle",
+      "side": "left",
+      "region": "shoulder",
+      "layer": "superficial",
+      "asset": "/models/web/structures/FJ1467M.glb",
+      "bounds": {
+        "min": [
+          0.1457968,
+          0.4211108,
+          -0.0668945
+        ],
+        "max": [
+          0.2260103,
+          0.5644751,
+          -0.0047266
+        ]
+      }
+    },
+    "FJ1468": {
+      "id": "FJ1468",
+      "name": {
+        "zh": "右侧三角肌锁骨部",
+        "en": "clavicular part of right deltoid"
+      },
+      "kind": "muscle",
+      "side": "right",
+      "region": "shoulder",
+      "layer": "superficial",
+      "asset": "/models/web/structures/FJ1468.glb",
+      "bounds": {
+        "min": [
+          -0.2025476,
+          0.4198774,
+          -0.0327885
+        ],
+        "max": [
+          -0.088095,
+          0.5706123,
+          0.0131718
+        ]
+      }
+    },
+    "FJ1468M": {
+      "id": "FJ1468M",
+      "name": {
+        "zh": "左侧三角肌锁骨部",
+        "en": "clavicular part of left deltoid"
+      },
+      "kind": "muscle",
+      "side": "left",
+      "region": "shoulder",
+      "layer": "superficial",
+      "asset": "/models/web/structures/FJ1468M.glb",
+      "bounds": {
+        "min": [
+          0.0880741,
+          0.4198774,
+          -0.0327885
+        ],
+        "max": [
+          0.2025268,
+          0.5706123,
+          0.0131718
+        ]
+      }
+    },
+    "FJ1513": {
+      "id": "FJ1513",
+      "name": {
+        "zh": "右侧三角肌肩胛冈部",
+        "en": "spinal part of right deltoid"
+      },
+      "kind": "muscle",
+      "side": "right",
+      "region": "shoulder",
+      "layer": "superficial",
+      "asset": "/models/web/structures/FJ1513.glb",
+      "bounds": {
+        "min": [
+          -0.218017,
+          0.4038629,
+          -0.1048039
+        ],
+        "max": [
+          -0.0824045,
+          0.5551449,
+          -0.0286826
+        ]
+      }
+    },
+    "FJ1513M": {
+      "id": "FJ1513M",
+      "name": {
+        "zh": "左侧三角肌肩胛冈部",
+        "en": "spinal part of left deltoid"
+      },
+      "kind": "muscle",
+      "side": "left",
+      "region": "shoulder",
+      "layer": "superficial",
+      "asset": "/models/web/structures/FJ1513M.glb",
+      "bounds": {
+        "min": [
+          0.0823836,
+          0.4038629,
+          -0.1048039
+        ],
+        "max": [
+          0.2179961,
+          0.5551449,
+          -0.0286826
+        ]
+      }
+    },
+    "FJ1506": {
+      "id": "FJ1506",
+      "name": {
+        "zh": "右侧冈上肌",
+        "en": "right supraspinatus"
+      },
+      "kind": "muscle",
+      "side": "right",
+      "region": "shoulder",
+      "layer": "deep",
+      "asset": "/models/web/structures/FJ1506.glb",
+      "bounds": {
+        "min": [
+          -0.1874523,
+          0.5228176,
+          -0.0946222
+        ],
+        "max": [
+          -0.0635471,
+          0.5576515,
+          -0.0161015
+        ]
+      }
+    },
+    "FJ1506M": {
+      "id": "FJ1506M",
+      "name": {
+        "zh": "左侧冈上肌",
+        "en": "left supraspinatus"
+      },
+      "kind": "muscle",
+      "side": "left",
+      "region": "shoulder",
+      "layer": "deep",
+      "asset": "/models/web/structures/FJ1506M.glb",
+      "bounds": {
+        "min": [
+          0.0635262,
+          0.5228176,
+          -0.0946222
+        ],
+        "max": [
+          0.1874314,
+          0.5576614,
+          -0.0161015
+        ]
+      }
+    },
+    "FJ1500": {
+      "id": "FJ1500",
+      "name": {
+        "zh": "右侧冈下肌",
+        "en": "right infraspinatus muscle"
+      },
+      "kind": "muscle",
+      "side": "right",
+      "region": "shoulder",
+      "layer": "deep",
+      "asset": "/models/web/structures/FJ1500.glb",
+      "bounds": {
+        "min": [
+          -0.188056,
+          0.4225431,
+          -0.1111612
+        ],
+        "max": [
+          -0.0599487,
+          0.546322,
+          -0.0308371
+        ]
+      }
+    },
+    "FJ1500M": {
+      "id": "FJ1500M",
+      "name": {
+        "zh": "左侧冈下肌",
+        "en": "left infraspinatus muscle"
+      },
+      "kind": "muscle",
+      "side": "left",
+      "region": "shoulder",
+      "layer": "deep",
+      "asset": "/models/web/structures/FJ1500M.glb",
+      "bounds": {
+        "min": [
+          0.0599278,
+          0.4225431,
+          -0.1111612
+        ],
+        "max": [
+          0.1880352,
+          0.546332,
+          -0.0308371
+        ]
+      }
+    },
+    "FJ1508": {
+      "id": "FJ1508",
+      "name": {
+        "zh": "右侧小圆肌",
+        "en": "right teres minor"
+      },
+      "kind": "muscle",
+      "side": "right",
+      "region": "shoulder",
+      "layer": "deep",
+      "asset": "/models/web/structures/FJ1508.glb",
+      "bounds": {
+        "min": [
+          -0.1895521,
+          0.4364986,
+          -0.0951743
+        ],
+        "max": [
+          -0.1048594,
+          0.5323467,
+          -0.0276307
+        ]
+      }
+    },
+    "FJ1508M": {
+      "id": "FJ1508M",
+      "name": {
+        "zh": "左侧小圆肌",
+        "en": "left teres minor"
+      },
+      "kind": "muscle",
+      "side": "left",
+      "region": "shoulder",
+      "layer": "deep",
+      "asset": "/models/web/structures/FJ1508M.glb",
+      "bounds": {
+        "min": [
+          0.1048385,
+          0.4364986,
+          -0.0951743
+        ],
+        "max": [
+          0.1895322,
+          0.5323467,
+          -0.0276307
+        ]
+      }
+    },
+    "FJ1504": {
+      "id": "FJ1504",
+      "name": {
+        "zh": "右侧肩胛下肌",
+        "en": "right subscapularis"
+      },
+      "kind": "muscle",
+      "side": "right",
+      "region": "shoulder",
+      "layer": "deep",
+      "asset": "/models/web/structures/FJ1504.glb",
+      "bounds": {
+        "min": [
+          -0.1652449,
+          0.4112336,
+          -0.1047714
+        ],
+        "max": [
+          -0.062857,
+          0.5401848,
+          -0.0080909
+        ]
+      }
+    },
+    "FJ1504M": {
+      "id": "FJ1504M",
+      "name": {
+        "zh": "左侧肩胛下肌",
+        "en": "left subscapularis"
+      },
+      "kind": "muscle",
+      "side": "left",
+      "region": "shoulder",
+      "layer": "deep",
+      "asset": "/models/web/structures/FJ1504M.glb",
+      "bounds": {
+        "min": [
+          0.0628361,
+          0.4112336,
+          -0.1047714
+        ],
+        "max": [
+          0.165224,
+          0.5401848,
+          -0.0080906
+        ]
+      }
+    },
+    "BP3D3_FMA13358": {
+      "id": "BP3D3_FMA13358",
+      "name": {
+        "zh": "右侧背阔肌",
+        "en": "right latissimus dorsi"
+      },
+      "kind": "muscle",
+      "side": "right",
+      "region": "shoulder",
+      "layer": "superficial",
+      "asset": "/models/web/structures/BP3D3_FMA13358.glb",
+      "bounds": {
+        "min": [
+          -0.1784225034274286,
+          0.10654695762942881,
+          -0.12570264260873437
+        ],
+        "max": [
+          0.001530544999031928,
+          0.5017799253528258,
+          -0.026854016379922758
+        ]
+      },
+      "source": "bodyparts3d-v3"
+    },
+    "BP3D3_FMA13359": {
+      "id": "BP3D3_FMA13359",
+      "name": {
+        "zh": "左侧背阔肌",
+        "en": "left latissimus dorsi"
+      },
+      "kind": "muscle",
+      "side": "left",
+      "region": "shoulder",
+      "layer": "superficial",
+      "asset": "/models/web/structures/BP3D3_FMA13359.glb",
+      "bounds": {
+        "min": [
+          -0.00092850165419398,
+          0.10654695762942881,
+          -0.12569329254960024
+        ],
+        "max": [
+          0.1777859036565928,
+          0.5017500847385679,
+          -0.026636378833268273
+        ]
+      },
+      "source": "bodyparts3d-v3"
+    },
+    "FJ1536": {
+      "id": "FJ1536",
+      "name": {
+        "zh": "右侧大菱形肌",
+        "en": "right rhomboid major"
+      },
+      "kind": "muscle",
+      "side": "right",
+      "region": "shoulder",
+      "layer": "deep",
+      "asset": "/models/web/structures/FJ1536.glb",
+      "bounds": {
+        "min": [
+          -0.0890385,
+          0.4043006,
+          -0.1135744
+        ],
+        "max": [
+          0.0007622,
+          0.576849,
+          -0.0855339
+        ]
+      }
+    },
+    "FJ1536M": {
+      "id": "FJ1536M",
+      "name": {
+        "zh": "左侧大菱形肌",
+        "en": "left rhomboid major"
+      },
+      "kind": "muscle",
+      "side": "left",
+      "region": "shoulder",
+      "layer": "deep",
+      "asset": "/models/web/structures/FJ1536M.glb",
+      "bounds": {
+        "min": [
+          -0.0007831,
+          0.4043006,
+          -0.1135744
+        ],
+        "max": [
+          0.0890176,
+          0.576849,
+          -0.0855339
+        ]
+      }
+    },
+    "FJ1537": {
+      "id": "FJ1537",
+      "name": {
+        "zh": "右侧小菱形肌",
+        "en": "right rhomboid minor"
+      },
+      "kind": "muscle",
+      "side": "right",
+      "region": "shoulder",
+      "layer": "deep",
+      "asset": "/models/web/structures/FJ1537.glb",
+      "bounds": {
+        "min": [
+          -0.061388,
+          0.4964186,
+          -0.1027242
+        ],
+        "max": [
+          0.0009007,
+          0.6025616,
+          -0.0716299
+        ]
+      }
+    },
+    "FJ1537M": {
+      "id": "FJ1537M",
+      "name": {
+        "zh": "左侧小菱形肌",
+        "en": "left rhomboid minor"
+      },
+      "kind": "muscle",
+      "side": "left",
+      "region": "shoulder",
+      "layer": "deep",
+      "asset": "/models/web/structures/FJ1537M.glb",
+      "bounds": {
+        "min": [
+          -0.0009216,
+          0.4964186,
+          -0.1027242
+        ],
+        "max": [
+          0.0613671,
+          0.6025616,
+          -0.0716299
+        ]
+      }
+    },
+    "FJ1446": {
+      "id": "FJ1446",
+      "name": {
+        "zh": "右侧胸大肌腹部",
+        "en": "abdominal part of right pectoralis major"
+      },
+      "kind": "muscle",
+      "side": "right",
+      "region": "torso",
+      "layer": "superficial",
+      "asset": "/models/web/structures/FJ1446.glb",
+      "bounds": {
+        "min": [
+          -0.1799454,
+          0.3213337,
+          -0.0261925
+        ],
+        "max": [
+          -0.0477554,
+          0.4935738,
+          0.1049784
+        ]
+      }
+    },
+    "FJ1446M": {
+      "id": "FJ1446M",
+      "name": {
+        "zh": "左侧胸大肌腹部",
+        "en": "abdominal part of left pectoralis major"
+      },
+      "kind": "muscle",
+      "side": "left",
+      "region": "torso",
+      "layer": "superficial",
+      "asset": "/models/web/structures/FJ1446M.glb",
+      "bounds": {
+        "min": [
+          0.0477345,
+          0.3213337,
+          -0.0261925
+        ],
+        "max": [
+          0.1799245,
+          0.4935738,
+          0.1049784
+        ]
+      }
+    },
+    "FJ1447": {
+      "id": "FJ1447",
+      "name": {
+        "zh": "右侧胸大肌锁骨部",
+        "en": "clavicular part of right pectoralis major"
+      },
+      "kind": "muscle",
+      "side": "right",
+      "region": "torso",
+      "layer": "superficial",
+      "asset": "/models/web/structures/FJ1447.glb",
+      "bounds": {
+        "min": [
+          -0.1932404,
+          0.4503745,
+          -0.0259502
+        ],
+        "max": [
+          -0.026284,
+          0.5512258,
+          0.0368105
+        ]
+      }
+    },
+    "FJ1447M": {
+      "id": "FJ1447M",
+      "name": {
+        "zh": "左侧胸大肌锁骨部",
+        "en": "clavicular part of left pectoralis major"
+      },
+      "kind": "muscle",
+      "side": "left",
+      "region": "torso",
+      "layer": "superficial",
+      "asset": "/models/web/structures/FJ1447M.glb",
+      "bounds": {
+        "min": [
+          0.0262631,
+          0.4503745,
+          -0.0259502
+        ],
+        "max": [
+          0.1932195,
+          0.5512258,
+          0.0368105
+        ]
+      }
+    },
+    "FJ1464": {
+      "id": "FJ1464",
+      "name": {
+        "zh": "右侧胸大肌胸肋部",
+        "en": "sternocostal part of right pectoralis major"
+      },
+      "kind": "muscle",
+      "side": "right",
+      "region": "torso",
+      "layer": "superficial",
+      "asset": "/models/web/structures/FJ1464.glb",
+      "bounds": {
+        "min": [
+          -0.1868604,
+          0.3569734,
+          -0.0269449
+        ],
+        "max": [
+          -0.0048004,
+          0.5292432,
+          0.110673
+        ]
+      }
+    },
+    "FJ1464M": {
+      "id": "FJ1464M",
+      "name": {
+        "zh": "左侧胸大肌胸肋部",
+        "en": "sternocostal part of left pectoralis major"
+      },
+      "kind": "muscle",
+      "side": "left",
+      "region": "torso",
+      "layer": "superficial",
+      "asset": "/models/web/structures/FJ1464M.glb",
+      "bounds": {
+        "min": [
+          0.0047795,
+          0.3569734,
+          -0.0269449
+        ],
+        "max": [
+          0.1868395,
+          0.5292432,
+          0.110673
+        ]
+      }
+    },
+    "FJ1459": {
+      "id": "FJ1459",
+      "name": {
+        "zh": "右侧前锯肌",
+        "en": "right serratus anterior"
+      },
+      "kind": "muscle",
+      "side": "right",
+      "region": "torso",
+      "layer": "superficial",
+      "asset": "/models/web/structures/FJ1459.glb",
+      "bounds": {
+        "min": [
+          -0.1436353,
+          0.2948552,
+          -0.1127507
+        ],
+        "max": [
+          -0.0574334,
+          0.5636395,
+          0.0492401
+        ]
+      }
+    },
+    "FJ1459M": {
+      "id": "FJ1459M",
+      "name": {
+        "zh": "左侧前锯肌",
+        "en": "left serratus anterior"
+      },
+      "kind": "muscle",
+      "side": "left",
+      "region": "torso",
+      "layer": "superficial",
+      "asset": "/models/web/structures/FJ1459M.glb",
+      "bounds": {
+        "min": [
+          0.0574126,
+          0.2948552,
+          -0.1127507
+        ],
+        "max": [
+          0.1436144,
+          0.5636395,
+          0.0492401
+        ]
+      }
+    },
+    "BP3D3_FMA13377": {
+      "id": "BP3D3_FMA13377",
+      "name": {
+        "zh": "右侧腹直肌",
+        "en": "right rectus abdominis"
+      },
+      "kind": "muscle",
+      "side": "right",
+      "region": "torso",
+      "layer": "superficial",
+      "asset": "/models/web/structures/BP3D3_FMA13377.glb",
+      "bounds": {
+        "min": [
+          -0.07931028510600528,
+          0.027523042951585423,
+          0.03322866786641539
+        ],
+        "max": [
+          -0.0035275982676294766,
+          0.4211704793707446,
+          0.1050858616866465
+        ]
+      },
+      "source": "bodyparts3d-v3"
+    },
+    "BP3D3_FMA13378": {
+      "id": "BP3D3_FMA13378",
+      "name": {
+        "zh": "左侧腹直肌",
+        "en": "left rectus abdominis"
+      },
+      "kind": "muscle",
+      "side": "left",
+      "region": "torso",
+      "layer": "superficial",
+      "asset": "/models/web/structures/BP3D3_FMA13378.glb",
+      "bounds": {
+        "min": [
+          -0.0066226667784617076,
+          0.027920917808357766,
+          0.0332226997435638
+        ],
+        "max": [
+          0.07799013633123456,
+          0.4211605324993253,
+          0.10510177668091741
+        ]
+      },
+      "source": "bodyparts3d-v3"
+    },
+    "FJ1452": {
+      "id": "FJ1452",
+      "name": {
+        "zh": "右侧腹外斜肌",
+        "en": "right external oblique"
+      },
+      "kind": "muscle",
+      "side": "right",
+      "region": "torso",
+      "layer": "superficial",
+      "asset": "/models/web/structures/FJ1452.glb",
+      "bounds": {
+        "min": [
+          -0.1400853,
+          0.0118328,
+          -0.0706905
+        ],
+        "max": [
+          -0.0034407,
+          0.4275663,
+          0.1100891
+        ]
+      }
+    },
+    "FJ1452M": {
+      "id": "FJ1452M",
+      "name": {
+        "zh": "左侧腹外斜肌",
+        "en": "left external oblique"
+      },
+      "kind": "muscle",
+      "side": "left",
+      "region": "torso",
+      "layer": "superficial",
+      "asset": "/models/web/structures/FJ1452M.glb",
+      "bounds": {
+        "min": [
+          0.0034198,
+          0.0118319,
+          -0.0706905
+        ],
+        "max": [
+          0.1400644,
+          0.4275663,
+          0.1100891
+        ]
+      }
+    },
+    "BP3D3_FMA13892": {
+      "id": "BP3D3_FMA13892",
+      "name": {
+        "zh": "右侧腹内斜肌",
+        "en": "right internal oblique"
+      },
+      "kind": "muscle",
+      "side": "right",
+      "region": "torso",
+      "layer": "deep",
+      "asset": "/models/web/structures/BP3D3_FMA13892.glb",
+      "bounds": {
+        "min": [
+          -0.12328798983733999,
+          0.02791992312121586,
+          -0.06161713836583786
+        ],
+        "max": [
+          -0.003384999918962261,
+          0.40512617577139887,
+          0.10745222239730017
+        ]
+      },
+      "source": "bodyparts3d-v3"
+    },
+    "BP3D3_FMA13893": {
+      "id": "BP3D3_FMA13893",
+      "name": {
+        "zh": "左侧腹内斜肌",
+        "en": "left internal oblique"
+      },
+      "kind": "muscle",
+      "side": "left",
+      "region": "torso",
+      "layer": "deep",
+      "asset": "/models/web/structures/BP3D3_FMA13893.glb",
+      "bounds": {
+        "min": [
+          0.0020624638950509032,
+          0.0279239018697836,
+          -0.061589983406863155
+        ],
+        "max": [
+          0.12191034814576567,
+          0.4051361226428181,
+          0.10744824364873241
+        ]
+      },
+      "source": "bodyparts3d-v3"
+    },
+    "FJ1526": {
+      "id": "FJ1526",
+      "name": {
+        "zh": "右侧颈髂肋肌",
+        "en": "right iliocostalis cervicis"
+      },
+      "kind": "muscle",
+      "side": "right",
+      "region": "torso",
+      "layer": "deep",
+      "asset": "/models/web/structures/FJ1526.glb",
+      "bounds": {
+        "min": [
+          -0.0731259,
+          0.4556065,
+          -0.1015608
+        ],
+        "max": [
+          -0.0222514,
+          0.6345906,
+          -0.0270609
+        ]
+      }
+    },
+    "FJ1526M": {
+      "id": "FJ1526M",
+      "name": {
+        "zh": "左侧颈髂肋肌",
+        "en": "left iliocostalis cervicis"
+      },
+      "kind": "muscle",
+      "side": "left",
+      "region": "torso",
+      "layer": "deep",
+      "asset": "/models/web/structures/FJ1526M.glb",
+      "bounds": {
+        "min": [
+          0.0222305,
+          0.4556065,
+          -0.1015608
+        ],
+        "max": [
+          0.073105,
+          0.6345906,
+          -0.0270609
+        ]
+      }
+    },
+    "FJ1527": {
+      "id": "FJ1527",
+      "name": {
+        "zh": "右侧腰髂肋肌",
+        "en": "right iliocostalis lumborum"
+      },
+      "kind": "muscle",
+      "side": "right",
+      "region": "torso",
+      "layer": "deep",
+      "asset": "/models/web/structures/FJ1527.glb",
+      "bounds": {
+        "min": [
+          -0.1017878,
+          0.0480743,
+          -0.1166179
+        ],
+        "max": [
+          -0.0050605,
+          0.4547412,
+          -0.0721359
+        ]
+      }
+    },
+    "FJ1527M": {
+      "id": "FJ1527M",
+      "name": {
+        "zh": "左侧腰髂肋肌",
+        "en": "left iliocostalis lumborum"
+      },
+      "kind": "muscle",
+      "side": "left",
+      "region": "torso",
+      "layer": "deep",
+      "asset": "/models/web/structures/FJ1527M.glb",
+      "bounds": {
+        "min": [
+          0.0050396,
+          0.0480743,
+          -0.1166179
+        ],
+        "max": [
+          0.1017669,
+          0.4547412,
+          -0.0721359
+        ]
+      }
+    },
+    "FJ1528": {
+      "id": "FJ1528",
+      "name": {
+        "zh": "右侧胸髂肋肌",
+        "en": "right iliocostalis thoracis"
+      },
+      "kind": "muscle",
+      "side": "right",
+      "region": "torso",
+      "layer": "deep",
+      "asset": "/models/web/structures/FJ1528.glb",
+      "bounds": {
+        "min": [
+          -0.0915376,
+          0.2734296,
+          -0.1082073
+        ],
+        "max": [
+          -0.0416403,
+          0.5762024,
+          -0.0325517
+        ]
+      }
+    },
+    "FJ1528M": {
+      "id": "FJ1528M",
+      "name": {
+        "zh": "左侧胸髂肋肌",
+        "en": "left iliocostalis thoracis"
+      },
+      "kind": "muscle",
+      "side": "left",
+      "region": "torso",
+      "layer": "deep",
+      "asset": "/models/web/structures/FJ1528M.glb",
+      "bounds": {
+        "min": [
+          0.0416194,
+          0.2734296,
+          -0.1082073
+        ],
+        "max": [
+          0.0915167,
+          0.5762024,
+          -0.0325517
+        ]
+      }
+    },
+    "FJ1533": {
+      "id": "FJ1533",
+      "name": {
+        "zh": "右侧头最长肌",
+        "en": "right longissimus capitis"
+      },
+      "kind": "muscle",
+      "side": "right",
+      "region": "torso",
+      "layer": "deep",
+      "asset": "/models/web/structures/FJ1533.glb",
+      "bounds": {
+        "min": [
+          -0.0601872,
+          0.5499725,
+          -0.07255
+        ],
+        "max": [
+          -0.0239659,
+          0.7143545,
+          -0.0289635
+        ]
+      }
+    },
+    "FJ1533M": {
+      "id": "FJ1533M",
+      "name": {
+        "zh": "左侧头最长肌",
+        "en": "left longissimus capitis"
+      },
+      "kind": "muscle",
+      "side": "left",
+      "region": "torso",
+      "layer": "deep",
+      "asset": "/models/web/structures/FJ1533M.glb",
+      "bounds": {
+        "min": [
+          0.023945,
+          0.5499725,
+          -0.07255
+        ],
+        "max": [
+          0.0601663,
+          0.7143545,
+          -0.0289635
+        ]
+      }
+    },
+    "FJ1534": {
+      "id": "FJ1534",
+      "name": {
+        "zh": "右侧颈最长肌",
+        "en": "right longissimus cervicis"
+      },
+      "kind": "muscle",
+      "side": "right",
+      "region": "torso",
+      "layer": "deep",
+      "asset": "/models/web/structures/FJ1534.glb",
+      "bounds": {
+        "min": [
+          -0.0395886,
+          0.4676423,
+          -0.0944842
+        ],
+        "max": [
+          -0.0197888,
+          0.6623523,
+          -0.0282139
+        ]
+      }
+    },
+    "FJ1534M": {
+      "id": "FJ1534M",
+      "name": {
+        "zh": "左侧颈最长肌",
+        "en": "left longissimus cervicis"
+      },
+      "kind": "muscle",
+      "side": "left",
+      "region": "torso",
+      "layer": "deep",
+      "asset": "/models/web/structures/FJ1534M.glb",
+      "bounds": {
+        "min": [
+          0.0197679,
+          0.4676423,
+          -0.0944842
+        ],
+        "max": [
+          0.0395678,
+          0.6623523,
+          -0.0282139
+        ]
+      }
+    },
+    "FJ1535": {
+      "id": "FJ1535",
+      "name": {
+        "zh": "右侧胸最长肌",
+        "en": "right longissimus thoracis"
+      },
+      "kind": "muscle",
+      "side": "right",
+      "region": "torso",
+      "layer": "deep",
+      "asset": "/models/web/structures/FJ1535.glb",
+      "bounds": {
+        "min": [
+          -0.0683868,
+          0.0669514,
+          -0.1109515
+        ],
+        "max": [
+          0.0006491,
+          0.5855525,
+          -0.0372336
+        ]
+      }
+    },
+    "FJ1535M": {
+      "id": "FJ1535M",
+      "name": {
+        "zh": "左侧胸最长肌",
+        "en": "left longissimus thoracis"
+      },
+      "kind": "muscle",
+      "side": "left",
+      "region": "torso",
+      "layer": "deep",
+      "asset": "/models/web/structures/FJ1535M.glb",
+      "bounds": {
+        "min": [
+          -0.00067,
+          0.0669514,
+          -0.1109515
+        ],
+        "max": [
+          0.0683659,
+          0.5855525,
+          -0.0372336
+        ]
+      }
+    },
+    "FJ1543": {
+      "id": "FJ1543",
+      "name": {
+        "zh": "棘肌",
+        "en": "spinalis"
+      },
+      "kind": "muscle",
+      "side": "midline",
+      "region": "torso",
+      "layer": "deep",
+      "asset": "/models/web/structures/FJ1543.glb",
+      "bounds": {
+        "min": [
+          -0.0079295,
+          0.5445714,
+          -0.095326
+        ],
+        "max": [
+          -0.0000873,
+          0.6502171,
+          -0.0642929
+        ]
+      }
+    },
+    "FJ1543M": {
+      "id": "FJ1543M",
+      "name": {
+        "zh": "棘肌",
+        "en": "spinalis"
+      },
+      "kind": "muscle",
+      "side": "midline",
+      "region": "torso",
+      "layer": "deep",
+      "asset": "/models/web/structures/FJ1543M.glb",
+      "bounds": {
+        "min": [
+          0.0000665,
+          0.5445714,
+          -0.095326
+        ],
+        "max": [
+          0.0079087,
+          0.6502171,
+          -0.0642929
+        ]
+      }
+    },
+    "FJ1544": {
+      "id": "FJ1544",
+      "name": {
+        "zh": "右侧胸棘肌",
+        "en": "right spinalis thoracis"
+      },
+      "kind": "muscle",
+      "side": "right",
+      "region": "torso",
+      "layer": "deep",
+      "asset": "/models/web/structures/FJ1544.glb",
+      "bounds": {
+        "min": [
+          -0.0119963,
+          0.1914863,
+          -0.1103067
+        ],
+        "max": [
+          0.0022812,
+          0.5501317,
+          -0.063849
+        ]
+      }
+    },
+    "FJ1544M": {
+      "id": "FJ1544M",
+      "name": {
+        "zh": "左侧胸棘肌",
+        "en": "left spinalis thoracis"
+      },
+      "kind": "muscle",
+      "side": "left",
+      "region": "torso",
+      "layer": "deep",
+      "asset": "/models/web/structures/FJ1544M.glb",
+      "bounds": {
+        "min": [
+          -0.0023021,
+          0.1914863,
+          -0.1103067
+        ],
+        "max": [
+          0.0119754,
+          0.5501317,
+          -0.063849
+        ]
+      }
+    },
+    "BP3D3_FMA22348": {
+      "id": "BP3D3_FMA22348",
+      "name": {
+        "zh": "右侧腰方肌",
+        "en": "right quadratus lumborum"
+      },
+      "kind": "muscle",
+      "side": "right",
+      "region": "torso",
+      "layer": "deep",
+      "asset": "/models/web/structures/BP3D3_FMA22348.glb",
+      "bounds": {
+        "min": [
+          -0.06718683928272293,
+          0.11510922454717006,
+          -0.08129294525165907
+        ],
+        "max": [
+          -0.01772472805692373,
+          0.3138835242420761,
+          -0.03774892411420624
+        ]
+      },
+      "source": "bodyparts3d-v3"
+    },
+    "BP3D3_FMA22349": {
+      "id": "BP3D3_FMA22349",
+      "name": {
+        "zh": "左侧腰方肌",
+        "en": "left quadratus lumborum"
+      },
+      "kind": "muscle",
+      "side": "left",
+      "region": "torso",
+      "layer": "deep",
+      "asset": "/models/web/structures/BP3D3_FMA22349.glb",
+      "bounds": {
+        "min": [
+          -0.04506977174446067,
+          0.11511419798287971,
+          -0.0812462944247025
+        ],
+        "max": [
+          0.06571122090766839,
+          0.3138735773706568,
+          -0.037795574941162806
+        ]
+      },
+      "source": "bodyparts3d-v3"
+    },
+    "FJ1478": {
+      "id": "FJ1478",
+      "name": {
+        "zh": "右侧肱二头肌长头",
+        "en": "long head of right biceps brachii"
+      },
+      "kind": "muscle",
+      "side": "right",
+      "region": "arm",
+      "layer": "superficial",
+      "asset": "/models/web/structures/FJ1478.glb",
+      "bounds": {
+        "min": [
+          -0.2286492,
+          0.2112139,
+          -0.0400659
+        ],
+        "max": [
+          -0.1345598,
+          0.5547271,
+          0.0011968
+        ]
+      }
+    },
+    "FJ1478M": {
+      "id": "FJ1478M",
+      "name": {
+        "zh": "左侧肱二头肌长头",
+        "en": "long head of left biceps brachii"
+      },
+      "kind": "muscle",
+      "side": "left",
+      "region": "arm",
+      "layer": "superficial",
+      "asset": "/models/web/structures/FJ1478M.glb",
+      "bounds": {
+        "min": [
+          0.1345389,
+          0.2112139,
+          -0.0400659
+        ],
+        "max": [
+          0.2286283,
+          0.5547271,
+          0.0011978
+        ]
+      }
+    },
+    "FJ1512": {
+      "id": "FJ1512",
+      "name": {
+        "zh": "右侧肱二头肌短头",
+        "en": "short head of right biceps brachii"
+      },
+      "kind": "muscle",
+      "side": "right",
+      "region": "arm",
+      "layer": "superficial",
+      "asset": "/models/web/structures/FJ1512.glb",
+      "bounds": {
+        "min": [
+          -0.211272,
+          0.2819839,
+          -0.03196
+        ],
+        "max": [
+          -0.1345289,
+          0.5431291,
+          0.0010068
+        ]
+      }
+    },
+    "FJ1512M": {
+      "id": "FJ1512M",
+      "name": {
+        "zh": "左侧肱二头肌短头",
+        "en": "short head of left biceps brachii"
+      },
+      "kind": "muscle",
+      "side": "left",
+      "region": "arm",
+      "layer": "superficial",
+      "asset": "/models/web/structures/FJ1512M.glb",
+      "bounds": {
+        "min": [
+          0.1345081,
+          0.2819839,
+          -0.03196
+        ],
+        "max": [
+          0.2112512,
+          0.5431291,
+          0.0010078
+        ]
+      }
+    },
+    "FJ1486": {
+      "id": "FJ1486",
+      "name": {
+        "zh": "右侧肱肌",
+        "en": "right brachialis"
+      },
+      "kind": "muscle",
+      "side": "right",
+      "region": "arm",
+      "layer": "deep",
+      "asset": "/models/web/structures/FJ1486.glb",
+      "bounds": {
+        "min": [
+          -0.2338823,
+          0.2124961,
+          -0.0472667
+        ],
+        "max": [
+          -0.1754583,
+          0.4361405,
+          -0.0215776
+        ]
+      }
+    },
+    "FJ1486M": {
+      "id": "FJ1486M",
+      "name": {
+        "zh": "左侧肱肌",
+        "en": "left brachialis"
+      },
+      "kind": "muscle",
+      "side": "left",
+      "region": "arm",
+      "layer": "deep",
+      "asset": "/models/web/structures/FJ1486M.glb",
+      "bounds": {
+        "min": [
+          0.1754374,
+          0.2124961,
+          -0.0472667
+        ],
+        "max": [
+          0.2338614,
+          0.4361405,
+          -0.0215777
+        ]
+      }
+    },
+    "FJ1477": {
+      "id": "FJ1477",
+      "name": {
+        "zh": "右侧肱三头肌外侧头",
+        "en": "lateral head of right triceps brachii"
+      },
+      "kind": "muscle",
+      "side": "right",
+      "region": "arm",
+      "layer": "superficial",
+      "asset": "/models/web/structures/FJ1477.glb",
+      "bounds": {
+        "min": [
+          -0.2268041,
+          0.2528893,
+          -0.0875371
+        ],
+        "max": [
+          -0.1735396,
+          0.5076884,
+          -0.0390833
+        ]
+      }
+    },
+    "FJ1477M": {
+      "id": "FJ1477M",
+      "name": {
+        "zh": "左侧肱三头肌外侧头",
+        "en": "lateral head of left triceps brachii"
+      },
+      "kind": "muscle",
+      "side": "left",
+      "region": "arm",
+      "layer": "superficial",
+      "asset": "/models/web/structures/FJ1477M.glb",
+      "bounds": {
+        "min": [
+          0.1735187,
+          0.2528893,
+          -0.0875371
+        ],
+        "max": [
+          0.2267832,
+          0.5076884,
+          -0.0390833
+        ]
+      }
+    },
+    "FJ1479": {
+      "id": "FJ1479",
+      "name": {
+        "zh": "右侧肱三头肌长头",
+        "en": "long head of right triceps brachii"
+      },
+      "kind": "muscle",
+      "side": "right",
+      "region": "arm",
+      "layer": "superficial",
+      "asset": "/models/web/structures/FJ1479.glb",
+      "bounds": {
+        "min": [
+          -0.2153224,
+          0.2521632,
+          -0.0888548
+        ],
+        "max": [
+          -0.1339859,
+          0.5162626,
+          -0.0437531
+        ]
+      }
+    },
+    "FJ1479M": {
+      "id": "FJ1479M",
+      "name": {
+        "zh": "左侧肱三头肌长头",
+        "en": "long head of left triceps brachii"
+      },
+      "kind": "muscle",
+      "side": "left",
+      "region": "arm",
+      "layer": "superficial",
+      "asset": "/models/web/structures/FJ1479M.glb",
+      "bounds": {
+        "min": [
+          0.133965,
+          0.2521632,
+          -0.0888547
+        ],
+        "max": [
+          0.2153015,
+          0.5162626,
+          -0.0437531
+        ]
+      }
+    },
+    "FJ1480": {
+      "id": "FJ1480",
+      "name": {
+        "zh": "右侧肱三头肌内侧头",
+        "en": "medial head of right triceps brachii"
+      },
+      "kind": "muscle",
+      "side": "right",
+      "region": "arm",
+      "layer": "superficial",
+      "asset": "/models/web/structures/FJ1480.glb",
+      "bounds": {
+        "min": [
+          -0.2257676,
+          0.2463045,
+          -0.0614435
+        ],
+        "max": [
+          -0.1664942,
+          0.4717901,
+          -0.0360166
+        ]
+      }
+    },
+    "FJ1480M": {
+      "id": "FJ1480M",
+      "name": {
+        "zh": "左侧肱三头肌内侧头",
+        "en": "medial head of left triceps brachii"
+      },
+      "kind": "muscle",
+      "side": "left",
+      "region": "arm",
+      "layer": "superficial",
+      "asset": "/models/web/structures/FJ1480M.glb",
+      "bounds": {
+        "min": [
+          0.1664743,
+          0.2463045,
+          -0.0614435
+        ],
+        "max": [
+          0.2257467,
+          0.4717901,
+          -0.0360166
+        ]
+      }
+    },
+    "FJ1487": {
+      "id": "FJ1487",
+      "name": {
+        "zh": "右侧肱桡肌",
+        "en": "right brachioradialis"
+      },
+      "kind": "muscle",
+      "side": "right",
+      "region": "arm",
+      "layer": "superficial",
+      "asset": "/models/web/structures/FJ1487.glb",
+      "bounds": {
+        "min": [
+          -0.2791057,
+          0.0278334,
+          -0.0519868
+        ],
+        "max": [
+          -0.2070635,
+          0.3639362,
+          0.0147106
+        ]
+      }
+    },
+    "FJ1487M": {
+      "id": "FJ1487M",
+      "name": {
+        "zh": "左侧肱桡肌",
+        "en": "left brachioradialis"
+      },
+      "kind": "muscle",
+      "side": "left",
+      "region": "arm",
+      "layer": "superficial",
+      "asset": "/models/web/structures/FJ1487M.glb",
+      "bounds": {
+        "min": [
+          0.2070426,
+          0.0278334,
+          -0.0519868
+        ],
+        "max": [
+          0.2790848,
+          0.3639362,
+          0.0147106
+        ]
+      }
+    },
+    "FJ1473": {
+      "id": "FJ1473",
+      "name": {
+        "zh": "右侧尺侧腕屈肌肱骨头",
+        "en": "humeral head of right flexor carpi ulnaris"
+      },
+      "kind": "muscle",
+      "side": "right",
+      "region": "arm",
+      "layer": "superficial",
+      "asset": "/models/web/structures/FJ1473.glb",
+      "bounds": {
+        "min": [
+          -0.2451531,
+          -0.000175,
+          -0.0466703
+        ],
+        "max": [
+          -0.1768947,
+          0.2651936,
+          0.0283338
+        ]
+      }
+    },
+    "FJ1473M": {
+      "id": "FJ1473M",
+      "name": {
+        "zh": "左侧尺侧腕屈肌肱骨头",
+        "en": "humeral head of left flexor carpi ulnaris"
+      },
+      "kind": "muscle",
+      "side": "left",
+      "region": "arm",
+      "layer": "superficial",
+      "asset": "/models/web/structures/FJ1473M.glb",
+      "bounds": {
+        "min": [
+          0.1768738,
+          -0.000175,
+          -0.0466703
+        ],
+        "max": [
+          0.2451322,
+          0.2651936,
+          0.0283338
+        ]
+      }
+    },
+    "FJ1496": {
+      "id": "FJ1496",
+      "name": {
+        "zh": "右侧桡侧腕屈肌",
+        "en": "right flexor carpi radialis"
+      },
+      "kind": "muscle",
+      "side": "right",
+      "region": "arm",
+      "layer": "superficial",
+      "asset": "/models/web/structures/FJ1496.glb",
+      "bounds": {
+        "min": [
+          -0.2706758,
+          -0.0010275,
+          -0.0370234
+        ],
+        "max": [
+          -0.183391,
+          0.274285,
+          0.0281667
+        ]
+      }
+    },
+    "FJ1496M": {
+      "id": "FJ1496M",
+      "name": {
+        "zh": "左侧桡侧腕屈肌",
+        "en": "left flexor carpi radialis"
+      },
+      "kind": "muscle",
+      "side": "left",
+      "region": "arm",
+      "layer": "superficial",
+      "asset": "/models/web/structures/FJ1496M.glb",
+      "bounds": {
+        "min": [
+          0.1833701,
+          -0.0010275,
+          -0.0370234
+        ],
+        "max": [
+          0.2706549,
+          0.274285,
+          0.0281677
+        ]
+      }
+    },
+    "FJ1502": {
+      "id": "FJ1502",
+      "name": {
+        "zh": "右侧掌长肌",
+        "en": "right palmaris longus"
+      },
+      "kind": "muscle",
+      "side": "right",
+      "region": "arm",
+      "layer": "superficial",
+      "asset": "/models/web/structures/FJ1502.glb",
+      "bounds": {
+        "min": [
+          -0.2890864,
+          -0.0484641,
+          -0.0362856
+        ],
+        "max": [
+          -0.1784852,
+          0.2706246,
+          0.0413821
+        ]
+      }
+    },
+    "FJ1502M": {
+      "id": "FJ1502M",
+      "name": {
+        "zh": "左侧掌长肌",
+        "en": "left palmaris longus"
+      },
+      "kind": "muscle",
+      "side": "left",
+      "region": "arm",
+      "layer": "superficial",
+      "asset": "/models/web/structures/FJ1502M.glb",
+      "bounds": {
+        "min": [
+          0.1784633,
+          -0.0484641,
+          -0.0362856
+        ],
+        "max": [
+          0.2890655,
+          0.2706246,
+          0.0413821
+        ]
+      }
+    },
+    "FJ1518": {
+      "id": "FJ1518",
+      "name": {
+        "zh": "右侧尺侧腕屈肌尺骨头",
+        "en": "ulnar head of right flexor carpi ulnaris"
+      },
+      "kind": "muscle",
+      "side": "right",
+      "region": "arm",
+      "layer": "superficial",
+      "asset": "/models/web/structures/FJ1518.glb",
+      "bounds": {
+        "min": [
+          -0.2283051,
+          0.0484871,
+          -0.0603683
+        ],
+        "max": [
+          -0.1883843,
+          0.26024,
+          0.00807
+        ]
+      }
+    },
+    "FJ1518M": {
+      "id": "FJ1518M",
+      "name": {
+        "zh": "左侧尺侧腕屈肌尺骨头",
+        "en": "ulnar head of left flexor carpi ulnaris"
+      },
+      "kind": "muscle",
+      "side": "left",
+      "region": "arm",
+      "layer": "superficial",
+      "asset": "/models/web/structures/FJ1518M.glb",
+      "bounds": {
+        "min": [
+          0.1883634,
+          0.0484871,
+          -0.0603683
+        ],
+        "max": [
+          0.2282842,
+          0.26024,
+          0.00807
+        ]
+      }
+    },
+    "FJ1472": {
+      "id": "FJ1472",
+      "name": {
+        "zh": "右侧尺侧腕伸肌（来源网格1）",
+        "en": "right extensor carpi ulnaris (source mesh 1)"
+      },
+      "kind": "muscle",
+      "side": "right",
+      "region": "arm",
+      "layer": "superficial",
+      "asset": "/models/web/structures/FJ1472.glb",
+      "bounds": {
+        "min": [
+          -0.236179,
+          -0.0105078,
+          -0.0580938
+        ],
+        "max": [
+          -0.2183204,
+          0.2756676,
+          0.0186098
+        ]
+      }
+    },
+    "FJ1472M": {
+      "id": "FJ1472M",
+      "name": {
+        "zh": "左侧尺侧腕伸肌（来源网格1）",
+        "en": "left extensor carpi ulnaris (source mesh 1)"
+      },
+      "kind": "muscle",
+      "side": "left",
+      "region": "arm",
+      "layer": "superficial",
+      "asset": "/models/web/structures/FJ1472M.glb",
+      "bounds": {
+        "min": [
+          0.2182995,
+          -0.0105078,
+          -0.0580938
+        ],
+        "max": [
+          0.2361581,
+          0.2756676,
+          0.0186107
+        ]
+      }
+    },
+    "FJ1489": {
+      "id": "FJ1489",
+      "name": {
+        "zh": "右侧桡侧腕短伸肌",
+        "en": "right extensor carpi radialis brevis"
+      },
+      "kind": "muscle",
+      "side": "right",
+      "region": "arm",
+      "layer": "superficial",
+      "asset": "/models/web/structures/FJ1489.glb",
+      "bounds": {
+        "min": [
+          -0.2712,
+          -0.0056448,
+          -0.0575207
+        ],
+        "max": [
+          -0.2271612,
+          0.2954022,
+          0.0076135
+        ]
+      }
+    },
+    "FJ1489M": {
+      "id": "FJ1489M",
+      "name": {
+        "zh": "左侧桡侧腕短伸肌",
+        "en": "left extensor carpi radialis brevis"
+      },
+      "kind": "muscle",
+      "side": "left",
+      "region": "arm",
+      "layer": "superficial",
+      "asset": "/models/web/structures/FJ1489M.glb",
+      "bounds": {
+        "min": [
+          0.2271403,
+          -0.0056448,
+          -0.0575207
+        ],
+        "max": [
+          0.2711791,
+          0.2954022,
+          0.0076135
+        ]
+      }
+    },
+    "FJ1490": {
+      "id": "FJ1490",
+      "name": {
+        "zh": "右侧桡侧腕长伸肌",
+        "en": "right extensor carpi radialis longus"
+      },
+      "kind": "muscle",
+      "side": "right",
+      "region": "arm",
+      "layer": "superficial",
+      "asset": "/models/web/structures/FJ1490.glb",
+      "bounds": {
+        "min": [
+          -0.2763972,
+          -0.0025722,
+          -0.0545914
+        ],
+        "max": [
+          -0.2189272,
+          0.3181806,
+          0.0128217
+        ]
+      }
+    },
+    "FJ1490M": {
+      "id": "FJ1490M",
+      "name": {
+        "zh": "左侧桡侧腕长伸肌",
+        "en": "left extensor carpi radialis longus"
+      },
+      "kind": "muscle",
+      "side": "left",
+      "region": "arm",
+      "layer": "superficial",
+      "asset": "/models/web/structures/FJ1490M.glb",
+      "bounds": {
+        "min": [
+          0.2188884,
+          -0.0025722,
+          -0.0545914
+        ],
+        "max": [
+          0.2763763,
+          0.3181806,
+          0.0128217
+        ]
+      }
+    },
+    "FJ1517": {
+      "id": "FJ1517",
+      "name": {
+        "zh": "右侧尺侧腕伸肌（来源网格2）",
+        "en": "right extensor carpi ulnaris (source mesh 2)"
+      },
+      "kind": "muscle",
+      "side": "right",
+      "region": "arm",
+      "layer": "superficial",
+      "asset": "/models/web/structures/FJ1517.glb",
+      "bounds": {
+        "min": [
+          -0.2359015,
+          -0.0049933,
+          -0.0418968
+        ],
+        "max": [
+          -0.219146,
+          0.1768485,
+          0.0159281
+        ]
+      }
+    },
+    "FJ1517M": {
+      "id": "FJ1517M",
+      "name": {
+        "zh": "左侧尺侧腕伸肌（来源网格2）",
+        "en": "left extensor carpi ulnaris (source mesh 2)"
+      },
+      "kind": "muscle",
+      "side": "left",
+      "region": "arm",
+      "layer": "superficial",
+      "asset": "/models/web/structures/FJ1517M.glb",
+      "bounds": {
+        "min": [
+          0.2191251,
+          -0.0049933,
+          -0.0418968
+        ],
+        "max": [
+          0.2358806,
+          0.1768485,
+          0.0159281
+        ]
+      }
+    },
+    "FJ1418": {
+      "id": "FJ1418",
+      "name": {
+        "zh": "右侧臀大肌",
+        "en": "right gluteus maximus"
+      },
+      "kind": "muscle",
+      "side": "right",
+      "region": "hip",
+      "layer": "superficial",
+      "asset": "/models/web/structures/FJ1418.glb",
+      "bounds": {
+        "min": [
+          -0.1446389,
+          -0.1133794,
+          -0.1272753
+        ],
+        "max": [
+          0.0015024,
+          0.1500257,
+          -0.0299176
+        ]
+      }
+    },
+    "FJ1418M": {
+      "id": "FJ1418M",
+      "name": {
+        "zh": "左侧臀大肌",
+        "en": "left gluteus maximus"
+      },
+      "kind": "muscle",
+      "side": "left",
+      "region": "hip",
+      "layer": "superficial",
+      "asset": "/models/web/structures/FJ1418M.glb",
+      "bounds": {
+        "min": [
+          -0.0015233,
+          -0.1133794,
+          -0.1272753
+        ],
+        "max": [
+          0.1446181,
+          0.1500257,
+          -0.0299176
+        ]
+      }
+    },
+    "FJ1419": {
+      "id": "FJ1419",
+      "name": {
+        "zh": "右侧臀中肌",
+        "en": "right gluteus medius"
+      },
+      "kind": "muscle",
+      "side": "right",
+      "region": "hip",
+      "layer": "deep",
+      "asset": "/models/web/structures/FJ1419.glb",
+      "bounds": {
+        "min": [
+          -0.1489509,
+          0.0069758,
+          -0.0906704
+        ],
+        "max": [
+          -0.0592901,
+          0.1682743,
+          -0.0060585
+        ]
+      }
+    },
+    "FJ1419M": {
+      "id": "FJ1419M",
+      "name": {
+        "zh": "左侧臀中肌",
+        "en": "left gluteus medius"
+      },
+      "kind": "muscle",
+      "side": "left",
+      "region": "hip",
+      "layer": "deep",
+      "asset": "/models/web/structures/FJ1419M.glb",
+      "bounds": {
+        "min": [
+          0.0592692,
+          0.0069758,
+          -0.0906704
+        ],
+        "max": [
+          0.148929,
+          0.1682743,
+          -0.0060585
+        ]
+      }
+    },
+    "FJ1420": {
+      "id": "FJ1420",
+      "name": {
+        "zh": "右侧臀小肌",
+        "en": "right gluteus minimus"
+      },
+      "kind": "muscle",
+      "side": "right",
+      "region": "hip",
+      "layer": "deep",
+      "asset": "/models/web/structures/FJ1420.glb",
+      "bounds": {
+        "min": [
+          -0.1443764,
+          0.0015418,
+          -0.0613891
+        ],
+        "max": [
+          -0.0673591,
+          0.1407731,
+          -0.005781
+        ]
+      }
+    },
+    "FJ1420M": {
+      "id": "FJ1420M",
+      "name": {
+        "zh": "左侧臀小肌",
+        "en": "left gluteus minimus"
+      },
+      "kind": "muscle",
+      "side": "left",
+      "region": "hip",
+      "layer": "deep",
+      "asset": "/models/web/structures/FJ1420M.glb",
+      "bounds": {
+        "min": [
+          0.0673382,
+          0.0015418,
+          -0.0613891
+        ],
+        "max": [
+          0.1443555,
+          0.1407731,
+          -0.005781
+        ]
+      }
+    },
+    "FJ1422": {
+      "id": "FJ1422",
+      "name": {
+        "zh": "右侧髂肌",
+        "en": "right iliacus"
+      },
+      "kind": "muscle",
+      "side": "right",
+      "region": "hip",
+      "layer": "deep",
+      "asset": "/models/web/structures/FJ1422.glb",
+      "bounds": {
+        "min": [
+          -0.1265884,
+          -0.0476534,
+          -0.0614075
+        ],
+        "max": [
+          -0.072373,
+          0.1753246,
+          0.0212467
+        ]
+      }
+    },
+    "FJ1422M": {
+      "id": "FJ1422M",
+      "name": {
+        "zh": "左侧髂肌",
+        "en": "left iliacus"
+      },
+      "kind": "muscle",
+      "side": "left",
+      "region": "hip",
+      "layer": "deep",
+      "asset": "/models/web/structures/FJ1422M.glb",
+      "bounds": {
+        "min": [
+          0.0723522,
+          -0.0476534,
+          -0.0614075
+        ],
+        "max": [
+          0.1265675,
+          0.1753246,
+          0.0212467
+        ]
+      }
+    },
+    "FJ1431": {
+      "id": "FJ1431",
+      "name": {
+        "zh": "右侧腰大肌",
+        "en": "right psoas major"
+      },
+      "kind": "muscle",
+      "side": "right",
+      "region": "hip",
+      "layer": "deep",
+      "asset": "/models/web/structures/FJ1431.glb",
+      "bounds": {
+        "min": [
+          -0.1131641,
+          -0.0462678,
+          -0.054662
+        ],
+        "max": [
+          -0.0074459,
+          0.3153258,
+          0.0114162
+        ]
+      }
+    },
+    "FJ1431M": {
+      "id": "FJ1431M",
+      "name": {
+        "zh": "左侧腰大肌",
+        "en": "left psoas major"
+      },
+      "kind": "muscle",
+      "side": "left",
+      "region": "hip",
+      "layer": "deep",
+      "asset": "/models/web/structures/FJ1431M.glb",
+      "bounds": {
+        "min": [
+          0.007425,
+          -0.0462678,
+          -0.054662
+        ],
+        "max": [
+          0.1131422,
+          0.3153258,
+          0.0114162
+        ]
+      }
+    },
+    "FJ1428": {
+      "id": "FJ1428",
+      "name": {
+        "zh": "右侧梨状肌",
+        "en": "right piriformis"
+      },
+      "kind": "muscle",
+      "side": "right",
+      "region": "hip",
+      "layer": "deep",
+      "asset": "/models/web/structures/FJ1428.glb",
+      "bounds": {
+        "min": [
+          -0.1363423,
+          0.0241968,
+          -0.0954966
+        ],
+        "max": [
+          -0.0253556,
+          0.0901913,
+          -0.0358786
+        ]
+      }
+    },
+    "FJ1428M": {
+      "id": "FJ1428M",
+      "name": {
+        "zh": "左侧梨状肌",
+        "en": "left piriformis"
+      },
+      "kind": "muscle",
+      "side": "left",
+      "region": "hip",
+      "layer": "deep",
+      "asset": "/models/web/structures/FJ1428M.glb",
+      "bounds": {
+        "min": [
+          0.0253347,
+          0.0241968,
+          -0.0954966
+        ],
+        "max": [
+          0.1363214,
+          0.0901913,
+          -0.0358786
+        ]
+      }
+    },
+    "FJ1401": {
+      "id": "FJ1401",
+      "name": {
+        "zh": "右侧短收肌",
+        "en": "right adductor brevis"
+      },
+      "kind": "muscle",
+      "side": "right",
+      "region": "hip",
+      "layer": "deep",
+      "asset": "/models/web/structures/FJ1401.glb",
+      "bounds": {
+        "min": [
+          -0.0979475,
+          -0.1790526,
+          -0.0282292
+        ],
+        "max": [
+          -0.0229839,
+          0.0167337,
+          0.0183332
+        ]
+      }
+    },
+    "FJ1401M": {
+      "id": "FJ1401M",
+      "name": {
+        "zh": "左侧短收肌",
+        "en": "left adductor brevis"
+      },
+      "kind": "muscle",
+      "side": "left",
+      "region": "hip",
+      "layer": "deep",
+      "asset": "/models/web/structures/FJ1401M.glb",
+      "bounds": {
+        "min": [
+          0.022963,
+          -0.1790526,
+          -0.0282292
+        ],
+        "max": [
+          0.0979267,
+          0.0167327,
+          0.0183332
+        ]
+      }
+    },
+    "FJ1402": {
+      "id": "FJ1402",
+      "name": {
+        "zh": "右侧长收肌",
+        "en": "right adductor longus"
+      },
+      "kind": "muscle",
+      "side": "right",
+      "region": "hip",
+      "layer": "deep",
+      "asset": "/models/web/structures/FJ1402.glb",
+      "bounds": {
+        "min": [
+          -0.0936127,
+          -0.2700834,
+          -0.0186136
+        ],
+        "max": [
+          -0.01696,
+          0.0178398,
+          0.0287297
+        ]
+      }
+    },
+    "FJ1402M": {
+      "id": "FJ1402M",
+      "name": {
+        "zh": "左侧长收肌",
+        "en": "left adductor longus"
+      },
+      "kind": "muscle",
+      "side": "left",
+      "region": "hip",
+      "layer": "deep",
+      "asset": "/models/web/structures/FJ1402M.glb",
+      "bounds": {
+        "min": [
+          0.0169392,
+          -0.2700834,
+          -0.0186136
+        ],
+        "max": [
+          0.0935918,
+          0.0178398,
+          0.0287287
+        ]
+      }
+    },
+    "FJ1403": {
+      "id": "FJ1403",
+      "name": {
+        "zh": "右侧大收肌",
+        "en": "right adductor magnus"
+      },
+      "kind": "muscle",
+      "side": "right",
+      "region": "hip",
+      "layer": "deep",
+      "asset": "/models/web/structures/FJ1403.glb",
+      "bounds": {
+        "min": [
+          -0.1116263,
+          -0.3996304,
+          -0.0533628
+        ],
+        "max": [
+          -0.0136371,
+          -0.0043776,
+          0.0049059
+        ]
+      }
+    },
+    "FJ1403M": {
+      "id": "FJ1403M",
+      "name": {
+        "zh": "左侧大收肌",
+        "en": "left adductor magnus"
+      },
+      "kind": "muscle",
+      "side": "left",
+      "region": "hip",
+      "layer": "deep",
+      "asset": "/models/web/structures/FJ1403M.glb",
+      "bounds": {
+        "min": [
+          0.0136162,
+          -0.3996304,
+          -0.0533628
+        ],
+        "max": [
+          0.1116064,
+          -0.0043776,
+          0.004905
+        ]
+      }
+    },
+    "FJ1404": {
+      "id": "FJ1404",
+      "name": {
+        "zh": "右侧小收肌",
+        "en": "right adductor minimus"
+      },
+      "kind": "muscle",
+      "side": "right",
+      "region": "hip",
+      "layer": "deep",
+      "asset": "/models/web/structures/FJ1404.glb",
+      "bounds": {
+        "min": [
+          -0.1007285,
+          -0.1163754,
+          -0.0374177
+        ],
+        "max": [
+          -0.0157684,
+          0.0042732,
+          0.0074414
+        ]
+      }
+    },
+    "FJ1404M": {
+      "id": "FJ1404M",
+      "name": {
+        "zh": "左侧小收肌",
+        "en": "left adductor minimus"
+      },
+      "kind": "muscle",
+      "side": "left",
+      "region": "hip",
+      "layer": "deep",
+      "asset": "/models/web/structures/FJ1404M.glb",
+      "bounds": {
+        "min": [
+          0.0157474,
+          -0.1163754,
+          -0.0374177
+        ],
+        "max": [
+          0.1007076,
+          0.0042732,
+          0.0074414
+        ]
+      }
+    },
+    "FJ1421": {
+      "id": "FJ1421",
+      "name": {
+        "zh": "右侧股薄肌",
+        "en": "right gracilis"
+      },
+      "kind": "muscle",
+      "side": "right",
+      "region": "hip",
+      "layer": "deep",
+      "asset": "/models/web/structures/FJ1421.glb",
+      "bounds": {
+        "min": [
+          -0.0700515,
+          -0.4960663,
+          -0.0425114
+        ],
+        "max": [
+          -0.0120126,
+          0.0157489,
+          0.0243143
+        ]
+      }
+    },
+    "FJ1421M": {
+      "id": "FJ1421M",
+      "name": {
+        "zh": "左侧股薄肌",
+        "en": "left gracilis"
+      },
+      "kind": "muscle",
+      "side": "left",
+      "region": "hip",
+      "layer": "deep",
+      "asset": "/models/web/structures/FJ1421M.glb",
+      "bounds": {
+        "min": [
+          0.0119917,
+          -0.4960663,
+          -0.0425114
+        ],
+        "max": [
+          0.0700306,
+          0.0157489,
+          0.0243143
+        ]
+      }
+    },
+    "FJ1427": {
+      "id": "FJ1427",
+      "name": {
+        "zh": "右侧耻骨肌",
+        "en": "right pectineus"
+      },
+      "kind": "muscle",
+      "side": "right",
+      "region": "hip",
+      "layer": "deep",
+      "asset": "/models/web/structures/FJ1427.glb",
+      "bounds": {
+        "min": [
+          -0.0980196,
+          -0.1060525,
+          -0.0287175
+        ],
+        "max": [
+          -0.0226272,
+          0.0339428,
+          0.0277649
+        ]
+      }
+    },
+    "FJ1427M": {
+      "id": "FJ1427M",
+      "name": {
+        "zh": "左侧耻骨肌",
+        "en": "left pectineus"
+      },
+      "kind": "muscle",
+      "side": "left",
+      "region": "hip",
+      "layer": "deep",
+      "asset": "/models/web/structures/FJ1427M.glb",
+      "bounds": {
+        "min": [
+          0.0226064,
+          -0.1060525,
+          -0.0287175
+        ],
+        "max": [
+          0.0979987,
+          0.0339428,
+          0.0277649
+        ]
+      }
+    },
+    "FJ1433": {
+      "id": "FJ1433",
+      "name": {
+        "zh": "右侧股直肌",
+        "en": "right rectus femoris"
+      },
+      "kind": "muscle",
+      "side": "right",
+      "region": "thigh",
+      "layer": "superficial",
+      "asset": "/models/web/structures/FJ1433.glb",
+      "bounds": {
+        "min": [
+          -0.1536389,
+          -0.4645407,
+          -0.0240605
+        ],
+        "max": [
+          -0.0625907,
+          0.0888992,
+          0.0441414
+        ]
+      }
+    },
+    "FJ1433M": {
+      "id": "FJ1433M",
+      "name": {
+        "zh": "左侧股直肌",
+        "en": "left rectus femoris"
+      },
+      "kind": "muscle",
+      "side": "left",
+      "region": "thigh",
+      "layer": "superficial",
+      "asset": "/models/web/structures/FJ1433M.glb",
+      "bounds": {
+        "min": [
+          0.0625698,
+          -0.4645407,
+          -0.0240605
+        ],
+        "max": [
+          0.153618,
+          0.0888992,
+          0.0441414
+        ]
+      }
+    },
+    "FJ1442": {
+      "id": "FJ1442",
+      "name": {
+        "zh": "右侧股外侧肌",
+        "en": "right vastus lateralis"
+      },
+      "kind": "muscle",
+      "side": "right",
+      "region": "thigh",
+      "layer": "superficial",
+      "asset": "/models/web/structures/FJ1442.glb",
+      "bounds": {
+        "min": [
+          -0.1587943,
+          -0.4613339,
+          -0.0503169
+        ],
+        "max": [
+          -0.0836204,
+          0.0064029,
+          0.0288083
+        ]
+      }
+    },
+    "FJ1442M": {
+      "id": "FJ1442M",
+      "name": {
+        "zh": "左侧股外侧肌",
+        "en": "left vastus lateralis"
+      },
+      "kind": "muscle",
+      "side": "left",
+      "region": "thigh",
+      "layer": "superficial",
+      "asset": "/models/web/structures/FJ1442M.glb",
+      "bounds": {
+        "min": [
+          0.0835995,
+          -0.4613339,
+          -0.0503169
+        ],
+        "max": [
+          0.1587744,
+          0.0064029,
+          0.0288083
+        ]
+      }
+    },
+    "FJ1443": {
+      "id": "FJ1443",
+      "name": {
+        "zh": "右侧股内侧肌",
+        "en": "right vastus medialis"
+      },
+      "kind": "muscle",
+      "side": "right",
+      "region": "thigh",
+      "layer": "superficial",
+      "asset": "/models/web/structures/FJ1443.glb",
+      "bounds": {
+        "min": [
+          -0.1050504,
+          -0.438838,
+          -0.0188561
+        ],
+        "max": [
+          -0.034764,
+          -0.0433196,
+          0.0386059
+        ]
+      }
+    },
+    "FJ1443M": {
+      "id": "FJ1443M",
+      "name": {
+        "zh": "左侧股内侧肌",
+        "en": "left vastus medialis"
+      },
+      "kind": "muscle",
+      "side": "left",
+      "region": "thigh",
+      "layer": "superficial",
+      "asset": "/models/web/structures/FJ1443M.glb",
+      "bounds": {
+        "min": [
+          0.0347432,
+          -0.438838,
+          -0.0188561
+        ],
+        "max": [
+          0.1050295,
+          -0.0433196,
+          0.0386059
+        ]
+      }
+    },
+    "FJ1441": {
+      "id": "FJ1441",
+      "name": {
+        "zh": "右侧股中间肌",
+        "en": "right vastus intermedius"
+      },
+      "kind": "muscle",
+      "side": "right",
+      "region": "thigh",
+      "layer": "deep",
+      "asset": "/models/web/structures/FJ1441.glb",
+      "bounds": {
+        "min": [
+          -0.1323983,
+          -0.4369113,
+          -0.031659
+        ],
+        "max": [
+          -0.0758127,
+          -0.0119223,
+          0.0269064
+        ]
+      }
+    },
+    "FJ1441M": {
+      "id": "FJ1441M",
+      "name": {
+        "zh": "左侧股中间肌",
+        "en": "left vastus intermedius"
+      },
+      "kind": "muscle",
+      "side": "left",
+      "region": "thigh",
+      "layer": "deep",
+      "asset": "/models/web/structures/FJ1441M.glb",
+      "bounds": {
+        "min": [
+          0.0757918,
+          -0.4369113,
+          -0.031659
+        ],
+        "max": [
+          0.1323784,
+          -0.0119223,
+          0.0269064
+        ]
+      }
+    },
+    "FJ1395": {
+      "id": "FJ1395",
+      "name": {
+        "zh": "右侧股二头肌长头",
+        "en": "long head of right biceps femoris"
+      },
+      "kind": "muscle",
+      "side": "right",
+      "region": "thigh",
+      "layer": "superficial",
+      "asset": "/models/web/structures/FJ1395.glb",
+      "bounds": {
+        "min": [
+          -0.1259796,
+          -0.4514138,
+          -0.0893023
+        ],
+        "max": [
+          -0.0484445,
+          -0.0168868,
+          -0.0357103
+        ]
+      }
+    },
+    "FJ1395M": {
+      "id": "FJ1395M",
+      "name": {
+        "zh": "左侧股二头肌长头",
+        "en": "long head of left biceps femoris"
+      },
+      "kind": "muscle",
+      "side": "left",
+      "region": "thigh",
+      "layer": "superficial",
+      "asset": "/models/web/structures/FJ1395M.glb",
+      "bounds": {
+        "min": [
+          0.0484236,
+          -0.4514138,
+          -0.0893024
+        ],
+        "max": [
+          0.1259587,
+          -0.0168868,
+          -0.0357103
+        ]
+      }
+    },
+    "FJ1444": {
+      "id": "FJ1444",
+      "name": {
+        "zh": "右侧股二头肌短头",
+        "en": "short head of right biceps femoris"
+      },
+      "kind": "muscle",
+      "side": "right",
+      "region": "thigh",
+      "layer": "superficial",
+      "asset": "/models/web/structures/FJ1444.glb",
+      "bounds": {
+        "min": [
+          -0.1167957,
+          -0.4511304,
+          -0.0569031
+        ],
+        "max": [
+          -0.080253,
+          -0.1343921,
+          -0.0205007
+        ]
+      }
+    },
+    "FJ1444M": {
+      "id": "FJ1444M",
+      "name": {
+        "zh": "左侧股二头肌短头",
+        "en": "short head of left biceps femoris"
+      },
+      "kind": "muscle",
+      "side": "left",
+      "region": "thigh",
+      "layer": "superficial",
+      "asset": "/models/web/structures/FJ1444M.glb",
+      "bounds": {
+        "min": [
+          0.0802322,
+          -0.4511304,
+          -0.0569031
+        ],
+        "max": [
+          0.1167748,
+          -0.1343921,
+          -0.0205007
+        ]
+      }
+    },
+    "FJ1436": {
+      "id": "FJ1436",
+      "name": {
+        "zh": "右侧半腱肌",
+        "en": "right semitendinosus"
+      },
+      "kind": "muscle",
+      "side": "right",
+      "region": "thigh",
+      "layer": "superficial",
+      "asset": "/models/web/structures/FJ1436.glb",
+      "bounds": {
+        "min": [
+          -0.0679413,
+          -0.4959559,
+          -0.0828659
+        ],
+        "max": [
+          -0.0268031,
+          -0.0179312,
+          -0.0094519
+        ]
+      }
+    },
+    "FJ1436M": {
+      "id": "FJ1436M",
+      "name": {
+        "zh": "左侧半腱肌",
+        "en": "left semitendinosus"
+      },
+      "kind": "muscle",
+      "side": "left",
+      "region": "thigh",
+      "layer": "superficial",
+      "asset": "/models/web/structures/FJ1436M.glb",
+      "bounds": {
+        "min": [
+          0.0267822,
+          -0.4959559,
+          -0.0828659
+        ],
+        "max": [
+          0.0679204,
+          -0.0179312,
+          -0.0094519
+        ]
+      }
+    },
+    "FJ1435": {
+      "id": "FJ1435",
+      "name": {
+        "zh": "右侧半膜肌",
+        "en": "right semimembranosus"
+      },
+      "kind": "muscle",
+      "side": "right",
+      "region": "thigh",
+      "layer": "deep",
+      "asset": "/models/web/structures/FJ1435.glb",
+      "bounds": {
+        "min": [
+          -0.0706324,
+          -0.4633292,
+          -0.0703832
+        ],
+        "max": [
+          -0.0131153,
+          -0.027147,
+          -0.0045694
+        ]
+      }
+    },
+    "FJ1435M": {
+      "id": "FJ1435M",
+      "name": {
+        "zh": "左侧半膜肌",
+        "en": "left semimembranosus"
+      },
+      "kind": "muscle",
+      "side": "left",
+      "region": "thigh",
+      "layer": "deep",
+      "asset": "/models/web/structures/FJ1435M.glb",
+      "bounds": {
+        "min": [
+          0.0130945,
+          -0.4633292,
+          -0.0703833
+        ],
+        "max": [
+          0.0706114,
+          -0.027147,
+          -0.0045694
+        ]
+      }
+    },
+    "FJ1394": {
+      "id": "FJ1394",
+      "name": {
+        "zh": "右侧腓肠肌外侧头",
+        "en": "lateral head of right gastrocnemius"
+      },
+      "kind": "muscle",
+      "side": "right",
+      "region": "leg",
+      "layer": "superficial",
+      "asset": "/models/web/structures/FJ1394.glb",
+      "bounds": {
+        "min": [
+          -0.1163809,
+          -0.6454813,
+          -0.1017363
+        ],
+        "max": [
+          -0.0608525,
+          -0.3565645,
+          -0.0272925
+        ]
+      }
+    },
+    "FJ1394M": {
+      "id": "FJ1394M",
+      "name": {
+        "zh": "左侧腓肠肌外侧头",
+        "en": "lateral head of left gastrocnemius"
+      },
+      "kind": "muscle",
+      "side": "left",
+      "region": "leg",
+      "layer": "superficial",
+      "asset": "/models/web/structures/FJ1394M.glb",
+      "bounds": {
+        "min": [
+          0.0608316,
+          -0.6454813,
+          -0.1017363
+        ],
+        "max": [
+          0.11636,
+          -0.3565645,
+          -0.0272925
+        ]
+      }
+    },
+    "FJ1397": {
+      "id": "FJ1397",
+      "name": {
+        "zh": "右侧腓肠肌内侧头",
+        "en": "medial head of right gastrocnemius"
+      },
+      "kind": "muscle",
+      "side": "right",
+      "region": "leg",
+      "layer": "superficial",
+      "asset": "/models/web/structures/FJ1397.glb",
+      "bounds": {
+        "min": [
+          -0.0738517,
+          -0.6553963,
+          -0.0939258
+        ],
+        "max": [
+          -0.0216545,
+          -0.3477704,
+          -0.0153137
+        ]
+      }
+    },
+    "FJ1397M": {
+      "id": "FJ1397M",
+      "name": {
+        "zh": "左侧腓肠肌内侧头",
+        "en": "medial head of left gastrocnemius"
+      },
+      "kind": "muscle",
+      "side": "left",
+      "region": "leg",
+      "layer": "superficial",
+      "asset": "/models/web/structures/FJ1397M.glb",
+      "bounds": {
+        "min": [
+          0.0216336,
+          -0.6553963,
+          -0.0939258
+        ],
+        "max": [
+          0.073831,
+          -0.3477704,
+          -0.0153137
+        ]
+      }
+    },
+    "FJ1437": {
+      "id": "FJ1437",
+      "name": {
+        "zh": "右侧比目鱼肌",
+        "en": "right soleus"
+      },
+      "kind": "muscle",
+      "side": "right",
+      "region": "leg",
+      "layer": "deep",
+      "asset": "/models/web/structures/FJ1437.glb",
+      "bounds": {
+        "min": [
+          -0.1151803,
+          -0.7452852,
+          -0.0754871
+        ],
+        "max": [
+          -0.0354214,
+          -0.420865,
+          -0.0168798
+        ]
+      }
+    },
+    "FJ1437M": {
+      "id": "FJ1437M",
+      "name": {
+        "zh": "左侧比目鱼肌",
+        "en": "left soleus"
+      },
+      "kind": "muscle",
+      "side": "left",
+      "region": "leg",
+      "layer": "deep",
+      "asset": "/models/web/structures/FJ1437M.glb",
+      "bounds": {
+        "min": [
+          0.0354005,
+          -0.7452852,
+          -0.0754871
+        ],
+        "max": [
+          0.1151594,
+          -0.420865,
+          -0.0168798
+        ]
+      }
+    },
+    "FJ1439": {
+      "id": "FJ1439",
+      "name": {
+        "zh": "右侧胫骨前肌",
+        "en": "right tibialis anterior"
+      },
+      "kind": "muscle",
+      "side": "right",
+      "region": "leg",
+      "layer": "superficial",
+      "asset": "/models/web/structures/FJ1439.glb",
+      "bounds": {
+        "min": [
+          -0.116169,
+          -0.816177,
+          -0.0350769
+        ],
+        "max": [
+          -0.0666217,
+          -0.4241952,
+          0.0412906
+        ]
+      }
+    },
+    "FJ1439M": {
+      "id": "FJ1439M",
+      "name": {
+        "zh": "左侧胫骨前肌",
+        "en": "left tibialis anterior"
+      },
+      "kind": "muscle",
+      "side": "left",
+      "region": "leg",
+      "layer": "superficial",
+      "asset": "/models/web/structures/FJ1439M.glb",
+      "bounds": {
+        "min": [
+          0.0666008,
+          -0.816177,
+          -0.0350769
+        ],
+        "max": [
+          0.1161481,
+          -0.4241952,
+          0.0412906
+        ]
+      }
+    },
+    "FJ1409": {
+      "id": "FJ1409",
+      "name": {
+        "zh": "右侧腓骨短肌",
+        "en": "right fibularis brevis"
+      },
+      "kind": "muscle",
+      "side": "right",
+      "region": "leg",
+      "layer": "deep",
+      "asset": "/models/web/structures/FJ1409.glb",
+      "bounds": {
+        "min": [
+          -0.1171299,
+          -0.8331801,
+          -0.0650239
+        ],
+        "max": [
+          -0.0817171,
+          -0.5897838,
+          -0.012795
+        ]
+      }
+    },
+    "FJ1409M": {
+      "id": "FJ1409M",
+      "name": {
+        "zh": "左侧腓骨短肌",
+        "en": "left fibularis brevis"
+      },
+      "kind": "muscle",
+      "side": "left",
+      "region": "leg",
+      "layer": "deep",
+      "asset": "/models/web/structures/FJ1409M.glb",
+      "bounds": {
+        "min": [
+          0.0816961,
+          -0.8331801,
+          -0.0650239
+        ],
+        "max": [
+          0.117109,
+          -0.5897838,
+          -0.012795
+        ]
+      }
+    },
+    "FJ1410": {
+      "id": "FJ1410",
+      "name": {
+        "zh": "右侧腓骨长肌",
+        "en": "right fibularis longus"
+      },
+      "kind": "muscle",
+      "side": "right",
+      "region": "leg",
+      "layer": "deep",
+      "asset": "/models/web/structures/FJ1410.glb",
+      "bounds": {
+        "min": [
+          -0.1257668,
+          -0.8301011,
+          -0.0669313
+        ],
+        "max": [
+          -0.0819768,
+          -0.4276756,
+          0.0282891
+        ]
+      }
+    },
+    "FJ1410M": {
+      "id": "FJ1410M",
+      "name": {
+        "zh": "左侧腓骨长肌",
+        "en": "left fibularis longus"
+      },
+      "kind": "muscle",
+      "side": "left",
+      "region": "leg",
+      "layer": "deep",
+      "asset": "/models/web/structures/FJ1410M.glb",
+      "bounds": {
+        "min": [
+          0.081956,
+          -0.8301011,
+          -0.0669313
+        ],
+        "max": [
+          0.1257459,
+          -0.4276756,
+          0.0282891
+        ]
+      }
+    },
+    "FJ1411": {
+      "id": "FJ1411",
+      "name": {
+        "zh": "右侧第三腓骨肌",
+        "en": "right fibularis tertius"
+      },
+      "kind": "muscle",
+      "side": "right",
+      "region": "leg",
+      "layer": "deep",
+      "asset": "/models/web/structures/FJ1411.glb",
+      "bounds": {
+        "min": [
+          -0.119355,
+          -0.8312619,
+          -0.0449759
+        ],
+        "max": [
+          -0.0894539,
+          -0.6991899,
+          -0.0052876
+        ]
+      }
+    },
+    "FJ1411M": {
+      "id": "FJ1411M",
+      "name": {
+        "zh": "左侧第三腓骨肌",
+        "en": "left fibularis tertius"
+      },
+      "kind": "muscle",
+      "side": "left",
+      "region": "leg",
+      "layer": "deep",
+      "asset": "/models/web/structures/FJ1411M.glb",
+      "bounds": {
+        "min": [
+          0.089433,
+          -0.8312619,
+          -0.0449758
+        ],
+        "max": [
+          0.1193341,
+          -0.6991899,
+          -0.0052876
+        ]
+      }
+    },
+    "FJ1405": {
+      "id": "FJ1405",
+      "name": {
+        "zh": "右侧跟腱",
+        "en": "right calcaneal tendon"
+      },
+      "kind": "tendon",
+      "side": "right",
+      "region": "leg",
+      "layer": "superficial",
+      "asset": "/models/web/structures/FJ1405.glb",
+      "bounds": {
+        "min": [
+          -0.0972045,
+          -0.833433,
+          -0.0829835
+        ],
+        "max": [
+          -0.0406164,
+          -0.6205922,
+          -0.0525259
+        ]
+      }
+    },
+    "FJ1405M": {
+      "id": "FJ1405M",
+      "name": {
+        "zh": "左侧跟腱",
+        "en": "left calcaneal tendon"
+      },
+      "kind": "tendon",
+      "side": "left",
+      "region": "leg",
+      "layer": "superficial",
+      "asset": "/models/web/structures/FJ1405M.glb",
+      "bounds": {
+        "min": [
+          0.0405955,
+          -0.833433,
+          -0.0829835
+        ],
+        "max": [
+          0.0971836,
+          -0.6205922,
+          -0.0525259
+        ]
+      }
+    }
+  },
+  "assets": {
+    "body": {
+      "url": "/models/web/body.glb",
+      "bytes": 49776,
+      "triangles": 10000
+    },
+    "skin": {
+      "url": "/models/web/skin.glb",
+      "bytes": 799620,
+      "triangles": 203382
+    }
+  },
+  "initialStructureIds": [
+    "FJ1520",
+    "FJ1520M",
+    "FJ1521",
+    "FJ1521M",
+    "FJ1554",
+    "FJ1554M",
+    "FJ1573",
+    "FJ1595",
+    "FJ1467",
+    "FJ1467M",
+    "FJ1468",
+    "FJ1468M",
+    "FJ1513",
+    "FJ1513M",
+    "BP3D3_FMA13358",
+    "BP3D3_FMA13359",
+    "FJ1446",
+    "FJ1446M",
+    "FJ1447",
+    "FJ1447M",
+    "FJ1464",
+    "FJ1464M",
+    "FJ1459",
+    "FJ1459M",
+    "BP3D3_FMA13377",
+    "BP3D3_FMA13378",
+    "FJ1452",
+    "FJ1452M",
+    "FJ1478",
+    "FJ1478M",
+    "FJ1512",
+    "FJ1512M",
+    "FJ1477",
+    "FJ1477M",
+    "FJ1479",
+    "FJ1479M",
+    "FJ1487",
+    "FJ1487M",
+    "FJ1418",
+    "FJ1418M",
+    "FJ1433",
+    "FJ1433M",
+    "FJ1442",
+    "FJ1442M",
+    "FJ1443",
+    "FJ1443M",
+    "FJ1395",
+    "FJ1395M",
+    "FJ1436",
+    "FJ1436M",
+    "FJ1394",
+    "FJ1394M",
+    "FJ1397",
+    "FJ1397M",
+    "FJ1439",
+    "FJ1439M"
+  ],
+  "tendons": [
+    {
+      "id": "achilles",
+      "name": {
+        "zh": "跟腱",
+        "en": "Achilles tendon"
+      },
+      "structureIds": [
+        "FJ1405",
+        "FJ1405M"
+      ]
+    },
+    {
+      "id": "rotator-cuff",
+      "name": {
+        "zh": "肩袖肌腱",
+        "en": "Rotator cuff tendons"
+      },
+      "structureIds": [],
+      "missing": {
+        "zh": "现有来源无独立肌腱网格；不以肌腹冒充。",
+        "en": "No separate tendon mesh in the existing source; muscle bellies are not substitutes."
+      }
+    },
+    {
+      "id": "biceps-long-head",
+      "name": {
+        "zh": "肱二头肌长头腱",
+        "en": "Long head of biceps tendon"
+      },
+      "structureIds": [],
+      "missing": {
+        "zh": "现有来源无独立肌腱网格；不以肌腹冒充。",
+        "en": "No separate tendon mesh in the existing source; muscle bellies are not substitutes."
+      }
+    },
+    {
+      "id": "quadriceps",
+      "name": {
+        "zh": "股四头肌腱",
+        "en": "Quadriceps tendon"
+      },
+      "structureIds": [],
+      "missing": {
+        "zh": "现有来源无独立肌腱网格；不以肌腹冒充。",
+        "en": "No separate tendon mesh in the existing source; muscle bellies are not substitutes."
+      }
+    }
+  ],
+  "stats": {
+    "legacyStructureCount": 617,
+    "selectedStructureCount": 148,
+    "supplementalStructureCount": 8,
+    "supplementalObjBytes": 22150674,
+    "supplementalObjGzipBytes": 6347648,
+    "initialStructureCount": 56,
+    "legacyMeshBytes": 159203291,
+    "legacySkinBytes": 9682249,
+    "legacyGeometryBytes": 168885540,
+    "legacyMeshGzipBytes": 52209606,
+    "legacySkinGzipBytes": 3215234,
+    "selectedStructureJsonBytes": 45324955,
+    "selectedStructureJsonGzipBytes": 15045133,
+    "allGeometryGzipBytes": 5624091,
+    "structureGlbBytes": 6309132,
+    "bodyBytes": 49776,
+    "skinBytes": 799620,
+    "initialGeometryBytes": 3648000,
+    "initialGzipBytes": 2878589,
+    "allGeometryBytes": 7158528,
+    "geometryReductionPercent": 95.76
+  }
+}
