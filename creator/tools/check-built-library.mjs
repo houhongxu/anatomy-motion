@@ -36,18 +36,33 @@ for (const record of anonymous) {
   assert.equal(record.deps.length, 0);
   record.factory(() => {}, {}).execute();
 }
-const record = registry.get("chunks:///_virtual/learning.ts");
-assert.ok(record, "Compiled learning.ts module must exist");
-const exports = {};
-const instance = record.factory((name, value) => {
-  if (typeof name === "string") exports[name] = value;
-  else Object.assign(exports, name);
-}, {});
-for (let i = 0; i < record.deps.length; i++) {
-  assert.equal(record.deps[i], "cc");
-  instance.setters[i]({ cclegacy: { _RF: { push() {}, pop() {} } } });
+// 递归执行官方产物及其真实Babel辅助模块。 / Execute compiled modules with their actual Babel helpers.
+const moduleCache = new Map();
+function loadCompiled(name) {
+  if (name === "cc") return { cclegacy: { _RF: { push() {}, pop() {} } } };
+  if (moduleCache.has(name)) return moduleCache.get(name);
+  const record = registry.get(name);
+  assert.ok(record, `Compiled module must exist: ${name}`);
+  const exports = {};
+  moduleCache.set(name, exports);
+  const instance = record.factory((key, value) => {
+    if (typeof key === "string") {
+      exports[key] = value;
+      return value;
+    }
+    Object.assign(exports, key);
+    return key;
+  }, {});
+  for (let i = 0; i < record.deps.length; i++) {
+    const dependency = record.deps[i];
+    const resolved =
+      dependency === "cc" ? dependency : new URL(dependency, name).href;
+    instance.setters[i](loadCompiled(resolved));
+  }
+  instance.execute();
+  return exports;
 }
-instance.execute();
+const exports = loadCompiled("chunks:///_virtual/learning.ts");
 assert.equal(typeof exports.matchLearningEntry, "function");
 const catalog = JSON.parse(
     readFileSync(resolve(root, "../models/learning.json")),
@@ -75,4 +90,67 @@ assert.ok(
 );
 console.log(
   `官方构建检查通过 / Official bundle check passed: biceps=${biceps.ids.length}, calf=${calf.ids.length}, pull-up=${pullup.ids.length} (partial).`,
+);
+
+const surfaceExports = loadCompiled("chunks:///_virtual/acupuncture.ts");
+const surfaceCatalog = JSON.parse(
+  readFileSync(resolve(root, "../models/acupuncture.json")),
+);
+surfaceExports.validateAcupuncture(surfaceCatalog);
+assert.equal(surfaceCatalog.meridians.length, 14);
+const representative = surfaceCatalog.points[0];
+assert.ok(
+  surfaceExports
+    .queryPoints(surfaceCatalog, representative.code, representative.meridianId)
+    .some((p) => p.id === representative.id),
+);
+assert.equal(
+  surfaceExports.pickSurfacePoint(
+    [{ point: representative, x: 0, y: 0, depth: 1 }],
+    0,
+    0,
+    () => false,
+  ),
+  null,
+);
+const skin = JSON.parse(readFileSync(resolve(root, "../models/skin.json")));
+const skinChunks = surfaceExports.splitSurfaceMesh(skin);
+assert.equal(
+  skinChunks.reduce((sum, chunk) => sum + chunk.indices.length, 0),
+  skin.indices.length,
+);
+assert.ok(
+  skinChunks.every(
+    (chunk) =>
+      chunk.positions.length / 3 <= 60000 &&
+      chunk.indices.every((index) => index < 65536),
+  ),
+);
+for (const meridian of surfaceCatalog.meridians) {
+  const route = surfaceExports.routeMesh(
+    meridian.paths.map((path) => path.points),
+  );
+  assert.ok(route.positions.length && route.positions.every(Number.isFinite));
+  const chunks = surfaceExports.splitSurfaceMesh(route);
+  assert.equal(
+    chunks.reduce((sum, chunk) => sum + chunk.indices.length, 0),
+    route.indices.length,
+  );
+  assert.ok(
+    chunks.every(
+      (chunk) =>
+        chunk.positions.length / 3 <= 60000 &&
+        chunk.indices.every((index) => index < 65536),
+    ),
+  );
+}
+const view = surfaceExports.surfaceView(skin, representative.position);
+assert.ok(Number.isFinite(view.yaw) && Number.isFinite(view.pitch));
+assert.ok(surfaceExports.pointMesh().positions.every(Number.isFinite));
+assert.ok(
+  moduleCache.has("chunks:///_virtual/rollupPluginModLoBabelHelpers.js"),
+  "Execute real Babel helpers for the surface module",
+);
+console.log(
+  `穴位经络官方构建检查通过 / Official surface bundle check passed: meridians=${surfaceCatalog.meridians.length}, points=${surfaceCatalog.points.length}, skinChunks=${skinChunks.length}.`,
 );

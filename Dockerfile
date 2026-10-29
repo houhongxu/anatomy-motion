@@ -1,3 +1,11 @@
+# 从当前提交构建 React 网页 / Build React from the checked-out source.
+FROM node:22-bookworm-slim AS frontend
+WORKDIR /build/web
+COPY web/package.json web/package-lock.json ./
+RUN npm ci --no-audit --no-fund
+COPY web/ ./
+RUN npm run build
+
 # 原生 SQLite 依赖构建 / Build native SQLite production dependencies.
 FROM node:22-bookworm-slim AS dependencies
 WORKDIR /build/server
@@ -15,11 +23,13 @@ COPY --from=dependencies --chown=node:node /build/server/node_modules ./server/n
 COPY --chown=node:node server/package.json ./server/package.json
 COPY --chown=node:node server/src ./server/src
 COPY --chown=node:node LICENSE ./LICENSE
-COPY --chown=node:node models ./models
+COPY --chown=node:node models/web ./models/web
+COPY --chown=node:node models/manifest.json models/learning.json models/acupuncture.json ./models/
 COPY --chown=node:node deploy/licenses/CC-BY-4.0.txt ./models/LICENSE-CC-BY-4.0.txt
+COPY --chown=node:node deploy/licenses/CC-BY-SA-2.1-JP.html ./models/LICENSE-CC-BY-SA-2.1-JP.html
 COPY --chown=node:node deploy/licenses/NOTICE.md ./models/LICENSE-NOTICE.md
-COPY --chown=node:node shared/anatomy-manifest.json ./shared/anatomy-manifest.json
-COPY --chown=node:node .build/web/ ./web/
+COPY --chown=node:node shared/anatomy-manifest.json shared/supplemental-manifest.json ./shared/
+COPY --from=frontend --chown=node:node /build/web/dist/ ./web/
 RUN mkdir -p /data && chown node:node /data
 USER 1000:1000
 EXPOSE 3000

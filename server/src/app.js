@@ -48,6 +48,9 @@ export function createApp({
   manifestPath = fileURLToPath(
     new URL("../../shared/anatomy-manifest.json", import.meta.url),
   ),
+  supplementalManifestPath = fileURLToPath(
+    new URL("../../shared/supplemental-manifest.json", import.meta.url),
+  ),
   structures,
   allowedOrigin = process.env.APP_ORIGIN || "http://localhost:3000",
   secureCookies = process.env.COOKIE_SECURE === "true" ||
@@ -56,9 +59,14 @@ export function createApp({
 } = {}) {
   const origin = new URL(allowedOrigin).origin;
   const catalog =
-    structures || JSON.parse(readFileSync(manifestPath, "utf8")).structures;
+    structures || [
+      ...JSON.parse(readFileSync(manifestPath, "utf8")).structures,
+      ...JSON.parse(readFileSync(supplementalManifestPath, "utf8")).structures,
+    ];
   if (!Array.isArray(catalog) || !catalog.length)
     throw new Error("Anatomy manifest must contain structures.");
+  if (new Set(catalog.map((s) => s.id)).size !== catalog.length)
+    throw new Error("Anatomy manifest contains duplicate structure IDs.");
   const recordable = new Map(
     catalog
       .filter((s) => ["muscle", "tendon"].includes(s.kind))

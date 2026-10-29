@@ -40,6 +40,18 @@ import {
   type LearningData,
   type LearningEntry,
 } from "./learning";
+import {
+  validateAcupuncture,
+  queryPoints,
+  pickSurfacePoint,
+  routeMesh,
+  pointMesh,
+  splitSurfaceMesh,
+  surfaceView,
+  type AcupunctureData,
+  type SurfacePoint,
+  type SurfaceMesh,
+} from "./acupuncture";
 const { ccclass, property } = _decorator;
 type Structure = {
   id: string;
@@ -162,7 +174,25 @@ export class AtlasBootstrap extends Component {
   private learningFailed = false;
   private modelsReady = false;
   private modelTotal = 0;
-  private explorerTab: "structures" | "exercise" | "condition" = "structures";
+  private explorerTab: "structures" | "exercise" | "condition" | "acupuncture" =
+    "structures";
+  private acupuncture: AcupunctureData | null = null;
+  private acupunctureFailed = false;
+  private acupuncturePending = false;
+  private disposed = false;
+  private surfaceSelection: SurfacePoint | null = null;
+  private meridianFilter = "";
+  private surfaceLayers = new Set<string>();
+  private skinData: SurfaceMesh | null = null;
+  private skinBounds: { min: number[]; max: number[] } | null = null;
+  private skinRenderer: MeshRenderer | null = null;
+  private surfaceRenderers: {
+    renderer: MeshRenderer;
+    kind: string;
+    meridianId: string;
+    pointId?: string;
+  }[] = [];
+  private surfaceControls!: HTMLElement;
   private activeLearning: LearningEntry | null = null;
   private highlightedIds = new Set<string>();
   private isolateGroupIds: Set<string> | null = null;
@@ -322,9 +352,10 @@ export class AtlasBootstrap extends Component {
       ["structures", t("tabStructures")],
       ["exercise", t("tabExercises")],
       ["condition", t("tabConditions")],
+      ["acupuncture", t("tabAcupuncture")],
     ] as const) {
       const b = button(label, () => {
-        this.explorerTab = tab;
+        this.switchExplorer(tab);
         left.dataset.explorerTab = tab;
         for (const other of libraryTabs.querySelectorAll<HTMLButtonElement>(
           "button",
@@ -369,6 +400,43 @@ export class AtlasBootstrap extends Component {
       toggles.append(row);
     }
     left.append(layerTitle, toggles);
+    this.surfaceControls = el("div", "surface-controls");
+    this.surfaceControls.dataset.testid = "surface-controls";
+    this.surfaceControls.append(el("div", "section-title", t("surfaceLayers")));
+    for (const [key, label] of [
+      ["skin", t("skin")],
+      ["points", t("surfacePoints")],
+      ["meridians", t("meridians")],
+    ]) {
+      const row = el("label", "toggle"),
+        check = input("checkbox");
+      check.dataset.surfaceLayer = key;
+      check.checked = this.surfaceLayers.has(key);
+      check.addEventListener("change", () => {
+        if (check.checked) this.surfaceLayers.add(key);
+        else this.surfaceLayers.delete(key);
+        this.applyVisibility();
+      });
+      row.append(check, el("span", "", label));
+      this.surfaceControls.append(row);
+    }
+    const filter = el("select", "meridian-filter");
+    filter.dataset.testid = "meridian-filter";
+    filter.setAttribute("aria-label", t("meridianFilter"));
+    filter.addEventListener("change", () => {
+      this.meridianFilter = filter.value;
+      if (
+        this.surfaceSelection &&
+        filter.value &&
+        this.surfaceSelection.meridianId !== filter.value
+      )
+        this.surfaceSelection = null;
+      this.applyVisibility();
+      this.renderDetail();
+    });
+    this.surfaceControls.append(filter);
+    this.populateMeridians();
+    left.append(this.surfaceControls);
     const disclaimer = el("p", "taxonomy-note", t("layerNotice"));
     left.append(disclaimer);
     this.learningDetail = el("section", "learning-detail");
@@ -434,6 +502,10 @@ export class AtlasBootstrap extends Component {
     this.groupActions = el("div", "group-actions");
     this.groupActions.append(
       button(t("entryDetails"), () => {
+        if (this.explorerTab === "acupuncture" && this.surfaceSelection) {
+          this.setMobilePane("journal");
+          return;
+        }
         if (this.activeLearning) {
           this.explorerTab = this.activeLearning.kind;
           this.setMobilePane("structures");
@@ -626,6 +698,366 @@ export class AtlasBootstrap extends Component {
       );
     }
   }
+  private switchExplorer(tab: typeof this.explorerTab) {
+    const entering = tab === "acupuncture" && this.explorerTab !== tab;
+    this.explorerTab = tab;
+    if (entering) {
+      this.surfaceLayers = new Set(["skin", "points", "meridians"]);
+      this.selected = null;
+      this.editing = null;
+      this.activeLearning = null;
+      this.highlightedIds.clear();
+      this.parts.forEach((p) => this.colorPart(p));
+      this.search = "";
+      const search = this.overlay.querySelector<HTMLInputElement>(
+        "[data-testid=structure-search]",
+      );
+      if (search) search.value = "";
+      for (const check of this.surfaceControls.querySelectorAll<HTMLInputElement>(
+        "[data-surface-layer]",
+      ))
+        check.checked = this.surfaceLayers.has(check.dataset.surfaceLayer!);
+      if (!this.acupuncture) void this.loadAcupuncture();
+    }
+    this.applyVisibility();
+    this.renderDetail();
+    if (entering) this.fit();
+  }
+  private populateMeridians() {
+    const select =
+      this.surfaceControls.querySelector<HTMLSelectElement>("select");
+    if (!select) return;
+    select.replaceChildren();
+    const all = el("option", "", t("allMeridians"));
+    all.value = "";
+    select.append(all);
+    for (const m of this.acupuncture?.meridians || []) {
+      const option = el("option", "", `${m.id} · ${localized(m.name)}`);
+      option.value = m.id;
+      select.append(option);
+    }
+    select.value = this.meridianFilter;
+    select.disabled = !this.acupuncture;
+  }
+  private clearSurface() {
+    for (const entry of this.surfaceRenderers) {
+      entry.renderer.getSharedMaterial(0)?.destroy();
+      entry.renderer.mesh?.destroy();
+      entry.renderer.node.destroy();
+    }
+    this.surfaceRenderers = [];
+    this.skinRenderer = null;
+    this.skinData = null;
+    this.skinBounds = null;
+  }
+  private surfaceMesh(
+    data: SurfaceMesh,
+    name: string,
+    color: string,
+    kind: string,
+    meridianId = "",
+    pointId?: string,
+  ) {
+    if (
+      !this.tissueMaterial?.passes.length ||
+      !data.positions.length ||
+      data.positions.length % 3 ||
+      data.positions.length / 3 > 65535 ||
+      !data.indices.length ||
+      data.indices.length % 3 ||
+      !data.positions.every(Number.isFinite) ||
+      data.indices.some(
+        (i) => !Number.isInteger(i) || i < 0 || i >= data.positions.length / 3,
+      )
+    )
+      throw new Error("Invalid surface mesh");
+    const node = new Node(name);
+    this.node.addChild(node);
+    const renderer = node.addComponent(MeshRenderer);
+    this.surfaceRenderers.push({ renderer, kind, meridianId, pointId });
+    renderer.mesh = utils.createMesh(data);
+    const mat = new Material();
+    mat.copy(this.tissueMaterial);
+    const c = new Color(
+      parseInt(color.slice(1, 3), 16),
+      parseInt(color.slice(3, 5), 16),
+      parseInt(color.slice(5, 7), 16),
+    );
+    mat.setProperty("mainColor", c);
+    mat.setProperty("roughness", 0.85);
+    mat.setProperty("metallic", 0);
+    mat.setProperty(
+      "emissive",
+      kind === "skin"
+        ? new Color(0, 0, 0)
+        : new Color(c.r * 0.28, c.g * 0.28, c.b * 0.28),
+    );
+    renderer.setSharedMaterial(mat, 0);
+    return renderer;
+  }
+  private async loadAcupuncture() {
+    if (this.acupuncturePending || this.disposed) return;
+    this.acupuncturePending = true;
+    this.acupunctureFailed = false;
+    this.renderList();
+    try {
+      const data = validateAcupuncture(
+        await api<AcupunctureData>("/models/acupuncture.json"),
+      );
+      const skin = await api<SurfaceMesh>("/models/skin.json");
+      if (this.disposed) return;
+      this.clearSurface();
+      const skinChunks = splitSurfaceMesh(skin);
+      for (let index = 0; index < skinChunks.length; index++) {
+        const renderer = this.surfaceMesh(
+          skinChunks[index],
+          `Surface skin ${index}`,
+          "#e8c5ad",
+          "skin",
+        );
+        if (!this.skinRenderer) this.skinRenderer = renderer;
+      }
+      this.skinData = skin;
+      const min = [Infinity, Infinity, Infinity],
+        max = [-Infinity, -Infinity, -Infinity];
+      for (let i = 0; i < skin.positions.length; i++) {
+        const axis = i % 3;
+        min[axis] = Math.min(min[axis], skin.positions[i]);
+        max[axis] = Math.max(max[axis], skin.positions[i]);
+      }
+      this.skinBounds = { min, max };
+      for (const m of data.meridians) {
+        const chunks = splitSurfaceMesh(
+          routeMesh(m.paths.map((path) => path.points)),
+        );
+        for (let index = 0; index < chunks.length; index++)
+          this.surfaceMesh(
+            chunks[index],
+            `Meridian ${m.id} ${index}`,
+            m.color,
+            "meridians",
+            m.id,
+          );
+      }
+      const sphere = pointMesh();
+      for (const point of data.points) {
+        const meridian = data.meridians.find((m) => m.id === point.meridianId)!;
+        const renderer = this.surfaceMesh(
+          sphere,
+          point.id,
+          meridian.color,
+          "points",
+          point.meridianId,
+          point.id,
+        );
+        renderer.node.setPosition(
+          new Vec3(...(point.position as [number, number, number])),
+        );
+      }
+      this.acupuncture = data;
+      this.populateMeridians();
+    } catch {
+      if (!this.disposed) {
+        this.clearSurface();
+        this.acupunctureFailed = true;
+      }
+    } finally {
+      this.acupuncturePending = false;
+      if (!this.disposed) {
+        this.applyVisibility();
+        this.renderDetail();
+        if (this.acupuncture && this.explorerTab === "acupuncture") this.fit();
+      }
+    }
+  }
+  private applySurfaceVisibility() {
+    const active = this.explorerTab === "acupuncture";
+    for (const entry of this.surfaceRenderers) {
+      entry.renderer.node.active =
+        active &&
+        this.surfaceLayers.has(entry.kind) &&
+        (entry.kind === "skin" ||
+          !this.meridianFilter ||
+          entry.meridianId === this.meridianFilter);
+      if (entry.kind === "skin") continue;
+      const selected = this.surfaceSelection?.id === entry.pointId;
+      const highlighted =
+        this.surfaceSelection?.meridianId === entry.meridianId;
+      if (entry.kind === "points")
+        entry.renderer.node.setScale(
+          selected ? 1.8 : 1,
+          selected ? 1.8 : 1,
+          selected ? 1.8 : 1,
+        );
+      const meridian = this.acupuncture?.meridians.find(
+        (m) => m.id === entry.meridianId,
+      );
+      if (!meridian) continue;
+      const color = selected
+        ? new Color(255, 246, 114)
+        : new Color(
+            parseInt(meridian.color.slice(1, 3), 16),
+            parseInt(meridian.color.slice(3, 5), 16),
+            parseInt(meridian.color.slice(5, 7), 16),
+          );
+      const dim = this.surfaceSelection && !highlighted ? 0.48 : 1;
+      entry.renderer
+        .getSharedMaterial(0)
+        ?.setProperty(
+          "mainColor",
+          new Color(color.r * dim, color.g * dim, color.b * dim),
+        );
+      entry.renderer
+        .getSharedMaterial(0)
+        ?.setProperty(
+          "emissive",
+          new Color(
+            color.r * (highlighted ? 0.6 : 0.16),
+            color.g * (highlighted ? 0.6 : 0.16),
+            color.b * (highlighted ? 0.6 : 0.16),
+          ),
+        );
+    }
+  }
+  private renderAcupunctureList() {
+    const heading = this.overlay.querySelector<HTMLElement>(
+      ".list-heading span:first-child",
+    );
+    if (heading) heading.textContent = t("acupunctureDirectory");
+    this.learningDetail.replaceChildren(
+      el("p", "acupuncture-notice", t("acupunctureNotice")),
+    );
+    if (!this.acupuncture) {
+      this.count.textContent = "0";
+      this.list.append(
+        el(
+          "p",
+          "empty-state",
+          t(
+            this.acupunctureFailed
+              ? "acupunctureUnavailable"
+              : "acupunctureLoading",
+          ),
+        ),
+      );
+      if (this.acupunctureFailed)
+        this.list.append(button(t("retry"), () => void this.loadAcupuncture()));
+      return;
+    }
+    this.learningDetail.append(
+      el(
+        "p",
+        "acupuncture-notice",
+        t("acupunctureScope", {
+          points: new Set(this.acupuncture.points.map((p) => p.code)).size,
+          meridians: this.acupuncture.meridians.length,
+        }),
+      ),
+      el("p", "acupuncture-notice", t("skinCredit")),
+    );
+    const points = queryPoints(
+      this.acupuncture,
+      this.search,
+      this.meridianFilter,
+    );
+    this.count.textContent = String(points.length);
+    for (const point of points) {
+      const row = button(
+        "",
+        () => this.selectSurfacePoint(point),
+        "structure-row" +
+          (point.id === this.surfaceSelection?.id ? " selected" : ""),
+      );
+      row.dataset.pointId = point.id;
+      row.setAttribute(
+        "aria-pressed",
+        String(point.id === this.surfaceSelection?.id),
+      );
+      row.append(
+        el("span", "point-code", point.code),
+        el("span", "structure-name", localized(point.name)),
+        el("small", "", sideLabel(point.side)),
+      );
+      this.list.append(row);
+    }
+    if (!points.length)
+      this.list.append(el("p", "empty-state", t("noMatches")));
+  }
+  private selectSurfacePoint(point: SurfacePoint) {
+    this.surfaceSelection = point;
+    this.selected = null;
+    this.editing = null;
+    this.surfaceLayers.add("points");
+    this.surfaceLayers.add("meridians");
+    for (const check of this.surfaceControls.querySelectorAll<HTMLInputElement>(
+      "[data-surface-layer]",
+    ))
+      check.checked = this.surfaceLayers.has(check.dataset.surfaceLayer!);
+    this.applyVisibility();
+    this.renderDetail();
+    const orientation = surfaceView(this.skinData!, point.position);
+    this.yaw = orientation.yaw;
+    this.pitch = orientation.pitch;
+    this.setMobilePane("model");
+    this.fit();
+  }
+  private pickAcupuncture(clientX: number, clientY: number) {
+    if (!this.acupuncture || !this.surfaceLayers.has("points")) return;
+    const canvas = game.canvas;
+    if (!canvas) return;
+    const rect = canvas.getBoundingClientRect();
+    const cameraPosition = this.camera.node.worldPosition;
+    const origin = [cameraPosition.x, cameraPosition.y, cameraPosition.z];
+    const candidates = queryPoints(
+      this.acupuncture,
+      "",
+      this.meridianFilter,
+    ).map((point) => {
+      const pos = new Vec3(...(point.position as [number, number, number]));
+      const screenPoint = this.camera.worldToScreen(pos);
+      const distance = Vec3.distance(pos, cameraPosition);
+      const forward = this.camera.node.forward;
+      const depth =
+        (pos.x - cameraPosition.x) * forward.x +
+        (pos.y - cameraPosition.y) * forward.y +
+        (pos.z - cameraPosition.z) * forward.z;
+      return {
+        point,
+        x: rect.left + (screenPoint.x / canvas.width) * rect.width,
+        y: rect.bottom - (screenPoint.y / canvas.height) * rect.height,
+        depth: depth > 0 ? distance : -1,
+      };
+    });
+    const point = pickSurfacePoint(candidates, clientX, clientY, (point) => {
+      const delta = point.position.map((v, i) => v - origin[i]),
+        distance = Math.hypot(...delta),
+        direction = delta.map((v) => v / distance);
+      // 皮肤始终参与点选遮挡，关闭显示也不会选中背面的穴位。 / Skin always occludes picking, even when hidden.
+      const mesh = this.skinData;
+      if (
+        !mesh ||
+        !this.skinBounds ||
+        !rayBounds(origin, direction, this.skinBounds.min, this.skinBounds.max)
+      )
+        return false;
+      const { positions: v, indices: ix } = mesh;
+      for (let i = 0; i < ix.length; i += 3) {
+        const a = ix[i] * 3,
+          b = ix[i + 1] * 3,
+          c = ix[i + 2] * 3;
+        const hit = rayTriangle(
+          origin,
+          direction,
+          [v[a], v[a + 1], v[a + 2]],
+          [v[b], v[b + 1], v[b + 2]],
+          [v[c], v[c + 1], v[c + 2]],
+        );
+        if (hit !== null && hit < distance - 0.012) return false;
+      }
+      return true;
+    });
+    if (point) this.selectSurfacePoint(point);
+  }
   private async loadLearning() {
     try {
       const data = await api<LearningData>("/models/learning.json");
@@ -682,7 +1114,11 @@ export class AtlasBootstrap extends Component {
   private renderLearningDetail() {
     if (!this.learningDetail) return;
     this.learningDetail.replaceChildren();
-    if (!this.activeLearning || this.explorerTab === "structures") return;
+    if (
+      !this.activeLearning ||
+      (this.explorerTab !== "exercise" && this.explorerTab !== "condition")
+    )
+      return;
     const entry = this.activeLearning,
       result = matchLearningEntry(
         entry,
@@ -879,6 +1315,8 @@ export class AtlasBootstrap extends Component {
     );
   }
   private visible(part: Part) {
+    if (this.explorerTab === "acupuncture")
+      return !this.surfaceLayers.has("skin") || !this.skinRenderer;
     const key = part.info.kind === "muscle" ? part.info.layer : part.info.kind;
     return (
       this.enabledLayers.has(key) &&
@@ -889,12 +1327,17 @@ export class AtlasBootstrap extends Component {
   }
   private applyVisibility() {
     for (const p of this.parts) p.node.active = this.visible(p);
+    this.applySurfaceVisibility();
     this.renderList();
     this.updateSelectionChip();
   }
   private renderList() {
     this.list.replaceChildren();
     this.renderLearningDetail();
+    if (this.explorerTab === "acupuncture") {
+      this.renderAcupunctureList();
+      return;
+    }
     const heading = this.overlay.querySelector<HTMLElement>(
       ".list-heading span:first-child",
     );
@@ -977,6 +1420,19 @@ export class AtlasBootstrap extends Component {
       );
   }
   private select(p: Part, reveal = false) {
+    if (this.explorerTab === "acupuncture") {
+      this.switchExplorer("structures");
+      this.overlay.querySelector<HTMLElement>(
+        ".anatomy-panel",
+      )!.dataset.explorerTab = "structures";
+      for (const tab of this.overlay.querySelectorAll<HTMLButtonElement>(
+        ".explorer-tabs button",
+      ))
+        tab.setAttribute(
+          "aria-selected",
+          String(tab.dataset.testid === "explorer-tab-structures"),
+        );
+    }
     if (this.activeLearning) {
       this.activeLearning = null;
       this.highlightedIds.clear();
@@ -1032,8 +1488,11 @@ export class AtlasBootstrap extends Component {
   }
   private updateSelectionChip() {
     const viewport = this.overlay.querySelector<HTMLElement>(".viewport");
-    if (viewport) viewport.dataset.groupActive = String(!!this.activeLearning);
-    this.groupActions.style.display = this.activeLearning ? "flex" : "none";
+    const hasDetails =
+      !!this.activeLearning ||
+      (this.explorerTab === "acupuncture" && !!this.surfaceSelection);
+    if (viewport) viewport.dataset.groupActive = String(hasDetails);
+    this.groupActions.style.display = hasDetails ? "flex" : "none";
     if (this.activeLearning) {
       const result = matchLearningEntry(
         this.activeLearning,
@@ -1044,6 +1503,14 @@ export class AtlasBootstrap extends Component {
       this.syncViewport();
       return;
     }
+    if (this.explorerTab === "acupuncture") {
+      const point = this.surfaceSelection;
+      this.selectionChip.textContent = point
+        ? `${point.code} · ${localized(point.name)}\n${sideLabel(point.side)} · ${localized(this.acupuncture!.meridians.find((m) => m.id === point.meridianId)!.name)}`
+        : t("acupunctureSelect");
+      this.syncViewport();
+      return;
+    }
     this.selectionChip.textContent = this.selected
       ? `${title(this.selected.info)}\n${sideLabel(this.selected.info.side)} · ${kindLabel(this.selected.info.kind)}${this.visible(this.selected) ? "" : ` · ${t("hidden")}`}`
       : t("selectHint");
@@ -1051,6 +1518,38 @@ export class AtlasBootstrap extends Component {
   }
   private renderDetail() {
     this.detail.replaceChildren(el("div", "eyebrow", t("structurePain")));
+    if (this.explorerTab === "acupuncture") {
+      this.detail.replaceChildren(
+        el("div", "eyebrow", t("acupunctureDetails")),
+      );
+      const point = this.surfaceSelection;
+      if (point) {
+        this.detail.append(
+          el("h2", "", `${point.code} · ${localized(point.name)}`),
+          el(
+            "p",
+            "structure-meta",
+            `${localized(point.region)} · ${sideLabel(point.side)}`,
+          ),
+          el("p", "subheading", localized(point.landmark || point.region)),
+        );
+        for (const source of this.acupuncture!.sources.filter((source) =>
+          point.sourceIds.includes(source.id),
+        )) {
+          if (!/^https?:\/\//.test(source.url)) continue;
+          const link = el("a", "source-link", source.title);
+          link.href = source.url;
+          link.target = "_blank";
+          link.rel = "noopener noreferrer";
+          this.detail.append(link);
+        }
+      } else this.detail.append(el("h2", "", t("acupunctureSelect")));
+      this.detail.append(
+        el("p", "context-notice", t("acupunctureNotice")),
+        el("p", "empty-state", t("acupunctureRecordNotice")),
+      );
+      return;
+    }
     if (this.activeLearning) {
       this.detail.append(
         el("h2", "", localized(this.activeLearning.name)),
@@ -1509,15 +2008,22 @@ export class AtlasBootstrap extends Component {
     else this.updateCamera();
   }
   private fit() {
-    if (!this.parts.length) return;
+    if (!this.parts.length && !this.skinBounds) return;
     const min = [Infinity, Infinity, Infinity],
       max = [-Infinity, -Infinity, -Infinity];
-    for (const p of this.parts.filter((p) => p.node.active)) {
+    for (const p of this.parts.filter(
+      (p) => this.explorerTab === "acupuncture" || p.node.active,
+    )) {
       for (let i = 0; i < 3; i++) {
         min[i] = Math.min(min[i], p.min[i]);
         max[i] = Math.max(max[i], p.max[i]);
       }
     }
+    if (this.explorerTab === "acupuncture" && this.skinBounds)
+      for (let i = 0; i < 3; i++) {
+        min[i] = Math.min(min[i], this.skinBounds.min[i]);
+        max[i] = Math.max(max[i], this.skinBounds.max[i]);
+      }
     if (!Number.isFinite(min[0])) return;
     this.target.set(
       (min[0] + max[0]) / 2,
@@ -1548,6 +2054,15 @@ export class AtlasBootstrap extends Component {
     this.updateCamera();
   }
   private resetVisibility() {
+    if (this.explorerTab === "acupuncture") {
+      this.surfaceSelection = null;
+      this.meridianFilter = "";
+      this.populateMeridians();
+      this.applyVisibility();
+      this.renderDetail();
+      this.fit();
+      return;
+    }
     this.activeLearning = null;
     this.highlightedIds.clear();
     this.isolateGroupIds = null;
@@ -1573,6 +2088,10 @@ export class AtlasBootstrap extends Component {
       ((rect.bottom - clientY) * canvas.height) / rect.height,
       ray,
     );
+    if (this.explorerTab === "acupuncture") {
+      this.pickAcupuncture(clientX, clientY);
+      return;
+    }
     const o = [ray.o.x, ray.o.y, ray.o.z],
       d = [ray.d.x, ray.d.y, ray.d.z];
     let nearest = Infinity,
@@ -1759,6 +2278,8 @@ export class AtlasBootstrap extends Component {
     resize();
   }
   onDestroy() {
+    this.disposed = true;
+    this.clearSurface();
     for (const fn of this.cleanup) fn();
     window.clearTimeout(this.toastTimer);
     this.overlay?.remove();
@@ -1990,12 +2511,19 @@ h2 { font-size: 18px; line-height: 1.5; }
 @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; transition: none !important; } }
 .header-actions { display:flex; align-items:center; gap:6px; }
 .language-button { min-height:44px; padding:8px 10px; font-size:11px; background:#fff; color:#4f716e; }
-.explorer-tabs { display:grid; grid-template-columns:repeat(3,1fr); gap:6px; margin:0 0 16px; }
+.explorer-tabs { display:grid; grid-template-columns:repeat(2,1fr); gap:6px; margin:0 0 16px; }
 .explorer-tabs button { min-height:44px; font-size:13px; padding:8px 4px; background:#f6f9f9; border-color:transparent; }
 .explorer-tabs button[aria-selected=true] { background:#eaf5ef; color:#246f60; border-color:#c5e0d2; }
 .anatomy-panel:not([data-explorer-tab=structures]) .toggles,
-.anatomy-panel:not([data-explorer-tab=structures]) .section-title,
+.anatomy-panel:not([data-explorer-tab=structures]) > .section-title,
 .anatomy-panel:not([data-explorer-tab=structures]) .taxonomy-note { display:none; }
+.surface-controls { display:none; }
+.anatomy-panel[data-explorer-tab=acupuncture] .surface-controls { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin:0 0 12px; }
+.surface-controls .section-title, .surface-controls select { grid-column:1/-1; }
+.surface-controls .toggle { min-height:44px; gap:5px; }
+select { font:inherit; min-height:44px; width:100%; color:var(--ink); background:#f8fafb; border:1px solid var(--line); border-radius:8px; padding:8px; }
+.acupuncture-notice { margin:8px 0; color:#7b7657; font-size:11px; line-height:1.7; }
+.point-code { font-weight:600; color:var(--teal); min-width:38px; }
 .learning-detail:empty { display:none; }
 .learning-detail { padding:16px 0 18px; border-bottom:1px solid var(--line); margin-bottom:14px; }
 .learning-detail h2 { margin-bottom:10px; font-size:20px; }

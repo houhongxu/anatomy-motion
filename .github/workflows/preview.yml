@@ -39,7 +39,8 @@ jobs:
           cache: npm
           cache-dependency-path: |
             server/package-lock.json
-            creator/package-lock.json
+            web/package-lock.json
+            tools/models/package-lock.json
       - name: Install and test / 安装并验证
         run: |
           npm run setup
@@ -55,8 +56,8 @@ jobs:
           data = module.read_pull_request(os.environ["GITHUB_REPOSITORY"], os.environ["PR_NUMBER"])
           module.verify_pr(data, os.environ["GITHUB_REPOSITORY"], os.environ["SOURCE_SHA"])
           PY
-      - name: Verify official web bundle / 校验官方网页构建
-        run: python3 deploy/prepare-web.py
+      - name: Check and build React frontend / 检查并构建 React 前端
+        run: npm run typecheck && npm run build
       - name: Set up image builder / 配置镜像构建
         uses: docker/setup-buildx-action@v3
       - name: Login to GHCR / 登录 GHCR
