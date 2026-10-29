@@ -914,16 +914,6 @@ button.primary:hover:not(:disabled) {
   }
 }
 
-.layer-controls {
-  border-bottom: 1px solid var(--border);
-  padding: 8px 0 12px;
-  margin-bottom: 15px;
-}
-.layer-controls summary {
-  cursor: pointer;
-  font-size: 12px;
-  font-weight: 600;
-}
 .category-filters {
   display: flex;
   flex-wrap: wrap;
@@ -955,16 +945,9 @@ button.primary:hover:not(:disabled) {
   white-space: normal;
   text-align: left;
 }
-.opacity-field input {
-  width: 100%;
-  accent-color: var(--accent);
-}
 @media (max-width: 700px) {
   :root {
-    --drawer: min(38dvh, 330px);
-  }
-  .layer-controls {
-    padding-top: 4px;
+    --drawer: min(34dvh, 300px);
   }
 }
 
@@ -991,4 +974,120 @@ button.primary:hover:not(:disabled) {
 }
 .selection-actions button {
   font-size: 12px;
+}
+
+.scene-viewport {
+  position: absolute;
+  inset: 0 194px 0 0;
+  min-width: 0;
+  min-height: 0;
+}
+.layer-controls {
+  position: absolute;
+  top: 20px;
+  right: 14px;
+  width: 166px;
+  max-height: calc(100% - 40px);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: #fffffff0;
+  overflow: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+}
+.layer-title {
+  font-size: 12px;
+}
+.layer-presets {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.layer-presets button {
+  padding: 6px 8px;
+  font-size: 11px;
+  white-space: nowrap;
+}
+.layer-presets button.active {
+  color: #a34e44;
+  border-color: #e7c7c0;
+  background: #fbf0ed;
+}
+.layer-switches {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.layer-switches .toggle {
+  min-height: 30px;
+  white-space: nowrap;
+}
+.layer-opacity {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-size: 10px;
+  white-space: nowrap;
+}
+.layer-opacity input {
+  width: 100%;
+  margin: 0;
+  accent-color: var(--accent);
+  touch-action: none;
+}
+@media (max-width: 900px) {
+  .scene-viewport {
+    inset: 0 0 58px;
+  }
+  .layer-controls {
+    inset: auto 0 0;
+    width: auto;
+    height: 58px;
+    max-height: none;
+    flex-direction: row;
+    align-items: center;
+    gap: 14px;
+    padding: 5px 12px;
+    border-width: 1px 0 0;
+    border-radius: 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+    touch-action: pan-x;
+  }
+  .layer-title {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  .layer-presets,
+  .layer-switches {
+    flex-direction: row;
+    flex: 0 0 auto;
+    align-items: center;
+    gap: 9px;
+  }
+  .layer-presets button {
+    min-height: 38px;
+    padding: 6px 9px;
+  }
+  .layer-switches .toggle {
+    min-height: 42px;
+  }
+  .layer-opacity {
+    flex: 0 0 auto;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+  }
+  .layer-opacity input {
+    width: 90px;
+  }
 }

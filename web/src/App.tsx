@@ -25,6 +25,7 @@ import { Records } from "./Records";
 import { LearningNotice } from "./LearningNotice";
 import { AtlasSelectionDetails, Sources } from "./AnatomyDetails";
 import { DirectoryTabs } from "./DirectoryTabs";
+import { LayerControls } from "./LayerControls";
 import type { DirectoryKind, SelectionAction } from "./atlas-state";
 import {
   explorerReducer,
@@ -379,87 +380,112 @@ function Atlas({
         </div>
       </header>
       <section className="stage" aria-label={t(locale, "explore")}>
-        <div className="stage-heading">
-          <span className="eyebrow">{t(locale, "atlas")}</span>
-          <p>{t(locale, "subtitle")}</p>
-        </div>
-        <Scene
-          catalog={catalog}
-          resources={resources}
-          acupuncture={acupuncture}
-          showSkin={showSkin}
-          skinOpacity={skinOpacity}
-          highlightedPointIds={
-            tab === "learning" ? relatedPoints.map((item) => item.id) : []
-          }
-          showPoints={showPoints}
-          showMeridians={showMeridians}
-          points={scenePoints}
-          meridianId={meridianId}
-          selectedId={selectedId}
-          selectedPointId={pointId}
-          highlighted={highlighted}
-          onStructure={(id) => {
-            chooseStructure(id, true, true);
-            backToAtlas();
-          }}
-          onPoint={(id) => {
-            choosePoint(id);
-            backToAtlas();
-          }}
-          view={view}
-          viewTick={viewTick}
-          locale={locale}
-        />
-        <div
-          className="view-controls"
-          role="group"
-          aria-label={t(locale, "fit")}
-        >
-          {(["front", "back", "leftView", "rightView", "fit"] as View[]).map(
-            (value) => (
-              <button
-                key={value}
-                className={view === value ? "active" : ""}
-                onClick={() => {
-                  if (value === "fit") restoreWholeBody();
-                  else {
-                    setView(value);
-                    setViewTick((x) => x + 1);
-                  }
-                }}
-              >
-                {t(locale, value)}
+        <div className="scene-viewport">
+          <div className="stage-heading">
+            <span className="eyebrow">{t(locale, "atlas")}</span>
+            <p>{t(locale, "subtitle")}</p>
+          </div>
+          <Scene
+            catalog={catalog}
+            resources={resources}
+            acupuncture={acupuncture}
+            showSkin={showSkin}
+            skinOpacity={skinOpacity}
+            highlightedPointIds={
+              tab === "learning" ? relatedPoints.map((item) => item.id) : []
+            }
+            showPoints={showPoints}
+            showMeridians={showMeridians}
+            points={scenePoints}
+            meridianId={meridianId}
+            selectedId={selectedId}
+            selectedPointId={pointId}
+            highlighted={highlighted}
+            onStructure={(id) => {
+              chooseStructure(id, true, true);
+              backToAtlas();
+            }}
+            onPoint={(id) => {
+              choosePoint(id);
+              backToAtlas();
+            }}
+            view={view}
+            viewTick={viewTick}
+            locale={locale}
+          />
+          <div
+            className="view-controls"
+            role="group"
+            aria-label={t(locale, "fit")}
+          >
+            {(["front", "back", "leftView", "rightView", "fit"] as View[]).map(
+              (value) => (
+                <button
+                  key={value}
+                  className={view === value ? "active" : ""}
+                  onClick={() => {
+                    if (value === "fit") restoreWholeBody();
+                    else {
+                      setView(value);
+                      setViewTick((x) => x + 1);
+                    }
+                  }}
+                >
+                  {t(locale, value)}
+                </button>
+              ),
+            )}
+          </div>
+          {resources.loading > 0 && (
+            <div className="load-status" role="status">
+              <span className="spinner" />
+              {t(locale, resources.body ? "loadingStructures" : "loading")}
+              {resources.body && ` · ${resources.loading}`}
+            </div>
+          )}
+          {resources.errors > 0 && (
+            <div className="load-error" role="alert">
+              {t(locale, "loadError")}{" "}
+              <button onClick={() => setRetry((x) => x + 1)}>
+                {t(locale, "retry")}
               </button>
-            ),
+            </div>
+          )}
+          {(point || selected) && (
+            <button className="selection-chip" onClick={backToAtlas}>
+              <span className="selection-dot" />
+              <span>
+                {point
+                  ? `${point.code} · ${text(locale, point.name)}`
+                  : text(locale, selected!.name)}
+              </span>
+              <span>↗</span>
+            </button>
           )}
         </div>
-        {resources.loading > 0 && (
-          <div className="load-status" role="status">
-            <span className="spinner" />
-            {t(locale, resources.body ? "loadingStructures" : "loading")}
-            {resources.body && ` · ${resources.loading}`}
-          </div>
-        )}
-        {resources.errors > 0 && (
-          <div className="load-error" role="alert">
-            {t(locale, "loadError")}{" "}
-            <button onClick={() => setRetry((x) => x + 1)}>
-              {t(locale, "retry")}
-            </button>
-          </div>
-        )}
-        {(point || selected) && (
-          <button className="selection-chip" onClick={backToAtlas}>
-            <span className="selection-dot" />
-            <span>
-              {point
-                ? `${point.code} · ${text(locale, point.name)}`
-                : text(locale, selected!.name)}
-            </span>
-            <span>↗</span>
-          </button>
-        )}
+        <LayerControls
+          locale={locale}
+          preset={preset}
+          layers={{
+            skin: showSkin,
+            superficial,
+            deep,
+            points: showPoints,
+            meridians: showMeridians,
+          }}
+          skinOpacity={skinOpacity}
+          onPreset={applyPreset}
+          onLayer={(layer, value) =>
+            ({
+              skin: setShowSkin,
+              superficial: setSuperficial,
+              deep: setDeep,
+              points: setShowPoints,
+              meridians: setShowMeridians,
+            })[layer](value)
+          }
+          onOpacity={setSkinOpacity}
+        />
       </section>
       <nav className="main-nav" aria-label={t(locale, "mode")}>
         {(["atlas", "learning", "records"] as Tab[]).map((value) => (
@@ -546,69 +572,6 @@ function Atlas({
                   onWholeBody={restoreWholeBody}
                 />
               </section>
-            )}
-            {tab !== "records" && (
-              <details className="layer-controls">
-                <summary>{t(locale, "layers")}</summary>
-                <div className="segmented" aria-label={t(locale, "mode")}>
-                  {(["muscles", "acupuncture", "overlay"] as const).map(
-                    (value) => (
-                      <button
-                        key={value}
-                        className={preset === value ? "active" : ""}
-                        onClick={() => applyPreset(value)}
-                      >
-                        {t(locale, value)}
-                      </button>
-                    ),
-                  )}
-                </div>
-                <div className="toggles">
-                  <Toggle
-                    checked={showSkin}
-                    onChange={setShowSkin}
-                    label={t(locale, "body")}
-                  />
-                  <Toggle
-                    checked={superficial}
-                    onChange={setSuperficial}
-                    label={t(locale, "superficial")}
-                  />
-                  <Toggle
-                    checked={deep}
-                    onChange={setDeep}
-                    label={t(locale, "deep")}
-                  />
-                  <Toggle
-                    checked={showPoints}
-                    onChange={setShowPoints}
-                    label={t(locale, "points")}
-                  />
-                  <Toggle
-                    checked={showMeridians}
-                    onChange={setShowMeridians}
-                    label={t(locale, "meridians")}
-                  />
-                </div>
-                {showSkin && (
-                  <label className="field opacity-field">
-                    <span>
-                      {t(locale, "skinOpacity")} ·{" "}
-                      {Math.round(skinOpacity * 100)}%
-                    </span>
-                    <input
-                      type="range"
-                      min="0.05"
-                      max="1"
-                      step="0.05"
-                      value={skinOpacity}
-                      onChange={(event) =>
-                        setSkinOpacity(Number(event.target.value))
-                      }
-                    />
-                  </label>
-                )}
-              </details>
             )}
             {tab === "learning" && directory === "structures" && (
               <>
@@ -882,28 +845,5 @@ function Atlas({
         </aside>
       )}
     </main>
-  );
-}
-function Toggle({
-  checked,
-  onChange,
-  label,
-  disabled = false,
-}: {
-  checked: boolean;
-  onChange: (value: boolean) => void;
-  label: string;
-  disabled?: boolean;
-}) {
-  return (
-    <label className={`toggle ${disabled ? "disabled" : ""}`}>
-      <input
-        type="checkbox"
-        checked={checked}
-        disabled={disabled}
-        onChange={(event) => onChange(event.target.checked)}
-      />
-      <span>{label}</span>
-    </label>
   );
 }

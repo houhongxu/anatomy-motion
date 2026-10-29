@@ -10,6 +10,8 @@ const words = {
   ],
   muscles: ["肌肉", "Muscles"],
   overlay: ["叠加", "Overlay"],
+  layerSuperficial: ["浅层", "Superficial"],
+  layerDeep: ["深层", "Deep"],
   layers: ["图层", "Layers"],
   skinOpacity: ["皮肤不透明度", "Skin opacity"],
   fitness: ["健身", "Fitness"],
