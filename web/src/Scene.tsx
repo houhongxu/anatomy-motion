@@ -6,7 +6,9 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import type { Acupuncture, Catalog, Locale, Point, Vec3 } from "./types";
 import type { ResourceState } from "./resources";
 import { t } from "./i18n";
-export type View = "front" | "back" | "leftView" | "rightView" | "fit";
+import { cameraFit } from "./camera";
+import type { CameraView } from "./camera";
+export type View = CameraView;
 class CanvasBoundary extends Component<
   { children: ReactNode; locale: Locale },
   { failed: boolean }
@@ -60,34 +62,19 @@ function Controls({
       return;
     body.updateMatrixWorld(true);
     const box = new THREE.Box3().setFromObject(body);
-    const center = box.getCenter(new THREE.Vector3());
-    const extent = box.getSize(new THREE.Vector3());
-    const vertical = THREE.MathUtils.degToRad(camera.fov);
-    const horizontal =
-      2 *
-      Math.atan(
-        (Math.tan(vertical / 2) * size.width) / Math.max(1, size.height),
-      );
-    const distance =
-      Math.max(
-        extent.y / (2 * Math.tan(vertical / 2)),
-        Math.max(extent.x, extent.z) / (2 * Math.tan(horizontal / 2)),
-      ) * 1.12;
-    const direction =
-      view === "back"
-        ? new THREE.Vector3(0, 0, -1)
-        : view === "leftView"
-          ? new THREE.Vector3(1, 0, 0)
-          : view === "rightView"
-            ? new THREE.Vector3(-1, 0, 0)
-            : new THREE.Vector3(0, 0, 1);
-    if (view === "fit")
-      direction.copy(camera.position).sub(controls.current.target).normalize();
-    camera.position.copy(center).addScaledVector(direction, distance);
+    const fit = cameraFit(
+      { min: box.min.toArray() as Vec3, max: box.max.toArray() as Vec3 },
+      view,
+      camera.fov,
+      size.width,
+      size.height,
+    );
+    camera.position.set(...fit.position);
+    camera.zoom = 1;
     camera.near = 0.01;
     camera.far = 30;
     camera.updateProjectionMatrix();
-    controls.current.target.copy(center);
+    controls.current.target.set(...fit.center);
     controls.current.update();
     invalidate();
   }, [body, view, viewTick, size.width, size.height, camera, invalidate]);

@@ -21,6 +21,7 @@ export function AtlasSelectionDetails({
   onRecord,
   onClear,
   onWholeBody,
+  canRestoreWholeBody,
 }: {
   structure?: Structure;
   group?: Group;
@@ -34,6 +35,7 @@ export function AtlasSelectionDetails({
   onRecord: () => void;
   onClear: () => void;
   onWholeBody: () => void;
+  canRestoreWholeBody: boolean;
 }) {
   const selected = !!(structure || group || point);
   return (
@@ -42,7 +44,9 @@ export function AtlasSelectionDetails({
         {selected && (
           <button onClick={onClear}>{t(locale, "clearSelection")}</button>
         )}
-        <button onClick={onWholeBody}>{t(locale, "restoreWholeBody")}</button>
+        {canRestoreWholeBody && (
+          <button onClick={onWholeBody}>{t(locale, "restoreWholeBody")}</button>
+        )}
       </div>
       {!selected ? (
         <p className="notice">{t(locale, "clickModelHint")}</p>
