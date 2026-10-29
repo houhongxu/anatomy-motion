@@ -1,5 +1,13 @@
 import type { Locale, Text } from "./types";
 const words = {
+  directory: ["学习目录", "Learning directory"],
+  structureDirectory: ["肌肉/肌腱", "Muscles/tendons"],
+  clearSelection: ["取消选择", "Clear selection"],
+  restoreWholeBody: ["返回全身", "Restore whole body"],
+  clickModelHint: [
+    "点击人体模型中的肌肉或穴位，查看详情及有来源的关联项目。完整目录位于动作与病症。",
+    "Select a muscle or acupoint on the model to view details and sourced associations. Find complete directories in Learn.",
+  ],
   muscles: ["肌肉", "Muscles"],
   overlay: ["叠加", "Overlay"],
   layers: ["图层", "Layers"],
@@ -31,10 +39,10 @@ const words = {
   groups: ["肌群", "Muscle groups"],
   tendons: ["肌腱", "Tendons"],
   superficial: ["浅层肌肉", "Superficial muscles"],
-  deep: ["显示本区域深层", "Show deep in region"],
+  deep: ["显示所选或本区域深层", "Show selected or regional deep muscles"],
   deepHint: [
-    "选择区域后按需加载深层结构。",
-    "Choose a region to load its deep structures.",
+    "全身默认保留浅层；选择深层结构或限定区域后按需加载。",
+    "Whole-body browsing keeps superficial muscles; deep structures load only when selected or within a chosen region.",
   ],
   region: ["区域", "Region"],
   select: ["选择", "Select"],

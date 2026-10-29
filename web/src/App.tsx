@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useReducer, useRef, useState } from "react";
 import type {
   Acupuncture,
   Catalog,
@@ -7,12 +7,9 @@ import type {
   LearningEntry,
   LearningCategory,
   Locale,
-  Point,
-  Structure,
   User,
 } from "./types";
-import { errorText, initialLocale, sourceLabel, t, text } from "./i18n";
-import type { MessageKey } from "./i18n";
+import { initialLocale, t, text } from "./i18n";
 import { learningIds, planResources, presetLayers } from "./planner";
 import {
   entryCategory,
@@ -26,7 +23,15 @@ import { Scene } from "./Scene";
 import type { View } from "./Scene";
 import { Records } from "./Records";
 import { LearningNotice } from "./LearningNotice";
-import { RelatedLearning } from "./RelatedLearning";
+import { AtlasSelectionDetails, Sources } from "./AnatomyDetails";
+import { DirectoryTabs } from "./DirectoryTabs";
+import type { DirectoryKind, SelectionAction } from "./atlas-state";
+import {
+  explorerReducer,
+  initialExplorerState,
+  selectionStructureIds,
+  wholeBodyScope,
+} from "./atlas-state";
 type Tab = "atlas" | "learning" | "records";
 const emptyAcupuncture: Acupuncture = {
   reviewStatus: "",
@@ -117,7 +122,16 @@ function Atlas({
   locale: Locale;
   setLocale: (value: Locale) => void;
 }) {
-  const [tab, setTab] = useState<Tab>("atlas");
+  const [navigation, dispatchNavigation] = useReducer(
+    explorerReducer,
+    initialExplorerState,
+  );
+  const { tab, directory, selection } = navigation;
+  const setTab = (tab: Tab) => dispatchNavigation({ type: "tab", tab });
+  const setDirectory = (directory: DirectoryKind) =>
+    dispatchNavigation({ type: "directory", directory });
+  const dispatchSelection = (action: SelectionAction, openAtlas = false) =>
+    dispatchNavigation({ type: "selection", action, openAtlas });
   const [panel, setPanel] = useState(false);
   const panelContent = useRef<HTMLDivElement>(null);
   const selectionDetails = useRef<HTMLElement>(null);
@@ -126,15 +140,18 @@ function Atlas({
   const [region, setRegion] = useState("all");
   const [superficial, setSuperficial] = useState(true);
   const [deep, setDeep] = useState(false);
-  const [selectedGroup, setSelectedGroup] = useState<Group>();
-  const [selectionKind, setSelectionKind] = useState<
-    "group" | "structure" | "point"
-  >("structure");
-  const [selectedId, setSelectedId] = useState<string>();
+  const selectedIds = selectionStructureIds(selection);
+  const selectedId = selectedIds.find((id) => catalog.structures[id]);
+  const selectedGroup =
+    selection?.kind === "group" ? selection.group : undefined;
+  const pointId = selection?.kind === "point" ? selection.id : undefined;
   const [entry, setEntry] = useState<LearningEntry>();
-  const [learningKind, setLearningKind] = useState<"exercise" | "condition">(
-    "exercise",
-  );
+  const learningKind = directory === "condition" ? "condition" : "exercise";
+  const activeEntry =
+    tab === "learning" &&
+    (directory === "exercise" || directory === "condition")
+      ? entry
+      : undefined;
   const [structureKind, setStructureKind] = useState<"muscle" | "tendon">(
     "muscle",
   );
@@ -147,7 +164,6 @@ function Atlas({
   const [showPoints, setShowPoints] = useState(false);
   const [showMeridians, setShowMeridians] = useState(false);
   const [meridianId, setMeridianId] = useState("all");
-  const [pointId, setPointId] = useState<string>();
   const [view, setView] = useState<View>("front");
   const [viewTick, setViewTick] = useState(0);
   const [retry, setRetry] = useState(0);
@@ -167,9 +183,8 @@ function Atlas({
   }, [panel, tab, selectedId, selectedGroup, pointId, selectionTick]);
 
   const highlighted = useMemo(
-    () =>
-      entry && tab === "learning" ? learningIds(catalog, learning, entry) : [],
-    [entry, tab, catalog, learning],
+    () => (activeEntry ? learningIds(catalog, learning, activeEntry) : []),
+    [activeEntry, catalog, learning],
   );
   const ids = useMemo(
     () =>
@@ -178,9 +193,9 @@ function Atlas({
         region,
         superficial,
         deep,
-        structureIds: selectedGroup?.structureIds,
+        structureIds: selectionStructureIds(selection),
         selectedId,
-        learningEntry: tab === "learning" ? entry : undefined,
+        learningEntry: activeEntry,
         learning,
       }),
     [
@@ -188,10 +203,9 @@ function Atlas({
       region,
       superficial,
       deep,
-      selectedGroup,
+      selection,
       selectedId,
-      entry,
-      tab,
+      activeEntry,
       learning,
     ],
   );
@@ -204,72 +218,64 @@ function Atlas({
   const points = useMemo(
     () =>
       acupuncture.points.filter(
-        (p) =>
-          (normalized || meridianId === "all" || p.meridianId === meridianId) &&
-          (tab !== "atlas" ||
-            `${p.name.zh} ${p.name.en} ${p.code}`
-              .toLocaleLowerCase()
-              .includes(normalized)),
+        (item) => meridianId === "all" || item.meridianId === meridianId,
       ),
-    [acupuncture, meridianId, normalized, tab],
+    [acupuncture, meridianId],
+  );
+  const visiblePoints = acupuncture.points.filter(
+    (item) =>
+      (normalized || meridianId === "all" || item.meridianId === meridianId) &&
+      match(item.name, item.code),
   );
   function selectTab(next: Tab) {
     setPanel(tab === next ? !panel : true);
     setTab(next);
     setSearch("");
-    if (next === "learning" && !entry) {
-      const first = learning.entries.find((e) => e.kind === learningKind);
-      if (first) chooseEntry(first);
-    }
+  }
+  function clearSelection() {
+    dispatchSelection({ type: "clear" });
+    setSelectionTick((value) => value + 1);
+  }
+  function restoreWholeBody() {
+    clearSelection();
+    setRegion(wholeBodyScope.region);
+    setSuperficial(wholeBodyScope.superficial);
+    setDeep(wholeBodyScope.deep);
+    setView("fit");
+    setViewTick((value) => value + 1);
+    backToAtlas();
   }
   function chooseGroup(group: Group) {
     setSelectionTick((value) => value + 1);
-    setSelectionKind("group");
-    setPointId(undefined);
-    setSelectedGroup(group);
-    setStructureKind(
-      catalog.tendons.some((item) => item.id === group.id)
-        ? "tendon"
-        : "muscle",
-    );
-    const structure = catalog.structures[group.structureIds[0]];
-    setSelectedId(structure?.id);
-    const selectedRegion = group.region ?? structure?.region;
-    if (selectedRegion) setRegion(selectedRegion);
-    if (group.layer === "deep" || structure?.layer === "deep") setDeep(true);
-    else setSuperficial(true);
+    dispatchSelection({ type: "group", group }, true);
+    const structures = group.structureIds
+      .map((id) => catalog.structures[id])
+      .filter(Boolean);
+    if (structures.some((structure) => structure.layer === "deep"))
+      setDeep(true);
+    if (structures.some((structure) => structure.layer === "superficial"))
+      setSuperficial(true);
   }
-  function chooseStructure(id: string) {
+  function chooseStructure(id: string, toggle = false, openAtlas = false) {
     const structure = catalog.structures[id];
     if (!structure) return;
     setSelectionTick((value) => value + 1);
-    setSelectionKind("structure");
-    setPointId(undefined);
-    setSelectedGroup(
-      catalog.groups
-        .concat(catalog.tendons)
-        .find((group) => group.structureIds.includes(id)),
-    );
-    setSelectedId(id);
-    setRegion(structure.region);
-    if (structure.layer === "deep") {
-      setDeep(true);
-    } else setSuperficial(true);
+    dispatchSelection({ type: "structure", id, toggle }, openAtlas);
+    if (toggle && selection?.kind === "structure" && selection.id === id)
+      return;
+    if (structure.layer === "deep") setDeep(true);
+    else setSuperficial(true);
   }
   function choosePoint(id: string) {
-    const nextPoint = acupuncture.points.find((item) => item.id === id);
-    if (!nextPoint) return;
+    if (!acupuncture.points.some((item) => item.id === id)) return;
     setSelectionTick((value) => value + 1);
-    setSelectionKind("point");
-    setPointId(id);
-    setSelectedId(undefined);
-    setSelectedGroup(undefined);
+    dispatchSelection({ type: "point", id }, true);
     setShowPoints(true);
     setMeridianId("all");
   }
   function chooseEntry(item: LearningEntry) {
     setEntry(item);
-    setLearningKind(item.kind);
+    setDirectory(item.kind);
     setCategory(entryCategory(item));
     setSearch("");
     setMeridianId("all");
@@ -285,10 +291,9 @@ function Atlas({
     setPanel(true);
   }
   function applyPreset(next: typeof preset) {
-    const selectionIds =
-      tab === "learning" && entry
-        ? learningIds(catalog, learning, entry)
-        : (selectedGroup?.structureIds ?? (selectedId ? [selectedId] : []));
+    const selectionIds = activeEntry
+      ? learningIds(catalog, learning, activeEntry)
+      : selectedIds;
     const layers = presetLayers(
       next,
       selectionIds.map((id) => catalog.structures[id]).filter(Boolean),
@@ -306,17 +311,14 @@ function Atlas({
     point
       ? { pointCode: point.code }
       : {
-          structureIds:
-            selectionKind === "group"
-              ? selectedGroup?.structureIds
-              : selectedId
-                ? [selectedId]
-                : [],
+          structureIds: selectedIds,
         },
   );
-  const relatedPoints = entry ? entryPoints(entry, acupuncture.points) : [];
+  const relatedPoints = activeEntry
+    ? entryPoints(activeEntry, acupuncture.points)
+    : [];
   const scenePoints =
-    tab === "learning" && relatedPoints.length ? acupuncture.points : points;
+    activeEntry && relatedPoints.length ? acupuncture.points : points;
   function backToAtlas() {
     setSelectionTick((value) => value + 1);
     setTab("atlas");
@@ -398,7 +400,7 @@ function Atlas({
           selectedPointId={pointId}
           highlighted={highlighted}
           onStructure={(id) => {
-            chooseStructure(id);
+            chooseStructure(id, true, true);
             backToAtlas();
           }}
           onPoint={(id) => {
@@ -420,8 +422,11 @@ function Atlas({
                 key={value}
                 className={view === value ? "active" : ""}
                 onClick={() => {
-                  setView(value);
-                  setViewTick((x) => x + 1);
+                  if (value === "fit") restoreWholeBody();
+                  else {
+                    setView(value);
+                    setViewTick((x) => x + 1);
+                  }
                 }}
               >
                 {t(locale, value)}
@@ -484,7 +489,22 @@ function Atlas({
             </button>
           </div>
           <div className="panel-content" ref={panelContent}>
-            {tab !== "records" && (
+            {tab === "learning" && (
+              <DirectoryTabs
+                directory={directory}
+                learning={learning}
+                catalog={catalog}
+                acupuncture={acupuncture}
+                locale={locale}
+                onChange={(value) => {
+                  setDirectory(value);
+                  setCategory("all");
+                  setSearch("");
+                  setEntry(undefined);
+                }}
+              />
+            )}
+            {tab === "learning" && (
               <label className="search">
                 <span aria-hidden="true">⌕</span>
                 <input
@@ -496,51 +516,39 @@ function Atlas({
                 />
               </label>
             )}
-            {tab === "atlas" && (point || selected || selectedGroup) && (
+            {tab === "atlas" && (
               <section
                 ref={selectionDetails}
                 tabIndex={-1}
                 className="selected-details"
                 aria-label={t(locale, "details")}
               >
-                {point ? (
-                  <PointDetails
-                    point={point}
-                    acupuncture={acupuncture}
-                    locale={locale}
-                  />
-                ) : selected ? (
-                  <StructureDetails
-                    structure={selected}
-                    locale={locale}
-                    onRecord={() => {
-                      setTab("records");
-                      setSearch("");
-                    }}
-                  />
-                ) : selectedGroup ? (
-                  <article className="detail-card">
-                    <span className="eyebrow">{t(locale, "details")}</span>
-                    <h3>{text(locale, selectedGroup.name)}</h3>
-                    {selectedGroup.missing && (
-                      <p className="missing">
-                        {text(locale, selectedGroup.missing)}
-                      </p>
-                    )}
-                  </article>
-                ) : null}
-                <RelatedLearning
-                  entries={related}
+                <AtlasSelectionDetails
+                  structure={selected}
+                  group={selectedGroup}
+                  groupStructures={selectedGroup?.structureIds
+                    .map((id) => catalog.structures[id])
+                    .filter(Boolean)}
+                  point={point}
+                  acupuncture={acupuncture}
                   locale={locale}
-                  onSelect={chooseEntry}
+                  related={related}
+                  onEntry={chooseEntry}
+                  onStructure={(id) => {
+                    chooseStructure(id, false, true);
+                    backToAtlas();
+                  }}
+                  onRecord={() => {
+                    setTab("records");
+                    setSearch("");
+                  }}
+                  onClear={clearSelection}
+                  onWholeBody={restoreWholeBody}
                 />
               </section>
             )}
             {tab !== "records" && (
-              <details
-                className="layer-controls"
-                open={tab === "atlas" ? true : undefined}
-              >
+              <details className="layer-controls">
                 <summary>{t(locale, "layers")}</summary>
                 <div className="segmented" aria-label={t(locale, "mode")}>
                   {(["muscles", "acupuncture", "overlay"] as const).map(
@@ -568,9 +576,6 @@ function Atlas({
                   />
                   <Toggle
                     checked={deep}
-                    disabled={
-                      region === "all" && !(tab === "learning" && entry)
-                    }
                     onChange={setDeep}
                     label={t(locale, "deep")}
                   />
@@ -605,14 +610,13 @@ function Atlas({
                 )}
               </details>
             )}
-            {tab === "atlas" && (
+            {tab === "learning" && directory === "structures" && (
               <>
                 <div className="segmented">
                   <button
                     className={structureKind === "muscle" ? "active" : ""}
                     onClick={() => {
                       setStructureKind("muscle");
-                      setSelectedGroup(undefined);
                     }}
                   >
                     {t(locale, "groups")}
@@ -621,7 +625,6 @@ function Atlas({
                     className={structureKind === "tendon" ? "active" : ""}
                     onClick={() => {
                       setStructureKind("tendon");
-                      setSelectedGroup(undefined);
                     }}
                   >
                     {t(locale, "tendons")}
@@ -633,8 +636,6 @@ function Atlas({
                     value={region}
                     onChange={(event) => {
                       setRegion(event.target.value);
-                      setSelectedGroup(undefined);
-                      setSelectedId(undefined);
                     }}
                   >
                     <option value="all">{t(locale, "all")}</option>
@@ -653,7 +654,10 @@ function Atlas({
                     <div key={group.id}>
                       <button
                         className={`list-item ${selectedGroup?.id === group.id ? "selected" : ""}`}
-                        onClick={() => chooseGroup(group)}
+                        onClick={() => {
+                          chooseGroup(group);
+                          backToAtlas();
+                        }}
                       >
                         <span>{text(locale, group.name)}</span>
                         <span className="count">
@@ -671,7 +675,10 @@ function Atlas({
                             <button
                               key={s.id}
                               className={`structure-item ${selectedId === s.id ? "selected" : ""}`}
-                              onClick={() => chooseStructure(s.id)}
+                              onClick={() => {
+                                chooseStructure(s.id, false, true);
+                                backToAtlas();
+                              }}
                             >
                               <span>{text(locale, s.name)}</span>
                               <span className="tag">{t(locale, s.side)}</span>
@@ -685,159 +692,126 @@ function Atlas({
                 </div>
               </>
             )}
-            {tab === "learning" && (
-              <>
-                <div className="segmented">
-                  <button
-                    className={learningKind === "exercise" ? "active" : ""}
-                    onClick={() => {
-                      setLearningKind("exercise");
-                      setCategory("all");
-                      setSearch("");
-                      setEntry(undefined);
-                    }}
+            {tab === "learning" &&
+              (directory === "exercise" || directory === "condition") && (
+                <>
+                  <div
+                    className="category-filters"
+                    role="group"
+                    aria-label={t(locale, "filter")}
                   >
-                    {t(locale, "exercises")} (
-                    {
-                      learning.entries.filter(
-                        (item) => item.kind === "exercise",
-                      ).length
-                    }
-                    )
-                  </button>
-                  <button
-                    className={learningKind === "condition" ? "active" : ""}
-                    onClick={() => {
-                      setLearningKind("condition");
-                      setCategory("all");
-                      setSearch("");
-                      setEntry(undefined);
-                    }}
-                  >
-                    {t(locale, "conditions")} (
-                    {
-                      learning.entries.filter(
-                        (item) => item.kind === "condition",
-                      ).length
-                    }
-                    )
-                  </button>
-                </div>
-                <div
-                  className="category-filters"
-                  role="group"
-                  aria-label={t(locale, "filter")}
-                >
-                  {categoryOptions.map((value) => (
-                    <button
-                      key={value}
-                      className={category === value ? "active" : ""}
-                      onClick={() => {
-                        setCategory(value);
-                        if (
-                          entry &&
-                          value !== "all" &&
-                          entryCategory(entry) !== value
+                    {categoryOptions.map((value) => (
+                      <button
+                        key={value}
+                        className={category === value ? "active" : ""}
+                        onClick={() => {
+                          setCategory(value);
+                          if (
+                            entry &&
+                            value !== "all" &&
+                            entryCategory(entry) !== value
+                          )
+                            setEntry(undefined);
+                        }}
+                      >
+                        {t(locale, value)} (
+                        {
+                          filterEntries(learning.entries, learningKind, value)
+                            .length
+                        }
                         )
-                          setEntry(undefined);
-                      }}
-                    >
-                      {t(locale, value)} (
-                      {
-                        filterEntries(learning.entries, learningKind, value)
-                          .length
-                      }
-                      )
+                      </button>
+                    ))}
+                  </div>
+                  <p className="hint">{t(locale, "learningHint")}</p>
+                  {(selected || selectedGroup || point) && (
+                    <button className="text-button" onClick={backToAtlas}>
+                      ← {t(locale, "backSelection")}
                     </button>
-                  ))}
-                </div>
-                <p className="hint">{t(locale, "learningHint")}</p>
-                {(selected || selectedGroup || point) && (
-                  <button className="text-button" onClick={backToAtlas}>
-                    ← {t(locale, "backSelection")}
-                  </button>
-                )}
-                {entry && (
-                  <article className="detail-card learning-detail">
-                    <span className="eyebrow">{t(locale, "selected")}</span>
-                    <h3>{text(locale, entry.name)}</h3>
-                    <p>{text(locale, entry.summary)}</p>
-                    <h4>{t(locale, "affected")}</h4>
-                    {!entry.groupIds.length && (
-                      <p className="hint">{t(locale, "noRelations")}</p>
-                    )}
-                    <div className="tags">
-                      {entry.groupIds
-                        .map((id) => learning.groups.find((g) => g.id === id))
-                        .filter(Boolean)
-                        .map((group) => (
+                  )}
+                  {entry && (
+                    <article className="detail-card learning-detail">
+                      <span className="eyebrow">{t(locale, "selected")}</span>
+                      <h3>{text(locale, entry.name)}</h3>
+                      <p>{text(locale, entry.summary)}</p>
+                      <h4>{t(locale, "affected")}</h4>
+                      {!entry.groupIds.length && (
+                        <p className="hint">{t(locale, "noRelations")}</p>
+                      )}
+                      <div className="tags">
+                        {entry.groupIds
+                          .map((id) => learning.groups.find((g) => g.id === id))
+                          .filter(Boolean)
+                          .map((group) => (
+                            <button
+                              className="tag"
+                              key={group!.id}
+                              onClick={() => {
+                                chooseGroup(group!);
+                                backToAtlas();
+                              }}
+                            >
+                              {text(locale, group!.name)}
+                            </button>
+                          ))}
+                      </div>
+                      <h4>{t(locale, "relatedPoints")}</h4>
+                      <div className="tags">
+                        {relatedPoints.map((item) => (
                           <button
                             className="tag"
-                            key={group!.id}
+                            key={item.id}
                             onClick={() => {
-                              chooseGroup(group!);
+                              choosePoint(item.id);
                               backToAtlas();
                             }}
                           >
-                            {text(locale, group!.name)}
+                            {item.code} · {text(locale, item.name)} ·{" "}
+                            {t(locale, item.side)}
                           </button>
                         ))}
-                    </div>
-                    <h4>{t(locale, "relatedPoints")}</h4>
-                    <div className="tags">
-                      {relatedPoints.map((item) => (
-                        <button
-                          className="tag"
-                          key={item.id}
-                          onClick={() => {
-                            choosePoint(item.id);
-                            backToAtlas();
-                          }}
-                        >
-                          {item.code} · {text(locale, item.name)} ·{" "}
-                          {t(locale, item.side)}
-                        </button>
-                      ))}
-                    </div>
-                    {!relatedPoints.length && (
-                      <p className="hint">{t(locale, "noRelations")}</p>
-                    )}
-                    {entryCategory(entry) === "tcm" && (
-                      <p className="notice">{t(locale, "traditionalNotice")}</p>
-                    )}
-                    <LearningNotice
-                      catalog={catalog}
-                      learning={learning}
-                      entry={entry}
-                      locale={locale}
-                    />
-                    <Sources
-                      locale={locale}
-                      sources={entry.sources.map((s) => ({
-                        title: s.label ? text(locale, s.label) : s.title,
-                        url: s.url,
-                      }))}
-                    />
-                  </article>
-                )}
-                <div className="item-list">
-                  {visibleEntries.map((item) => (
-                    <button
-                      key={item.id}
-                      className={`list-item ${entry?.id === item.id ? "selected" : ""}`}
-                      onClick={() => chooseEntry(item)}
-                    >
-                      <span>{text(locale, item.name)}</span>
-                      <span>↗</span>
-                    </button>
-                  ))}
-                  {!visibleEntries.length && (
-                    <p className="empty">{t(locale, "noResults")}</p>
+                      </div>
+                      {!relatedPoints.length && (
+                        <p className="hint">{t(locale, "noRelations")}</p>
+                      )}
+                      {entryCategory(entry) === "tcm" && (
+                        <p className="notice">
+                          {t(locale, "traditionalNotice")}
+                        </p>
+                      )}
+                      <LearningNotice
+                        catalog={catalog}
+                        learning={learning}
+                        entry={entry}
+                        locale={locale}
+                      />
+                      <Sources
+                        locale={locale}
+                        sources={entry.sources.map((s) => ({
+                          title: s.label ? text(locale, s.label) : s.title,
+                          url: s.url,
+                        }))}
+                      />
+                    </article>
                   )}
-                </div>
-              </>
-            )}
-            {tab === "atlas" && (
+                  <div className="item-list">
+                    {visibleEntries.map((item) => (
+                      <button
+                        key={item.id}
+                        className={`list-item ${entry?.id === item.id ? "selected" : ""}`}
+                        onClick={() => chooseEntry(item)}
+                      >
+                        <span>{text(locale, item.name)}</span>
+                        <span>↗</span>
+                      </button>
+                    ))}
+                    {!visibleEntries.length && (
+                      <p className="empty">{t(locale, "noResults")}</p>
+                    )}
+                  </div>
+                </>
+              )}
+            {tab === "learning" && directory === "points" && (
               <>
                 <p className="notice">{t(locale, "sourceNotice")}</p>
                 <label className="field">
@@ -855,14 +829,17 @@ function Atlas({
                   </select>
                 </label>
                 <p className="hint">
-                  {points.length} {t(locale, "pointsCount")}
+                  {visiblePoints.length} {t(locale, "pointsCount")}
                 </p>
                 <div className="item-list">
-                  {points.map((p) => (
+                  {visiblePoints.map((p) => (
                     <button
                       key={p.id}
                       className={`list-item ${pointId === p.id ? "selected" : ""}`}
-                      onClick={() => choosePoint(p.id)}
+                      onClick={() => {
+                        choosePoint(p.id);
+                        backToAtlas();
+                      }}
                     >
                       <span>
                         <b className="point-code">{p.code}</b>{" "}
@@ -871,7 +848,7 @@ function Atlas({
                       <span className="tag">{t(locale, p.side)}</span>
                     </button>
                   ))}
-                  {!points.length && (
+                  {!visiblePoints.length && (
                     <p className="empty">{t(locale, "noResults")}</p>
                   )}
                 </div>
@@ -883,7 +860,9 @@ function Atlas({
                 locale={locale}
                 user={user}
                 setUser={setUser}
-                selected={selected}
+                selected={
+                  selection?.kind === "structure" ? selected : undefined
+                }
                 onSelect={(id) => {
                   if (catalog.structures[id]) chooseStructure(id);
                 }}
@@ -898,15 +877,6 @@ function Atlas({
                 {t(locale, "sourceModel")}
               </a>
               <p>{t(locale, "modelUnreviewed")}</p>
-              {tab === "atlas" && (
-                <Sources
-                  locale={locale}
-                  sources={acupuncture.sources.map((s) => ({
-                    title: sourceLabel(locale, s.id, s.title),
-                    url: s.url,
-                  }))}
-                />
-              )}
             </footer>
           </div>
         </aside>
@@ -935,86 +905,5 @@ function Toggle({
       />
       <span>{label}</span>
     </label>
-  );
-}
-function Sources({
-  locale,
-  sources,
-}: {
-  locale: Locale;
-  sources: { title: string; url: string }[];
-}) {
-  return (
-    <div className="sources">
-      <h4>{t(locale, "source")}</h4>
-      {sources.map((s) => (
-        <a key={s.url} href={s.url} target="_blank" rel="noreferrer">
-          {s.title} ↗
-        </a>
-      ))}
-    </div>
-  );
-}
-function StructureDetails({
-  structure,
-  locale,
-  onRecord,
-}: {
-  structure: Structure;
-  locale: Locale;
-  onRecord: () => void;
-}) {
-  return (
-    <article className="detail-card">
-      <span className="eyebrow">{t(locale, "details")}</span>
-      <h3>{text(locale, structure.name)}</h3>
-      <div className="tags">
-        <span className="tag">{t(locale, structure.side)}</span>
-        <span className="tag">
-          {t(locale, structure.layer === "deep" ? "deep" : "superficial")}
-        </span>
-        <span className="tag">{structure.id}</span>
-      </div>
-      <button className="primary wide" onClick={onRecord}>
-        {t(locale, "newRecord")}
-      </button>
-    </article>
-  );
-}
-function PointDetails({
-  point,
-  acupuncture,
-  locale,
-}: {
-  point: Point;
-  acupuncture: Acupuncture;
-  locale: Locale;
-}) {
-  return (
-    <article className="detail-card">
-      <span className="badge">{t(locale, "unreviewed")}</span>
-      <h3>
-        {point.code} · {text(locale, point.name)}
-      </h3>
-      <p>
-        {text(locale, point.region)} · {t(locale, point.side)}
-      </p>
-      <h4>{t(locale, "landmark")}</h4>
-      <p>{text(locale, point.landmark)}</p>
-      {point.sourcePages?.length ? (
-        <p className="hint">
-          {t(locale, "pages")} {point.sourcePages.join(", ")}
-        </p>
-      ) : null}
-      <Sources
-        locale={locale}
-        sources={acupuncture.sources
-          .filter((s) => point.sourceIds.includes(s.id))
-          .map((s) => ({
-            title: sourceLabel(locale, s.id, s.title),
-            url: s.url,
-          }))}
-      />
-    </article>
   );
 }

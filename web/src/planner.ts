@@ -90,42 +90,35 @@ export function learningCoverage(
   });
 }
 export function planResources(catalog: Catalog, input: PlanInput): string[] {
-  if (input.learningEntry && input.learning)
-    return learningIds(catalog, input.learning, input.learningEntry).filter(
-      (id) =>
-        catalog.structures[id].layer === "deep"
-          ? input.deep
-          : input.superficial,
-    );
-  const explicit = input.groupIds?.length
-    ? catalog.groups
-        .concat(catalog.tendons)
-        .filter((g) => input.groupIds!.includes(g.id))
-        .flatMap((g) => g.structureIds)
-    : [];
-  const ids =
-    input.structureIds !== undefined
-      ? input.structureIds
-      : input.groupIds?.length
-        ? explicit
-        : input.region === "all"
-          ? catalog.initialStructureIds
-          : Object.values(catalog.structures)
-              .filter((s) => s.region === input.region)
-              .map((s) => s.id);
-  const selected = input.selectedId && catalog.structures[input.selectedId];
-  const matching = allowedIds(catalog, ids).filter((id) => {
-    const s = catalog.structures[id];
-    return s.layer === "deep"
-      ? input.deep && input.region !== "all" && s.region === input.region
-      : input.superficial;
-  });
-  const selectedVisible =
-    selected && (selected.layer === "deep" ? input.deep : input.superficial);
-  return allowedIds(
+  const visibleLayer = (id: string) =>
+    catalog.structures[id].layer === "deep" ? input.deep : input.superficial;
+  const baseline = allowedIds(
     catalog,
-    selectedVisible ? [...matching, selected.id] : matching,
+    input.region === "all"
+      ? catalog.initialStructureIds
+      : Object.values(catalog.structures)
+          .filter((structure) => structure.region === input.region)
+          .map((structure) => structure.id),
+  ).filter(
+    (id) =>
+      visibleLayer(id) &&
+      (catalog.structures[id].layer !== "deep" || input.region !== "all"),
   );
+  const groups = catalog.groups
+    .concat(catalog.tendons)
+    .filter((group) => input.groupIds?.includes(group.id))
+    .flatMap((group) => group.structureIds);
+  const learning =
+    input.learningEntry && input.learning
+      ? learningIds(catalog, input.learning, input.learningEntry)
+      : [];
+  const selection = allowedIds(catalog, [
+    ...groups,
+    ...(input.structureIds ?? []),
+    ...(input.selectedId ? [input.selectedId] : []),
+    ...learning,
+  ]).filter(visibleLayer);
+  return allowedIds(catalog, [...baseline, ...selection]);
 }
 export function recordPayload(
   record: Pick<

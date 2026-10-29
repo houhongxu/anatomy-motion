@@ -118,7 +118,7 @@ describe("按需资源规划 / on-demand resource planning", () => {
         learning,
         learningEntry: entry,
       }),
-    ).toEqual(["deep"]);
+    ).toEqual(["surface", "deep"]);
     expect(catalog.assets.body.url).toBe("/models/web/body.glb");
   });
   it("叠加穴位不改变按需肌肉计划 / overlay keeps the same lazy muscle plan", () => {
@@ -157,22 +157,22 @@ describe("按需资源规划 / on-demand resource planning", () => {
         learningEntry: entry,
         deep: true,
       }),
-    ).toEqual(["deep", "right"]);
+    ).toEqual(["surface", "deep", "right"]);
     expect(
       planResources(catalog, { ...base, learning, learningEntry: entry }),
-    ).toEqual(["right"]);
+    ).toEqual(["surface", "right"]);
     expect(
       planResources(catalog, {
         ...base,
         learning,
         learningEntry: { ...entry, groupIds: [] },
       }),
-    ).toEqual([]);
+    ).toEqual(["surface"]);
   });
   it("学习肌群的显式结构可用于图谱导航 / mapped group IDs navigate through explicit geometry", () => {
     expect(
       planResources(catalog, { ...base, structureIds: ["right"] }),
-    ).toEqual(["right"]);
+    ).toEqual(["surface", "right"]);
   });
   it("关闭浅层不残留浅层计划 / disabling superficial removes its geometry", () => {
     expect(planResources(catalog, { ...base, superficial: false })).toEqual([]);
@@ -191,7 +191,7 @@ describe("保留所选结构的预设 / presets preserve the selected structure"
           structureIds: ["deep"],
           selectedId: "deep",
         }),
-      ).toEqual(["deep"]);
+      ).toEqual(["surface", "deep"]);
     }
     expect(presetLayers("overlay").deep).toBe(false);
     expect(presetLayers("overlay").skinOpacity).toBe(0.3);
@@ -222,7 +222,7 @@ describe("保留所选结构的预设 / presets preserve the selected structure"
         structureIds: ["deep"],
         selectedId: "deep",
       }),
-    ).toEqual([]);
+    ).toEqual(["surface"]);
   });
 });
 describe("记录兼容 / record compatibility", () => {

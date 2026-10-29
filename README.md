@@ -8,14 +8,14 @@ A mobile-first React + Three.js / React Three Fiber atlas centered on a complete
 
 - 先显示低精度完整人体，随后渐进加载主要浅层肌肉；区域和深层结构按需下载独立压缩GLB，不预取目录外精细肌肉。
 - 点击动作或病症只加载关联白名单结构，始终保留全身背景；关联用于解剖学习，不能判断疼痛病因。
-- 肌肉与穴位合并为“人体图谱”，支持肌肉／穴位／叠加预设、独立图层及皮肤透明度；皮肤仍按需加载。统一搜索定位肌肉或穴位。14类经络、56穴位代码／104侧别点仍未经专业审核。
+- 肌肉与穴位合并为“人体图谱”，支持肌肉／穴位／叠加预设、独立图层及皮肤透明度；皮肤仍按需加载。“动作与病症”集中提供动作、病症、肌肉/肌腱和穴位目录；人体图谱侧栏显示当前选择的详情与关联项目。选择不缩小浏览范围，并支持取消选择、返回全身。14类经络、56穴位代码／104侧别点仍未经专业审核。
 - 学习目录区分健身／拉伸、西医／中医。肌肉与穴位详情反查有来源的相关条目，条目可返回对应结构或穴位；没有依据的关联明确留空，中医分类表示传统或补充医学资料，不代表病症只属于某一医学体系。
 - 旋转、缩放、点选高亮及正背侧视图；静止时按需渲染。亮色布局，手机与PC尽量保留模型空间，中英文单语言切换。
 - 注册／登录、肌肉和肌腱左右侧每日酸痛记录、历史日期筛选、编辑、确认删除。复用原Express/SQLite API、会话和稳定结构ID；旧目录外记录可管理，但不会因此下载其模型。
 
 - Show a low-detail whole body first, then progressively load major superficial muscles. Download independent compressed GLBs for requested regions/depths, without prefetching out-of-scope fine muscles.
 - Exercise/condition selection loads only mapped whitelist structures while retaining whole-body context. Associations explain anatomy, not pain causes.
-- Muscles and acupoints share one atlas with muscle/point/overlay presets, independent layers and skin opacity. Skin still loads on demand; unified search locates muscles or points. The14 meridian categories and56 point codes/104 sided instances remain professionally unreviewed.
+- Muscles and acupoints share one atlas with muscle/point/overlay presets, independent layers and skin opacity. Skin still loads on demand. The Actions & Conditions section contains exercise, condition, muscle/tendon and acupoint directories; the atlas sidebar shows only current details and related entries. Selection preserves the browsing scope, with clear-selection and full-body controls. The14 meridian categories and56 point codes/104 sided instances remain professionally unreviewed.
 - Learning separates fitness/stretching and Western/TCM references. Muscle and point details show sourced related entries, with links back to anatomy or points. Unsupported associations remain empty; TCM identifies a traditional/complementary framework, not exclusive ownership of a symptom.
 - Orbit, zoom, selection, highlights and front/back/side views; demand rendering while idle. Light model-first layouts and one UI language at a time on phone and desktop.
 - Account authentication, side-specific daily muscle/tendon journals, date filters, editing and confirmed deletion reuse Express/SQLite APIs, sessions and stable IDs. Older out-of-scope records stay manageable without downloading their models.
