@@ -4,13 +4,30 @@ import type {
   LearningEntry,
   Side,
   SorenessRecord,
+  Structure,
 } from "./types";
+export type AtlasPreset = "muscles" | "acupuncture" | "overlay";
+export function presetLayers(
+  preset: AtlasPreset,
+  selection: Pick<Structure, "layer">[] = [],
+) {
+  const muscles = preset !== "acupuncture";
+  return {
+    superficial: muscles,
+    deep: muscles && selection.some((structure) => structure.layer === "deep"),
+    showSkin: preset !== "muscles",
+    skinOpacity: preset === "acupuncture" ? 0.65 : 0.3,
+    showPoints: preset !== "muscles",
+    showMeridians: preset !== "muscles",
+  };
+}
 export type PlanInput = {
   mode: "muscles" | "acupuncture";
   region: string;
   superficial: boolean;
   deep: boolean;
   groupIds?: string[];
+  structureIds?: string[];
   selectedId?: string;
   learningEntry?: LearningEntry;
   learning?: Learning;
@@ -73,22 +90,29 @@ export function learningCoverage(
   });
 }
 export function planResources(catalog: Catalog, input: PlanInput): string[] {
-  if (input.mode === "acupuncture") return [];
   if (input.learningEntry && input.learning)
-    return learningIds(catalog, input.learning, input.learningEntry);
+    return learningIds(catalog, input.learning, input.learningEntry).filter(
+      (id) =>
+        catalog.structures[id].layer === "deep"
+          ? input.deep
+          : input.superficial,
+    );
   const explicit = input.groupIds?.length
     ? catalog.groups
         .concat(catalog.tendons)
         .filter((g) => input.groupIds!.includes(g.id))
         .flatMap((g) => g.structureIds)
     : [];
-  const ids = input.groupIds?.length
-    ? explicit
-    : input.region === "all"
-      ? catalog.initialStructureIds
-      : Object.values(catalog.structures)
-          .filter((s) => s.region === input.region)
-          .map((s) => s.id);
+  const ids =
+    input.structureIds !== undefined
+      ? input.structureIds
+      : input.groupIds?.length
+        ? explicit
+        : input.region === "all"
+          ? catalog.initialStructureIds
+          : Object.values(catalog.structures)
+              .filter((s) => s.region === input.region)
+              .map((s) => s.id);
   const selected = input.selectedId && catalog.structures[input.selectedId];
   const matching = allowedIds(catalog, ids).filter((id) => {
     const s = catalog.structures[id];
@@ -96,7 +120,12 @@ export function planResources(catalog: Catalog, input: PlanInput): string[] {
       ? input.deep && input.region !== "all" && s.region === input.region
       : input.superficial;
   });
-  return allowedIds(catalog, selected ? [...matching, selected.id] : matching);
+  const selectedVisible =
+    selected && (selected.layer === "deep" ? input.deep : input.superficial);
+  return allowedIds(
+    catalog,
+    selectedVisible ? [...matching, selected.id] : matching,
+  );
 }
 export function recordPayload(
   record: Pick<

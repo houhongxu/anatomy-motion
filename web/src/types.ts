@@ -29,9 +29,12 @@ export type Catalog = {
   tendons: Group[];
   assets: { body: { url: string }; skin: { url: string } };
 };
+export type LearningCategory = "fitness" | "stretching" | "western" | "tcm";
 export type LearningEntry = {
   id: string;
   kind: "exercise" | "condition";
+  category?: LearningCategory;
+  acupointCodes?: string[];
   name: Text;
   summary: Text;
   notice?: Text;

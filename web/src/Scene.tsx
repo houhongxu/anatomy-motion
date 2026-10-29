@@ -174,8 +174,9 @@ function SceneContent({
   catalog,
   resources,
   acupuncture,
-  acuMode,
   showSkin,
+  skinOpacity,
+  highlightedPointIds,
   showPoints,
   showMeridians,
   points,
@@ -196,6 +197,8 @@ function SceneContent({
     selectedId,
     selectedPointId,
     highlighted,
+    highlightedPointIds,
+    skinOpacity,
     showSkin,
     showPoints,
     showMeridians,
@@ -209,36 +212,30 @@ function SceneContent({
       <directionalLight position={[3, 4, 5]} intensity={2.5} />
       <directionalLight position={[-3, 2, -4]} intensity={1.5} />
       {resources.body && (
+        <Model object={resources.body} color="#c2ccd5" opacity={0.16} />
+      )}
+      {showSkin && resources.skin && (
+        <Model object={resources.skin} color="#dec2aa" opacity={skinOpacity} />
+      )}
+      {[...resources.structures].map(([id, object]) => (
         <Model
-          object={resources.body}
-          color={acuMode ? "#ddc0aa" : "#c2ccd5"}
-          opacity={acuMode && showSkin ? 1 : 0.16}
-        />
-      )}
-      {acuMode && showSkin && resources.skin && (
-        <Model object={resources.skin} color="#dec2aa" />
-      )}
-      {!acuMode &&
-        [...resources.structures].map(([id, object]) => (
-          <Model
-            key={id}
-            object={object}
-            color={
-              selectedId === id
+          key={id}
+          object={object}
+          color={
+            selectedId === id
+              ? "#ef5c36"
+              : highlighted?.includes(id)
                 ? "#ef5c36"
-                : highlighted?.includes(id)
-                  ? "#ef5c36"
-                  : catalog.structures[id].kind === "tendon"
-                    ? "#d1b37a"
-                    : catalog.structures[id].layer === "deep"
-                      ? "#c87778"
-                      : "#b25160"
-            }
-            onSelect={() => onStructure(id)}
-          />
-        ))}
-      {acuMode &&
-        showMeridians &&
+                : catalog.structures[id].kind === "tendon"
+                  ? "#d1b37a"
+                  : catalog.structures[id].layer === "deep"
+                    ? "#c87778"
+                    : "#b25160"
+          }
+          onSelect={() => onStructure(id)}
+        />
+      ))}
+      {showMeridians &&
         acupuncture.meridians
           .filter((m) => meridianId === "all" || m.id === meridianId)
           .flatMap((m) =>
@@ -250,8 +247,7 @@ function SceneContent({
               />
             )),
           )}
-      {acuMode &&
-        showPoints &&
+      {showPoints &&
         points.map((point) => (
           <mesh
             key={point.id}
@@ -262,10 +258,22 @@ function SceneContent({
             }}
           >
             <sphereGeometry
-              args={[point.id === selectedPointId ? 0.013 : 0.008, 12, 8]}
+              args={[
+                point.id === selectedPointId ||
+                highlightedPointIds?.includes(point.id)
+                  ? 0.013
+                  : 0.008,
+                12,
+                8,
+              ]}
             />
             <meshBasicMaterial
-              color={point.id === selectedPointId ? "#ed5b32" : "#3678ac"}
+              color={
+                point.id === selectedPointId ||
+                highlightedPointIds?.includes(point.id)
+                  ? "#ed5b32"
+                  : "#3678ac"
+              }
             />
           </mesh>
         ))}
@@ -277,8 +285,9 @@ export type SceneProps = {
   catalog: Catalog;
   resources: ResourceState;
   acupuncture: Acupuncture;
-  acuMode: boolean;
   showSkin: boolean;
+  skinOpacity: number;
+  highlightedPointIds?: string[];
   showPoints: boolean;
   showMeridians: boolean;
   points: Point[];

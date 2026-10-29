@@ -433,6 +433,39 @@
         "zh": "来源没有该肌腱的独立网格，无法单独高亮。",
         "en": "The source has no separate mesh for this tendon; it cannot be highlighted."
       }
+    },
+    {
+      "id": "gluteus-medius",
+      "name": {
+        "zh": "臀中肌",
+        "en": "Gluteus medius"
+      },
+      "structureIds": [
+        "FJ1419",
+        "FJ1419M"
+      ]
+    },
+    {
+      "id": "piriformis",
+      "name": {
+        "zh": "梨状肌",
+        "en": "Piriformis"
+      },
+      "structureIds": [
+        "FJ1428",
+        "FJ1428M"
+      ]
+    },
+    {
+      "id": "teres-minor",
+      "name": {
+        "zh": "小圆肌",
+        "en": "Teres minor"
+      },
+      "structureIds": [
+        "FJ1508",
+        "FJ1508M"
+      ]
     }
   ],
   "entries": [
@@ -461,7 +494,9 @@
           },
           "url": "https://www.nasm.org/resource-center/exercise-library/push-up"
         }
-      ]
+      ],
+      "category": "fitness",
+      "acupointCodes": []
     },
     {
       "id": "barbell-bench-press",
@@ -488,7 +523,9 @@
           },
           "url": "https://www.nasm.org/resource-center/exercise-library/barbell-bench-press"
         }
-      ]
+      ],
+      "category": "fitness",
+      "acupointCodes": []
     },
     {
       "id": "cable-crossover",
@@ -514,7 +551,9 @@
           },
           "url": "https://www.nasm.org/resource-center/exercise-library/cable-crossover"
         }
-      ]
+      ],
+      "category": "fitness",
+      "acupointCodes": []
     },
     {
       "id": "chest-press-machine",
@@ -541,7 +580,9 @@
           },
           "url": "https://www.nasm.org/resource-center/exercise-library/chest-press-machine"
         }
-      ]
+      ],
+      "category": "fitness",
+      "acupointCodes": []
     },
     {
       "id": "close-grip-bench-press",
@@ -568,7 +609,9 @@
           },
           "url": "https://www.nasm.org/resource-center/exercise-library/close-grip-bench-press"
         }
-      ]
+      ],
+      "category": "fitness",
+      "acupointCodes": []
     },
     {
       "id": "barbell-bicep-curl",
@@ -593,7 +636,9 @@
           },
           "url": "https://www.nasm.org/resource-center/exercise-library/barbell-bicep-curl"
         }
-      ]
+      ],
+      "category": "fitness",
+      "acupointCodes": []
     },
     {
       "id": "pike-push-up",
@@ -620,7 +665,9 @@
           },
           "url": "https://www.nasm.org/resource-center/exercise-library/pike-push-up"
         }
-      ]
+      ],
+      "category": "fitness",
+      "acupointCodes": []
     },
     {
       "id": "face-pull",
@@ -648,7 +695,9 @@
           },
           "url": "https://www.nasm.org/resource-center/exercise-library/face-pull"
         }
-      ]
+      ],
+      "category": "fitness",
+      "acupointCodes": []
     },
     {
       "id": "pull-up",
@@ -677,7 +726,9 @@
           },
           "url": "https://www.nasm.org/resource-center/exercise-library/pull-up"
         }
-      ]
+      ],
+      "category": "fitness",
+      "acupointCodes": []
     },
     {
       "id": "seated-machine-row-close-grip",
@@ -706,7 +757,9 @@
           },
           "url": "https://www.nasm.org/resource-center/exercise-library/seated-machine-row-close-grip"
         }
-      ]
+      ],
+      "category": "fitness",
+      "acupointCodes": []
     },
     {
       "id": "goblet-squat",
@@ -733,7 +786,9 @@
           },
           "url": "https://www.nasm.org/resource-center/exercise-library/goblet-squat"
         }
-      ]
+      ],
+      "category": "fitness",
+      "acupointCodes": []
     },
     {
       "id": "dumbbell-front-squat",
@@ -765,7 +820,9 @@
       "notice": {
         "zh": "部分相关结构缺少来源网格；高亮仅展示已有结构，不能代表完整肌肉参与情况。",
         "en": "Some involved structures lack source meshes. Highlights show available structures, not complete muscle involvement."
-      }
+      },
+      "category": "fitness",
+      "acupointCodes": []
     },
     {
       "id": "bulgarian-split-squat",
@@ -792,7 +849,9 @@
           },
           "url": "https://www.nasm.org/resource-center/exercise-library/bulgarian-split-squat"
         }
-      ]
+      ],
+      "category": "fitness",
+      "acupointCodes": []
     },
     {
       "id": "leg-press",
@@ -819,7 +878,9 @@
           },
           "url": "https://www.nasm.org/resource-center/exercise-library/leg-press"
         }
-      ]
+      ],
+      "category": "fitness",
+      "acupointCodes": []
     },
     {
       "id": "barbell-deadlift",
@@ -849,7 +910,9 @@
           },
           "url": "https://www.nasm.org/resource-center/exercise-library/barbell-deadlift"
         }
-      ]
+      ],
+      "category": "fitness",
+      "acupointCodes": []
     },
     {
       "id": "dumbbell-romanian-deadlift",
@@ -876,7 +939,9 @@
           },
           "url": "https://www.nasm.org/resource-center/exercise-library/dumbbell-romanian-deadlift"
         }
-      ]
+      ],
+      "category": "fitness",
+      "acupointCodes": []
     },
     {
       "id": "lying-leg-curl",
@@ -902,7 +967,9 @@
           },
           "url": "https://www.nasm.org/resource-center/exercise-library/lying-leg-curl"
         }
-      ]
+      ],
+      "category": "fitness",
+      "acupointCodes": []
     },
     {
       "id": "floor-bridge",
@@ -929,7 +996,9 @@
           },
           "url": "https://www.nasm.org/resource-center/exercise-library/floor-bridge"
         }
-      ]
+      ],
+      "category": "fitness",
+      "acupointCodes": []
     },
     {
       "id": "good-mornings",
@@ -956,7 +1025,9 @@
           },
           "url": "https://www.nasm.org/resource-center/exercise-library/good-mornings"
         }
-      ]
+      ],
+      "category": "fitness",
+      "acupointCodes": []
     },
     {
       "id": "leg-press-calf-raise",
@@ -982,7 +1053,9 @@
           },
           "url": "https://www.nasm.org/resource-center/exercise-library/leg-press-calf-raise"
         }
-      ]
+      ],
+      "category": "fitness",
+      "acupointCodes": []
     },
     {
       "id": "plank",
@@ -1014,7 +1087,9 @@
       "notice": {
         "zh": "部分相关结构缺少来源网格；高亮仅展示已有结构，不能代表完整肌肉参与情况。",
         "en": "Some involved structures lack source meshes. Highlights show available structures, not complete muscle involvement."
-      }
+      },
+      "category": "fitness",
+      "acupointCodes": []
     },
     {
       "id": "side-plank",
@@ -1040,7 +1115,9 @@
           },
           "url": "https://www.nasm.org/resource-center/exercise-library/side-plank"
         }
-      ]
+      ],
+      "category": "fitness",
+      "acupointCodes": []
     },
     {
       "id": "bird-dog",
@@ -1081,7 +1158,9 @@
       "notice": {
         "zh": "部分相关结构缺少来源网格；高亮仅展示已有结构，不能代表完整肌肉参与情况。",
         "en": "Some involved structures lack source meshes. Highlights show available structures, not complete muscle involvement."
-      }
+      },
+      "category": "fitness",
+      "acupointCodes": []
     },
     {
       "id": "dead-bug",
@@ -1112,7 +1191,9 @@
       "notice": {
         "zh": "部分相关结构缺少来源网格；高亮仅展示已有结构，不能代表完整肌肉参与情况。",
         "en": "Some involved structures lack source meshes. Highlights show available structures, not complete muscle involvement."
-      }
+      },
+      "category": "fitness",
+      "acupointCodes": []
     },
     {
       "id": "russian-twist",
@@ -1143,7 +1224,9 @@
       "notice": {
         "zh": "部分相关结构缺少来源网格；高亮仅展示已有结构，不能代表完整肌肉参与情况。",
         "en": "Some involved structures lack source meshes. Highlights show available structures, not complete muscle involvement."
-      }
+      },
+      "category": "fitness",
+      "acupointCodes": []
     },
     {
       "id": "hamstring-strain",
@@ -1172,7 +1255,9 @@
       "notice": {
         "zh": "用于解剖学习，不据酸痛位置诊断。若肌腱网格缺失，相关肌肉高亮仅作解剖背景。",
         "en": "For anatomy learning, not diagnosis from soreness location. If a tendon mesh is absent, muscle highlights provide anatomical context only."
-      }
+      },
+      "category": "western",
+      "acupointCodes": []
     },
     {
       "id": "quadriceps-strain",
@@ -1201,7 +1286,9 @@
       "notice": {
         "zh": "用于解剖学习，不据酸痛位置诊断。若肌腱网格缺失，相关肌肉高亮仅作解剖背景。",
         "en": "For anatomy learning, not diagnosis from soreness location. If a tendon mesh is absent, muscle highlights provide anatomical context only."
-      }
+      },
+      "category": "western",
+      "acupointCodes": []
     },
     {
       "id": "groin-adductor-strain",
@@ -1230,7 +1317,9 @@
       "notice": {
         "zh": "用于解剖学习，不据酸痛位置诊断。若肌腱网格缺失，相关肌肉高亮仅作解剖背景。",
         "en": "For anatomy learning, not diagnosis from soreness location. If a tendon mesh is absent, muscle highlights provide anatomical context only."
-      }
+      },
+      "category": "western",
+      "acupointCodes": []
     },
     {
       "id": "calf-strain",
@@ -1260,7 +1349,9 @@
       "notice": {
         "zh": "用于解剖学习，不据酸痛位置诊断。若肌腱网格缺失，相关肌肉高亮仅作解剖背景。",
         "en": "For anatomy learning, not diagnosis from soreness location. If a tendon mesh is absent, muscle highlights provide anatomical context only."
-      }
+      },
+      "category": "western",
+      "acupointCodes": []
     },
     {
       "id": "achilles-tendinopathy",
@@ -1289,7 +1380,9 @@
       "notice": {
         "zh": "用于解剖学习，不据酸痛位置诊断。若肌腱网格缺失，相关肌肉高亮仅作解剖背景。",
         "en": "For anatomy learning, not diagnosis from soreness location. If a tendon mesh is absent, muscle highlights provide anatomical context only."
-      }
+      },
+      "category": "western",
+      "acupointCodes": []
     },
     {
       "id": "patellar-tendinopathy",
@@ -1319,7 +1412,9 @@
       "notice": {
         "zh": "用于解剖学习，不据酸痛位置诊断。若肌腱网格缺失，相关肌肉高亮仅作解剖背景。",
         "en": "For anatomy learning, not diagnosis from soreness location. If a tendon mesh is absent, muscle highlights provide anatomical context only."
-      }
+      },
+      "category": "western",
+      "acupointCodes": []
     },
     {
       "id": "biceps-tendinitis",
@@ -1349,7 +1444,9 @@
       "notice": {
         "zh": "用于解剖学习，不据酸痛位置诊断。若肌腱网格缺失，相关肌肉高亮仅作解剖背景。",
         "en": "For anatomy learning, not diagnosis from soreness location. If a tendon mesh is absent, muscle highlights provide anatomical context only."
-      }
+      },
+      "category": "western",
+      "acupointCodes": []
     },
     {
       "id": "rotator-cuff-tendinitis",
@@ -1379,7 +1476,9 @@
       "notice": {
         "zh": "用于解剖学习，不据酸痛位置诊断。若肌腱网格缺失，相关肌肉高亮仅作解剖背景。",
         "en": "For anatomy learning, not diagnosis from soreness location. If a tendon mesh is absent, muscle highlights provide anatomical context only."
-      }
+      },
+      "category": "western",
+      "acupointCodes": []
     },
     {
       "id": "tennis-elbow",
@@ -1409,7 +1508,9 @@
       "notice": {
         "zh": "用于解剖学习，不据酸痛位置诊断。若肌腱网格缺失，相关肌肉高亮仅作解剖背景。",
         "en": "For anatomy learning, not diagnosis from soreness location. If a tendon mesh is absent, muscle highlights provide anatomical context only."
-      }
+      },
+      "category": "western",
+      "acupointCodes": []
     },
     {
       "id": "golfers-elbow",
@@ -1439,6 +1540,776 @@
       "notice": {
         "zh": "用于解剖学习，不据酸痛位置诊断。若肌腱网格缺失，相关肌肉高亮仅作解剖背景。",
         "en": "For anatomy learning, not diagnosis from soreness location. If a tendon mesh is absent, muscle highlights provide anatomical context only."
+      },
+      "category": "western",
+      "acupointCodes": []
+    },
+    {
+      "id": "crossover-arm-stretch",
+      "kind": "exercise",
+      "category": "stretching",
+      "name": {
+        "zh": "横臂肩后侧拉伸",
+        "en": "Crossover arm stretch"
+      },
+      "summary": {
+        "zh": "横臂动作关联三角肌后束。",
+        "en": "The cross-body movement relates to posterior deltoid."
+      },
+      "groupIds": [
+        "deltoid-posterior"
+      ],
+      "acupointCodes": [],
+      "sources": [
+        {
+          "title": "AAOS — Rotator Cuff and Shoulder Conditioning Program",
+          "label": {
+            "zh": "AAOS：肩袖与肩部训练",
+            "en": "AAOS — Rotator Cuff and Shoulder Conditioning Program"
+          },
+          "url": "https://www.orthoinfo.org/recovery/rotator-cuff-and-shoulder-conditioning-program/"
+        }
+      ],
+      "notice": {
+        "zh": "用于解剖学习；伤后或术后训练应由医生或物理治疗师指导，出现疼痛应停止并咨询。",
+        "en": "For anatomy learning. Seek clinician or physical therapist guidance after injury or surgery; stop and consult them if movement hurts."
+      }
+    },
+    {
+      "id": "passive-shoulder-external-rotation-stretch",
+      "kind": "exercise",
+      "category": "stretching",
+      "name": {
+        "zh": "肩被动外旋拉伸",
+        "en": "Passive shoulder external rotation stretch"
+      },
+      "summary": {
+        "zh": "来源将冈下肌和小圆肌列为此拉伸的相关结构。",
+        "en": "The source names infraspinatus and teres minor for this stretch."
+      },
+      "groupIds": [
+        "infraspinatus-muscle",
+        "teres-minor"
+      ],
+      "acupointCodes": [],
+      "sources": [
+        {
+          "title": "AAOS — Rotator Cuff and Shoulder Conditioning Program",
+          "label": {
+            "zh": "AAOS：肩袖与肩部训练",
+            "en": "AAOS — Rotator Cuff and Shoulder Conditioning Program"
+          },
+          "url": "https://www.orthoinfo.org/recovery/rotator-cuff-and-shoulder-conditioning-program/"
+        }
+      ],
+      "notice": {
+        "zh": "用于解剖学习；伤后或术后训练应由医生或物理治疗师指导，出现疼痛应停止并咨询。",
+        "en": "For anatomy learning. Seek clinician or physical therapist guidance after injury or surgery; stop and consult them if movement hurts."
+      }
+    },
+    {
+      "id": "sleeper-stretch",
+      "kind": "exercise",
+      "category": "stretching",
+      "name": {
+        "zh": "侧卧肩内旋拉伸",
+        "en": "Sleeper stretch"
+      },
+      "summary": {
+        "zh": "侧卧肩部拉伸关联冈下肌与小圆肌。",
+        "en": "This side-lying shoulder stretch relates to infraspinatus and teres minor."
+      },
+      "groupIds": [
+        "infraspinatus-muscle",
+        "teres-minor"
+      ],
+      "acupointCodes": [],
+      "sources": [
+        {
+          "title": "AAOS — Rotator Cuff and Shoulder Conditioning Program",
+          "label": {
+            "zh": "AAOS：肩袖与肩部训练",
+            "en": "AAOS — Rotator Cuff and Shoulder Conditioning Program"
+          },
+          "url": "https://www.orthoinfo.org/recovery/rotator-cuff-and-shoulder-conditioning-program/"
+        }
+      ],
+      "notice": {
+        "zh": "用于解剖学习；伤后或术后训练应由医生或物理治疗师指导，出现疼痛应停止并咨询。",
+        "en": "For anatomy learning. Seek clinician or physical therapist guidance after injury or surgery; stop and consult them if movement hurts."
+      }
+    },
+    {
+      "id": "knee-to-chest-stretch",
+      "kind": "exercise",
+      "category": "stretching",
+      "name": {
+        "zh": "抱膝臀部拉伸",
+        "en": "Knee-to-chest stretch"
+      },
+      "summary": {
+        "zh": "抱膝拉伸关联臀大肌与臀中肌。",
+        "en": "This stretch relates to gluteus maximus and gluteus medius."
+      },
+      "groupIds": [
+        "gluteus-maximus",
+        "gluteus-medius"
+      ],
+      "acupointCodes": [],
+      "sources": [
+        {
+          "title": "AAOS — Hip Conditioning Program",
+          "label": {
+            "zh": "AAOS：髋部训练",
+            "en": "AAOS — Hip Conditioning Program"
+          },
+          "url": "https://www.orthoinfo.org/recovery/hip-conditioning-program"
+        }
+      ],
+      "notice": {
+        "zh": "用于解剖学习；伤后或术后训练应由医生或物理治疗师指导，出现疼痛应停止并咨询。",
+        "en": "For anatomy learning. Seek clinician or physical therapist guidance after injury or surgery; stop and consult them if movement hurts."
+      }
+    },
+    {
+      "id": "supine-hamstring-stretch",
+      "kind": "exercise",
+      "category": "stretching",
+      "name": {
+        "zh": "仰卧腘绳肌拉伸",
+        "en": "Supine hamstring stretch"
+      },
+      "summary": {
+        "zh": "仰卧抬腿拉伸关联大腿后侧腘绳肌。",
+        "en": "This supine leg stretch relates to the hamstrings."
+      },
+      "groupIds": [
+        "hamstrings"
+      ],
+      "acupointCodes": [],
+      "sources": [
+        {
+          "title": "AAOS — Hip Conditioning Program",
+          "label": {
+            "zh": "AAOS：髋部训练",
+            "en": "AAOS — Hip Conditioning Program"
+          },
+          "url": "https://www.orthoinfo.org/recovery/hip-conditioning-program"
+        }
+      ],
+      "notice": {
+        "zh": "用于解剖学习；伤后或术后训练应由医生或物理治疗师指导，出现疼痛应停止并咨询。",
+        "en": "For anatomy learning. Seek clinician or physical therapist guidance after injury or surgery; stop and consult them if movement hurts."
+      }
+    },
+    {
+      "id": "seated-hip-rotation-stretch",
+      "kind": "exercise",
+      "category": "stretching",
+      "name": {
+        "zh": "坐姿髋部旋转拉伸",
+        "en": "Seated hip rotation stretch"
+      },
+      "summary": {
+        "zh": "来源将梨状肌列为坐姿旋转拉伸的主要相关肌肉。",
+        "en": "The source names piriformis for this seated rotation stretch."
+      },
+      "groupIds": [
+        "piriformis"
+      ],
+      "acupointCodes": [],
+      "sources": [
+        {
+          "title": "AAOS — Hip Conditioning Program",
+          "label": {
+            "zh": "AAOS：髋部训练",
+            "en": "AAOS — Hip Conditioning Program"
+          },
+          "url": "https://www.orthoinfo.org/recovery/hip-conditioning-program"
+        }
+      ],
+      "notice": {
+        "zh": "用于解剖学习；伤后或术后训练应由医生或物理治疗师指导，出现疼痛应停止并咨询。",
+        "en": "For anatomy learning. Seek clinician or physical therapist guidance after injury or surgery; stop and consult them if movement hurts."
+      }
+    },
+    {
+      "id": "standing-quadriceps-stretch",
+      "kind": "exercise",
+      "category": "stretching",
+      "name": {
+        "zh": "站姿股四头肌拉伸",
+        "en": "Standing quadriceps stretch"
+      },
+      "summary": {
+        "zh": "站姿屈膝拉伸关联大腿前侧股四头肌。",
+        "en": "This standing knee-flexion stretch relates to quadriceps."
+      },
+      "groupIds": [
+        "quadriceps"
+      ],
+      "acupointCodes": [],
+      "sources": [
+        {
+          "title": "AAOS — Knee Conditioning Program",
+          "label": {
+            "zh": "AAOS：膝部训练",
+            "en": "AAOS — Knee Conditioning Program"
+          },
+          "url": "https://www.orthoinfo.org/recovery/knee-conditioning-program/"
+        }
+      ],
+      "notice": {
+        "zh": "用于解剖学习；伤后或术后训练应由医生或物理治疗师指导，出现疼痛应停止并咨询。",
+        "en": "For anatomy learning. Seek clinician or physical therapist guidance after injury or surgery; stop and consult them if movement hurts."
+      }
+    },
+    {
+      "id": "straight-knee-heel-cord-stretch",
+      "kind": "exercise",
+      "category": "stretching",
+      "name": {
+        "zh": "直膝小腿后侧拉伸",
+        "en": "Straight-knee heel cord stretch"
+      },
+      "summary": {
+        "zh": "来源将腓肠肌与比目鱼肌复合体列为此拉伸的相关肌群。",
+        "en": "The source identifies the gastrocnemius–soleus complex for this stretch."
+      },
+      "groupIds": [
+        "gastrocnemius",
+        "soleus"
+      ],
+      "acupointCodes": [],
+      "sources": [
+        {
+          "title": "AAOS — Foot and Ankle Conditioning Program",
+          "label": {
+            "zh": "AAOS：足踝训练",
+            "en": "AAOS — Foot and Ankle Conditioning Program"
+          },
+          "url": "https://www.orthoinfo.org/recovery/foot-and-ankle-conditioning-program/"
+        }
+      ],
+      "notice": {
+        "zh": "用于解剖学习；伤后或术后训练应由医生或物理治疗师指导，出现疼痛应停止并咨询。",
+        "en": "For anatomy learning. Seek clinician or physical therapist guidance after injury or surgery; stop and consult them if movement hurts."
+      }
+    },
+    {
+      "id": "bent-knee-heel-cord-stretch",
+      "kind": "exercise",
+      "category": "stretching",
+      "name": {
+        "zh": "屈膝小腿后侧拉伸",
+        "en": "Bent-knee heel cord stretch"
+      },
+      "summary": {
+        "zh": "屈膝版本的来源列项为比目鱼肌。",
+        "en": "The bent-knee variation names soleus as its target."
+      },
+      "groupIds": [
+        "soleus"
+      ],
+      "acupointCodes": [],
+      "sources": [
+        {
+          "title": "AAOS — Foot and Ankle Conditioning Program",
+          "label": {
+            "zh": "AAOS：足踝训练",
+            "en": "AAOS — Foot and Ankle Conditioning Program"
+          },
+          "url": "https://www.orthoinfo.org/recovery/foot-and-ankle-conditioning-program/"
+        }
+      ],
+      "notice": {
+        "zh": "用于解剖学习；伤后或术后训练应由医生或物理治疗师指导，出现疼痛应停止并咨询。",
+        "en": "For anatomy learning. Seek clinician or physical therapist guidance after injury or surgery; stop and consult them if movement hurts."
+      }
+    },
+    {
+      "id": "towel-calf-stretch",
+      "kind": "exercise",
+      "category": "stretching",
+      "name": {
+        "zh": "毛巾辅助小腿拉伸",
+        "en": "Towel calf stretch"
+      },
+      "summary": {
+        "zh": "毛巾辅助拉伸关联腓肠肌与比目鱼肌。",
+        "en": "The towel-assisted stretch relates to gastrocnemius and soleus."
+      },
+      "groupIds": [
+        "gastrocnemius",
+        "soleus"
+      ],
+      "acupointCodes": [],
+      "sources": [
+        {
+          "title": "AAOS — Foot and Ankle Conditioning Program",
+          "label": {
+            "zh": "AAOS：足踝训练",
+            "en": "AAOS — Foot and Ankle Conditioning Program"
+          },
+          "url": "https://www.orthoinfo.org/recovery/foot-and-ankle-conditioning-program/"
+        }
+      ],
+      "notice": {
+        "zh": "用于解剖学习；伤后或术后训练应由医生或物理治疗师指导，出现疼痛应停止并咨询。",
+        "en": "For anatomy learning. Seek clinician or physical therapist guidance after injury or surgery; stop and consult them if movement hurts."
+      }
+    },
+    {
+      "id": "standing-calf-raise",
+      "kind": "exercise",
+      "category": "fitness",
+      "name": {
+        "zh": "站姿提踵",
+        "en": "Standing calf raise"
+      },
+      "summary": {
+        "zh": "站姿提踵关联腓肠肌和比目鱼肌。",
+        "en": "Standing heel raises relate to gastrocnemius and soleus."
+      },
+      "groupIds": [
+        "gastrocnemius",
+        "soleus"
+      ],
+      "acupointCodes": [],
+      "sources": [
+        {
+          "title": "AAOS — Foot and Ankle Conditioning Program",
+          "label": {
+            "zh": "AAOS：足踝训练",
+            "en": "AAOS — Foot and Ankle Conditioning Program"
+          },
+          "url": "https://www.orthoinfo.org/recovery/foot-and-ankle-conditioning-program/"
+        }
+      ],
+      "notice": {
+        "zh": "用于解剖学习；伤后或术后训练应由医生或物理治疗师指导，出现疼痛应停止并咨询。",
+        "en": "For anatomy learning. Seek clinician or physical therapist guidance after injury or surgery; stop and consult them if movement hurts."
+      }
+    },
+    {
+      "id": "seated-leg-extension",
+      "kind": "exercise",
+      "category": "fitness",
+      "name": {
+        "zh": "坐姿腿屈伸",
+        "en": "Seated leg extension"
+      },
+      "summary": {
+        "zh": "坐姿伸膝动作关联股四头肌。",
+        "en": "Seated knee extension relates to quadriceps."
+      },
+      "groupIds": [
+        "quadriceps"
+      ],
+      "acupointCodes": [],
+      "sources": [
+        {
+          "title": "AAOS — Knee Conditioning Program",
+          "label": {
+            "zh": "AAOS：膝部训练",
+            "en": "AAOS — Knee Conditioning Program"
+          },
+          "url": "https://www.orthoinfo.org/recovery/knee-conditioning-program/"
+        }
+      ],
+      "notice": {
+        "zh": "用于解剖学习；伤后或术后训练应由医生或物理治疗师指导，出现疼痛应停止并咨询。",
+        "en": "For anatomy learning. Seek clinician or physical therapist guidance after injury or surgery; stop and consult them if movement hurts."
+      }
+    },
+    {
+      "id": "side-lying-hip-adduction",
+      "kind": "exercise",
+      "category": "fitness",
+      "name": {
+        "zh": "侧卧髋内收",
+        "en": "Side-lying hip adduction"
+      },
+      "summary": {
+        "zh": "侧卧内收动作关联髋内收肌群。",
+        "en": "Side-lying adduction relates to the hip adductors."
+      },
+      "groupIds": [
+        "hip-adductors"
+      ],
+      "acupointCodes": [],
+      "sources": [
+        {
+          "title": "AAOS — Hip Conditioning Program",
+          "label": {
+            "zh": "AAOS：髋部训练",
+            "en": "AAOS — Hip Conditioning Program"
+          },
+          "url": "https://www.orthoinfo.org/recovery/hip-conditioning-program"
+        }
+      ],
+      "notice": {
+        "zh": "用于解剖学习；伤后或术后训练应由医生或物理治疗师指导，出现疼痛应停止并咨询。",
+        "en": "For anatomy learning. Seek clinician or physical therapist guidance after injury or surgery; stop and consult them if movement hurts."
+      }
+    },
+    {
+      "id": "overhead-elbow-extension",
+      "kind": "exercise",
+      "category": "fitness",
+      "name": {
+        "zh": "头上肘伸展",
+        "en": "Overhead elbow extension"
+      },
+      "summary": {
+        "zh": "肘伸展动作关联肱三头肌。",
+        "en": "Elbow extension relates to triceps brachii."
+      },
+      "groupIds": [
+        "triceps-brachii"
+      ],
+      "acupointCodes": [],
+      "sources": [
+        {
+          "title": "AAOS — Rotator Cuff and Shoulder Conditioning Program",
+          "label": {
+            "zh": "AAOS：肩袖与肩部训练",
+            "en": "AAOS — Rotator Cuff and Shoulder Conditioning Program"
+          },
+          "url": "https://www.orthoinfo.org/recovery/rotator-cuff-and-shoulder-conditioning-program/"
+        }
+      ],
+      "notice": {
+        "zh": "用于解剖学习；伤后或术后训练应由医生或物理治疗师指导，出现疼痛应停止并咨询。",
+        "en": "For anatomy learning. Seek clinician or physical therapist guidance after injury or surgery; stop and consult them if movement hurts."
+      }
+    },
+    {
+      "id": "rotator-cuff-tear",
+      "kind": "condition",
+      "category": "western",
+      "name": {
+        "zh": "肩袖撕裂",
+        "en": "Rotator cuff tear"
+      },
+      "summary": {
+        "zh": "肩袖肌腱可出现部分或完全撕裂；肌肉组用于理解其解剖背景。",
+        "en": "Rotator cuff tendons can tear partly or completely; the muscle group provides anatomical context."
+      },
+      "groupIds": [
+        "rotator-cuff-tendons",
+        "rotator-cuff-muscles"
+      ],
+      "acupointCodes": [],
+      "sources": [
+        {
+          "title": "AAOS — Rotator Cuff Tears",
+          "label": {
+            "zh": "AAOS：肩袖撕裂",
+            "en": "AAOS — Rotator Cuff Tears"
+          },
+          "url": "https://www.orthoinfo.org/diseases--conditions/rotator-cuff-tears/"
+        }
+      ],
+      "notice": {
+        "zh": "用于解剖背景学习，不据疼痛位置确诊。肌腱网格缺失，肌腹高亮不表示肌腱已覆盖或已确定受伤部位。",
+        "en": "Anatomical background only; pain location cannot establish a diagnosis. Tendon meshes are absent: highlighted muscle bellies do not cover the tendon or identify an injured site."
+      }
+    },
+    {
+      "id": "biceps-long-head-tendon-tear",
+      "kind": "condition",
+      "category": "western",
+      "name": {
+        "zh": "肱二头肌长头腱撕裂",
+        "en": "Long-head biceps tendon tear"
+      },
+      "summary": {
+        "zh": "肩部肱二头肌长头腱撕裂与肌腹是不同组织概念。",
+        "en": "A shoulder long-head biceps tendon tear concerns a different tissue from the muscle belly."
+      },
+      "groupIds": [
+        "biceps-long-head-tendon",
+        "biceps-long-head-muscle"
+      ],
+      "acupointCodes": [],
+      "sources": [
+        {
+          "title": "AAOS — Biceps Tendon Tear at the Shoulder",
+          "label": {
+            "zh": "AAOS：肩部肱二头肌腱撕裂",
+            "en": "AAOS — Biceps Tendon Tear at the Shoulder"
+          },
+          "url": "https://www.orthoinfo.org/diseases--conditions/biceps-tendon-tear-at-the-shoulder/"
+        }
+      ],
+      "notice": {
+        "zh": "用于解剖背景学习，不据疼痛位置确诊。肌腱网格缺失，肌腹高亮不表示肌腱已覆盖或已确定受伤部位。",
+        "en": "Anatomical background only; pain location cannot establish a diagnosis. Tendon meshes are absent: highlighted muscle bellies do not cover the tendon or identify an injured site."
+      }
+    },
+    {
+      "id": "pectoralis-tendon-tear",
+      "kind": "condition",
+      "category": "western",
+      "name": {
+        "zh": "胸大肌腱撕裂",
+        "en": "Pectoralis tendon tear"
+      },
+      "summary": {
+        "zh": "胸大肌经肌腱连接肱骨；本条仅以胸大肌肌腹说明相关解剖。",
+        "en": "Pectoralis major attaches to the humerus through a tendon; its muscle belly supplies anatomical context here."
+      },
+      "groupIds": [
+        "pectoralis-major"
+      ],
+      "acupointCodes": [],
+      "sources": [
+        {
+          "title": "AAOS — Pectoralis Tendon Tear",
+          "label": {
+            "zh": "AAOS：胸大肌腱撕裂",
+            "en": "AAOS — Pectoralis Tendon Tear"
+          },
+          "url": "https://www.orthoinfo.org/diseases--conditions/pectoralis-tendon-tear/"
+        }
+      ],
+      "notice": {
+        "zh": "用于解剖背景学习，不据疼痛位置确诊。肌腱网格缺失，肌腹高亮不表示肌腱已覆盖或已确定受伤部位。",
+        "en": "Anatomical background only; pain location cannot establish a diagnosis. Tendon meshes are absent: highlighted muscle bellies do not cover the tendon or identify an injured site."
+      }
+    },
+    {
+      "id": "low-back-strain",
+      "kind": "condition",
+      "category": "western",
+      "name": {
+        "zh": "腰背部肌肉拉伤",
+        "en": "Low-back muscle strain"
+      },
+      "summary": {
+        "zh": "肌纤维过度牵伸或撕裂属于拉伤；所示脊柱支持肌群仅为解剖背景。",
+        "en": "A strain involves overstretched or torn muscle fibers; the shown spinal-support muscle groups provide background."
+      },
+      "groupIds": [
+        "erector-spinae",
+        "rectus-abdominis",
+        "obliques"
+      ],
+      "acupointCodes": [],
+      "sources": [
+        {
+          "title": "AANS — Low Back Strain and Sprain",
+          "label": {
+            "zh": "AANS：腰背部拉伤与扭伤",
+            "en": "AANS — Low Back Strain and Sprain"
+          },
+          "url": "https://www.aans.org/patients/conditions-treatments/low-back-strain-and-sprain/"
+        }
+      ],
+      "notice": {
+        "zh": "这些高亮不是个人受伤位置的诊断，也不表示所有腰痛均由肌肉引起；韧带扭伤与肌肉拉伤有别。",
+        "en": "Highlights do not diagnose an injured site or imply that all low-back pain is muscular; ligament sprain differs from muscle strain."
+      }
+    },
+    {
+      "id": "tcm-headache",
+      "kind": "condition",
+      "category": "tcm",
+      "name": {
+        "zh": "头痛（穴位资料）",
+        "en": "Headache (point reference)"
+      },
+      "summary": {
+        "zh": "MSK 的补充疗法资料将合谷 LI4 与头痛关联。",
+        "en": "MSK complementary-care information associates Hegu LI4 with headaches."
+      },
+      "groupIds": [],
+      "acupointCodes": [
+        "LI4"
+      ],
+      "sources": [
+        {
+          "title": "MSK — Acupressure for Pain and Headaches",
+          "label": {
+            "zh": "MSK：疼痛与头痛穴位资料",
+            "en": "MSK — Acupressure for Pain and Headaches"
+          },
+          "url": "https://www.mskcc.org/cancer-care/patient-education/acupressure-pain-and-headaches"
+        }
+      ],
+      "notice": {
+        "zh": "记录传统或补充医学资料中的穴位关联，不代表疗效已获证实或可据此诊断；不提供针刺操作，也不能替代医疗评估。来源明确孕期禁按合谷；皮肤破损、水疱、皮疹或红肿发热、流脓处也禁按。",
+        "en": "Records traditional or complementary point associations, not proven efficacy or a diagnosis. No needling instructions; it does not replace clinical assessment. The source prohibits LI4 acupressure during pregnancy and on peeling, blistered, wounded, rash-covered or inflamed/infected skin."
+      }
+    },
+    {
+      "id": "tcm-nausea",
+      "kind": "condition",
+      "category": "tcm",
+      "name": {
+        "zh": "恶心（穴位资料）",
+        "en": "Nausea (point reference)"
+      },
+      "summary": {
+        "zh": "MedlinePlus 与 MSK 将内关 PC6（P-6）用于恶心相关的补充照护说明。",
+        "en": "MedlinePlus and MSK discuss Neiguan PC6 (P-6) in complementary care for nausea."
+      },
+      "groupIds": [],
+      "acupointCodes": [
+        "PC6"
+      ],
+      "sources": [
+        {
+          "title": "MedlinePlus — Nausea and acupressure",
+          "label": {
+            "zh": "MedlinePlus：恶心与穴位资料",
+            "en": "MedlinePlus — Nausea and acupressure"
+          },
+          "url": "https://www.medlineplus.gov/ency/article/002117.htm"
+        },
+        {
+          "title": "MSK — Acupressure for Nausea and Vomiting",
+          "label": {
+            "zh": "MSK：恶心与呕吐穴位资料",
+            "en": "MSK — Acupressure for Nausea and Vomiting"
+          },
+          "url": "https://www.mskcc.org/pdf/cancer-care/patient-education/acupressure-nausea-and-vomiting"
+        }
+      ],
+      "notice": {
+        "zh": "记录传统或补充医学资料中的穴位关联，不代表疗效已获证实或可据此诊断；不提供针刺操作，也不能替代医疗评估。MSK 明确皮肤脱皮、水疱、开放伤口、皮疹或红肿发热、流脓处禁按。",
+        "en": "Records traditional or complementary point associations, not proven efficacy or a diagnosis. No needling instructions; it does not replace clinical assessment. MSK prohibits acupressure on peeling, blistered, wounded, rash-covered or inflamed/infected skin."
+      }
+    },
+    {
+      "id": "tcm-sleep-difficulty",
+      "kind": "condition",
+      "category": "tcm",
+      "name": {
+        "zh": "入睡困难（传统穴位资料）",
+        "en": "Sleep difficulty (traditional point reference)"
+      },
+      "summary": {
+        "zh": "香港浸会大学资料列出神门、内关和百会等穴位；此处保留已有模型中的三个代码。",
+        "en": "HKBU lists Shenmen, Neiguan and Baihui among its traditional sleep-care points; these three codes exist in the atlas."
+      },
+      "groupIds": [],
+      "acupointCodes": [
+        "HT7",
+        "PC6",
+        "GV20"
+      ],
+      "sources": [
+        {
+          "title": "HKBU — 穴位保健治失眠",
+          "label": {
+            "zh": "香港浸会大学：穴位保健治失眠",
+            "en": "HKBU — 穴位保健治失眠"
+          },
+          "url": "https://embracehealth.hkbu.edu.hk/html/eclassroom_book_detail.php?bookid=13&id=715&sectionid=76"
+        }
+      ],
+      "notice": {
+        "zh": "记录传统或补充医学资料中的穴位关联，不代表疗效已获证实或可据此诊断；不提供针刺操作，也不能替代医疗评估。",
+        "en": "Records traditional or complementary point associations, not proven efficacy or a diagnosis. No needling instructions; it does not replace clinical assessment."
+      }
+    },
+    {
+      "id": "tcm-low-back-discomfort",
+      "kind": "condition",
+      "category": "tcm",
+      "name": {
+        "zh": "腰背不适（传统穴位资料）",
+        "en": "Low-back discomfort (traditional point reference)"
+      },
+      "summary": {
+        "zh": "清华大学医院保健资料列出肾俞与委中；不由此推断肌肉病因。",
+        "en": "Tsinghua University Hospital lists Shenshu and Weizhong in traditional back-care information; no muscular cause is inferred."
+      },
+      "groupIds": [],
+      "acupointCodes": [
+        "BL23",
+        "BL40"
+      ],
+      "sources": [
+        {
+          "title": "Tsinghua University Hospital — 六个中医护腰法",
+          "label": {
+            "zh": "清华大学医院：六个中医护腰法",
+            "en": "Tsinghua University Hospital — 六个中医护腰法"
+          },
+          "url": "https://xyy.tsinghua.edu.cn/info/1045/5937.htm"
+        }
+      ],
+      "notice": {
+        "zh": "记录传统或补充医学资料中的穴位关联，不代表疗效已获证实或可据此诊断；不提供针刺操作，也不能替代医疗评估。",
+        "en": "Records traditional or complementary point associations, not proven efficacy or a diagnosis. No needling instructions; it does not replace clinical assessment."
+      }
+    },
+    {
+      "id": "tcm-neck-discomfort",
+      "kind": "condition",
+      "category": "tcm",
+      "name": {
+        "zh": "颈部不适（传统穴位资料）",
+        "en": "Neck discomfort (traditional point reference)"
+      },
+      "summary": {
+        "zh": "香港浸会大学颈椎病资料列出风池与肩井；此条仅记录穴位关联。",
+        "en": "HKBU cervical-spondylosis material names Fengchi and Jianjing; this entry records point associations only."
+      },
+      "groupIds": [],
+      "acupointCodes": [
+        "GB20",
+        "GB21"
+      ],
+      "sources": [
+        {
+          "title": "HKBU — 頸椎病可以按哪些穴位？",
+          "label": {
+            "zh": "香港浸会大学：颈椎病穴位资料",
+            "en": "HKBU — 頸椎病可以按哪些穴位？"
+          },
+          "url": "https://embracehealth.hkbu.edu.hk/html/eclassroom_book_detail.php?bookid=28&id=1363&sectionid=193"
+        }
+      ],
+      "notice": {
+        "zh": "记录传统或补充医学资料中的穴位关联，不代表疗效已获证实或可据此诊断；不提供针刺操作，也不能替代医疗评估。",
+        "en": "Records traditional or complementary point associations, not proven efficacy or a diagnosis. No needling instructions; it does not replace clinical assessment."
+      }
+    },
+    {
+      "id": "tcm-constipation",
+      "kind": "condition",
+      "category": "tcm",
+      "name": {
+        "zh": "便秘（传统穴位资料）",
+        "en": "Constipation (traditional point reference)"
+      },
+      "summary": {
+        "zh": "中国医药大学附设医院排便训练资料列出足三里、天枢与中脘。",
+        "en": "China Medical University Hospital bowel-training material lists Zusanli, Tianshu and Zhongwan."
+      },
+      "groupIds": [],
+      "acupointCodes": [
+        "ST36",
+        "ST25",
+        "CV12"
+      ],
+      "sources": [
+        {
+          "title": "CMUH — 排便訓練",
+          "label": {
+            "zh": "中国医药大学附设医院：排便训练",
+            "en": "CMUH — 排便訓練"
+          },
+          "url": "https://www.cmuh.cmu.edu.tw/HealthEdus/Detail?no=5479"
+        }
+      ],
+      "notice": {
+        "zh": "记录传统或补充医学资料中的穴位关联，不代表疗效已获证实或可据此诊断；不提供针刺操作，也不能替代医疗评估。",
+        "en": "Records traditional or complementary point associations, not proven efficacy or a diagnosis. No needling instructions; it does not replace clinical assessment."
       }
     }
   ]

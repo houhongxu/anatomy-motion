@@ -3,6 +3,7 @@ import {
   allowedIds,
   learningIds,
   planResources,
+  presetLayers,
   recordPayload,
 } from "../src/planner";
 import type { Catalog, Learning, LearningEntry, Structure } from "../src/types";
@@ -57,12 +58,13 @@ describe("按需资源规划 / on-demand resource planning", () => {
   it("初始仅允许白名单浅层 / initial plan contains only allowed superficial geometry", () => {
     expect(planResources(catalog, base)).toEqual(["surface"]);
   });
-  it("穴位模式不加载任何内部模型 / acupuncture never loads internal models", () => {
+  it("预设不排斥独立肌层 / presets do not exclude independent muscle layers", () => {
     expect(
       planResources(catalog, {
         ...base,
         mode: "acupuncture",
-        deep: true,
+        superficial: false,
+        deep: false,
         selectedId: "deep",
       }),
     ).toEqual([]);
@@ -110,12 +112,117 @@ describe("按需资源规划 / on-demand resource planning", () => {
     };
     expect(learningIds(catalog, learning, entry)).toEqual(["deep"]);
     expect(
-      planResources(catalog, { ...base, learning, learningEntry: entry }),
+      planResources(catalog, {
+        ...base,
+        deep: true,
+        learning,
+        learningEntry: entry,
+      }),
     ).toEqual(["deep"]);
     expect(catalog.assets.body.url).toBe("/models/web/body.glb");
   });
+  it("叠加穴位不改变按需肌肉计划 / overlay keeps the same lazy muscle plan", () => {
+    expect(planResources(catalog, { ...base, mode: "acupuncture" })).toEqual([
+      "surface",
+    ]);
+    expect(
+      planResources(catalog, {
+        ...base,
+        superficial: false,
+        selectedId: "surface",
+      }),
+    ).toEqual([]);
+  });
+  it("学习中的显式跨区域深层仍受图层开关约束 / explicit learning deep structures respect layer switches", () => {
+    const entry: LearningEntry = {
+      id: "deep-entry",
+      kind: "exercise",
+      category: "stretching",
+      acupointCodes: [],
+      name: { zh: "深层", en: "Deep" },
+      summary: { zh: "", en: "" },
+      groupIds: ["mapped"],
+      sources: [],
+    };
+    const learning: Learning = {
+      groups: [
+        { id: "mapped", name: entry.name, structureIds: ["deep", "right"] },
+      ],
+      entries: [entry],
+    };
+    expect(
+      planResources(catalog, {
+        ...base,
+        learning,
+        learningEntry: entry,
+        deep: true,
+      }),
+    ).toEqual(["deep", "right"]);
+    expect(
+      planResources(catalog, { ...base, learning, learningEntry: entry }),
+    ).toEqual(["right"]);
+    expect(
+      planResources(catalog, {
+        ...base,
+        learning,
+        learningEntry: { ...entry, groupIds: [] },
+      }),
+    ).toEqual([]);
+  });
+  it("学习肌群的显式结构可用于图谱导航 / mapped group IDs navigate through explicit geometry", () => {
+    expect(
+      planResources(catalog, { ...base, structureIds: ["right"] }),
+    ).toEqual(["right"]);
+  });
   it("关闭浅层不残留浅层计划 / disabling superficial removes its geometry", () => {
     expect(planResources(catalog, { ...base, superficial: false })).toEqual([]);
+  });
+});
+describe("保留所选结构的预设 / presets preserve the selected structure", () => {
+  it("肌肉和叠加预设保留已选区域深层且不加载全身 / muscle and overlay presets retain selected regional deep geometry", () => {
+    for (const preset of ["muscles", "overlay"] as const) {
+      const layers = presetLayers(preset, [catalog.structures.deep]);
+      expect(layers.deep).toBe(true);
+      expect(
+        planResources(catalog, {
+          ...base,
+          ...layers,
+          region: "arm",
+          structureIds: ["deep"],
+          selectedId: "deep",
+        }),
+      ).toEqual(["deep"]);
+    }
+    expect(presetLayers("overlay").deep).toBe(false);
+    expect(presetLayers("overlay").skinOpacity).toBe(0.3);
+  });
+  it("纯穴位预设关闭内部肌层，切换肌肉不会自动开启深层 / point-only preset disables muscle layers without inferring deep anatomy", () => {
+    const layers = presetLayers("acupuncture", [catalog.structures.deep]);
+    expect(layers.deep).toBe(false);
+    expect(layers.superficial).toBe(false);
+    expect(layers.showPoints).toBe(true);
+    expect(
+      planResources(catalog, {
+        ...base,
+        ...layers,
+        region: "arm",
+        selectedId: "deep",
+      }),
+    ).toEqual([]);
+    expect(presetLayers("muscles", []).deep).toBe(false);
+  });
+  it("手动关闭深层优先于所选结构与预设 / manual layer changes override preset visibility and selection", () => {
+    const layers = presetLayers("overlay", [catalog.structures.deep]);
+    expect(
+      planResources(catalog, {
+        ...base,
+        ...layers,
+        deep: false,
+        region: "arm",
+        structureIds: ["deep"],
+        selectedId: "deep",
+      }),
+    ).toEqual([]);
   });
 });
 describe("记录兼容 / record compatibility", () => {

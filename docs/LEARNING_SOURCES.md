@@ -1,8 +1,8 @@
 # 学习目录来源与映射边界 / Learning sources and mapping limits
 
-中文：目录提供 25 个常见动作与 10 类运动相关肌肉拉伤、肌腱问题的简短结构说明，供解剖学习与记录时参考。动作说明是独立撰写的简述；没有复制训练计划、动作图片、治疗方案、用药建议或诊断规则。每个条目均链接具体来源页面。来源核查日期：2026-10-25。
+中文：目录提供 29 个健身动作、10 个拉伸动作、14 个西医损伤概念及 6 个传统/补充医学症状穴位条目，供解剖学习与记录时参考。动作说明是独立撰写的简述；没有复制训练计划、动作图片、治疗方案、用药建议或诊断规则。每个条目均链接具体来源页面。既有来源核查日期：2026-10-25；新增来源核查日期：2026-10-29。
 
-English: The catalog contains short structural descriptions for 25 common exercises and 10 sports-related muscle strains or tendon conditions. It supports anatomy learning and recording. Descriptions are original short paraphrases; no routines, exercise images, treatment plans, medication guidance or diagnostic rules are reproduced. Every entry links its specific source page. Sources were reviewed on 2026-10-25.
+English: The catalog contains 29 fitness exercises, 10 stretches, 14 Western injury concepts and 6 traditional/complementary symptom-to-point references. It supports anatomy learning and recording. Descriptions are original short paraphrases; no routines, exercise images, treatment plans, medication guidance or diagnostic rules are reproduced. Every entry links its specific source page. Existing sources were reviewed on 2026-10-25; added sources were reviewed on 2026-10-29.
 
 ## 资料与语义依据 / Evidence and anatomical semantics
 
@@ -27,9 +27,9 @@ English: The Achilles tendon has separate source meshes. The patellar tendon, lo
 
 ## 数据契约与复现 / Data contract and reproduction
 
-中文：`models/learning.json` 使用 `version:1`、`groups` 和 `entries`。组包含 `id,name:{zh,en},structureIds`，覆盖不足时增加 `missing:{zh,en}`。条目包含 `kind,name,summary,groupIds,sources`，必要时含 `notice`。来源的 `title` 保留机构与官方英文标题；可选的 `label:{zh,en}` 用于界面按所选语言显示单一来源标签。
+中文：`models/learning.json` 使用 `version:1`、`groups` 和 `entries`。组包含 `id,name:{zh,en},structureIds`，覆盖不足时增加 `missing:{zh,en}`。条目包含 `kind,category,name,summary,groupIds,acupointCodes,sources`，必要时含 `notice`。来源的 `title` 保留机构与官方英文标题；可选的 `label:{zh,en}` 用于界面按所选语言显示单一来源标签。
 
-English: `models/learning.json` contains `version:1`, `groups` and `entries`. Groups contain `id,name:{zh,en},structureIds`, with `missing:{zh,en}` for incomplete coverage. Entries contain `kind,name,summary,groupIds,sources` and a `notice` where needed. Source `title` retains the organization and official English title; optional `label:{zh,en}` supports displaying one source label in the selected UI language.
+English: `models/learning.json` contains `version:1`, `groups` and `entries`. Groups contain `id,name:{zh,en},structureIds`, with `missing:{zh,en}` for incomplete coverage. Entries contain `kind,category,name,summary,groupIds,acupointCodes,sources` and a `notice` where needed. Source `title` retains the organization and official English title; optional `label:{zh,en}` supports displaying one source label in the selected UI language.
 
 ```sh
 python3 scripts/prepare-models.py
@@ -129,3 +129,54 @@ English: IDs below are source element IDs; M-suffixed elements are source-provid
 BodyParts3D3.0的独立左右网格补齐背阔肌、腹直肌、腹内斜肌和腰方肌后，学习映射引用BP3D3_FMA稳定ID；腹斜肌群现在同时包含腹内外斜肌。此前“缺少这些网格”的覆盖统计属于历史Cocos版本。新40条目白名单外的关联结构不会下载，仍须显示部分覆盖，不将缺失肌腱用肌腹替代。来源及许可见WEB_ASSETS.md。
 
 Independent sided BodyParts3D3.0 meshes now supply latissimus dorsi, rectus abdominis, internal oblique and quadratus lumborum through stable BP3D3_FMA IDs. The oblique group includes both internal/external obliques. Earlier missing-mesh statistics describe historical Cocos versions. Linked structures outside the40-entry whitelist are not downloaded and remain disclosed as partial coverage; muscle bellies do not substitute for absent tendons. See WEB_ASSETS.md for provenance/licensing.
+
+
+## 四类关系目录 / Four-category relation catalog
+
+中文：版本仍为 `1`，既有条目 ID、`kind` 与分组 ID 保持稳定。`fitness`、`stretching` 对应 `exercise`；`western`、`tcm` 对应 `condition`。`tcm` 表示资料采用传统或补充医学框架，并不意味着头痛、恶心等症状仅属于中医。每个条目显式列出 `groupIds` 与 `acupointCodes`，正反向检索读取同一关系；没有另外维护反向映射，也不根据三维距离生成关系。
+
+English: Version remains `1`, preserving existing entry IDs, kinds and group IDs. `fitness` and `stretching` use kind `exercise`; `western` and `tcm` use `condition`. `tcm` identifies a traditional/complementary reference framework, not an exclusive medical ownership of symptoms. Both directions use the same explicit `groupIds` and `acupointCodes`; no separate reverse map or spatial inference is maintained.
+
+中文：穴位代码按 `models/acupuncture.json` 核验；左右侧实例共用代码。当前 6 个穴位条目均为 `groupIds:[]`，有 11 个不同代码；未推断穴位对应肌肉、肌肉病因或疾病诊断。穴位位置仍是原有未审校示意坐标；来源对穴位名称的提及不能验证三维定位。本轮没有改动坐标、网格、人体比例或参考资产。
+
+English: Point codes are checked against `models/acupuncture.json`; bilateral instances share a code. The six point-reference entries have `groupIds:[]` and 11 distinct codes. No point-to-muscle mapping, muscular cause or diagnosis is inferred. Existing point positions remain unreviewed illustrations: a source naming a point does not validate its 3D placement. This change does not alter coordinates, meshes, proportions or reference assets.
+
+中文：新增精确组复用已有网格：臀中肌 `FJ1419/FJ1419M`、梨状肌 `FJ1428/FJ1428M`、小圆肌 `FJ1508/FJ1508M`。校验器按去除左右侧前缀后的完整概念名审核，分别为 `gluteus medius`、`piriformis`、`teres minor`；未以整个肩袖代替单独小圆肌。
+
+English: Added precise groups reuse existing meshes: gluteus medius `FJ1419/FJ1419M`, piriformis `FJ1428/FJ1428M`, and teres minor `FJ1508/FJ1508M`. The validator checks these exact concept names after removing side prefixes; the entire rotator cuff is not substituted for teres minor.
+
+### 2026-10-29 新增来源对应 / Added source mapping
+
+| 条目 ID / Entry IDs | 依据与映射 / Evidence and mapping |
+|---|---|
+| `crossover-arm-stretch`; `passive-shoulder-external-rotation-stretch`; `sleeper-stretch`; `overhead-elbow-extension` | [AAOS 肩部训练 / Shoulder conditioning](https://www.orthoinfo.org/recovery/rotator-cuff-and-shoulder-conditioning-program/)：依次对应三角肌后束；冈下肌与小圆肌（两种拉伸）；肱三头肌。 / Respectively posterior deltoid; infraspinatus and teres minor (both stretches); triceps. |
+| `knee-to-chest-stretch`; `supine-hamstring-stretch`; `seated-hip-rotation-stretch`; `side-lying-hip-adduction` | [AAOS 髋部训练 / Hip conditioning](https://www.orthoinfo.org/recovery/hip-conditioning-program)：臀大肌与臀中肌；腘绳肌；梨状肌；内收肌。 / Gluteus maximus and medius; hamstrings; piriformis; adductors. |
+| `straight-knee-heel-cord-stretch`; `bent-knee-heel-cord-stretch`; `towel-calf-stretch`; `standing-calf-raise` | [AAOS 足踝训练 / Foot and ankle conditioning](https://www.orthoinfo.org/recovery/foot-and-ankle-conditioning-program/)：直膝、毛巾拉伸及提踵的来源均列腓肠肌–比目鱼肌复合体；屈膝版本仅列比目鱼肌。 / The straight-knee, towel and raise entries name the gastrocnemius–soleus complex; the bent-knee version names soleus. |
+| `standing-quadriceps-stretch`; `seated-leg-extension` | [AAOS 膝部训练 / Knee conditioning](https://www.orthoinfo.org/recovery/knee-conditioning-program/)：股四头肌。 / Quadriceps. |
+| `rotator-cuff-tear` | [AAOS 肩袖撕裂 / Rotator cuff tears](https://www.orthoinfo.org/diseases--conditions/rotator-cuff-tears/)：肌腱损伤，肌肉仅作解剖背景；肌腱未覆盖。 / Tendon injury, muscle context only; tendon coverage remains absent. |
+| `biceps-long-head-tendon-tear` | [AAOS 肩部肱二头肌腱撕裂 / Biceps tendon tear at the shoulder](https://www.orthoinfo.org/diseases--conditions/biceps-tendon-tear-at-the-shoulder/)：长头腱与长头肌腹分开，未用肌腹替代缺失肌腱。 / Long-head tendon and muscle belly remain distinct; the belly does not replace the absent tendon. |
+| `pectoralis-tendon-tear` | [AAOS 胸大肌腱撕裂 / Pectoralis tendon tear](https://www.orthoinfo.org/diseases--conditions/pectoralis-tendon-tear/)：肌腱未建模，仅显示胸大肌背景。 / Tendon unmodeled; pectoralis major provides background only. |
+| `low-back-strain` | [AANS 腰背拉伤与扭伤 / Low back strain and sprain](https://www.aans.org/patients/conditions-treatments/low-back-strain-and-sprain/)：文中脊柱支持肌群作背景，不声称个人的竖脊肌、腹直肌或腹斜肌已受伤。 / Spinal-support muscle context does not identify an individual's injured erectors, rectus abdominis or obliques. |
+| `tcm-headache` | [MSK 头痛穴位资料 / Headache acupressure](https://www.mskcc.org/cancer-care/patient-education/acupressure-pain-and-headaches)：合谷 / Hegu `LI4`。保留孕期及皮肤破损、炎症禁忌。 / Pregnancy and damaged/inflamed-skin restrictions retained. |
+| `tcm-nausea` | [MedlinePlus 恶心 / Nausea](https://www.medlineplus.gov/ency/article/002117.htm)、[MSK 恶心与呕吐 / Nausea and vomiting](https://www.mskcc.org/pdf/cancer-care/patient-education/acupressure-nausea-and-vomiting)：内关 / Neiguan `PC6`，保留 MSK 皮肤禁忌。 / MSK skin restrictions retained. |
+| `tcm-sleep-difficulty` | [香港浸会大学 失眠资料 / HKBU sleep reference](https://embracehealth.hkbu.edu.hk/html/eclassroom_book_detail.php?bookid=13&id=715&sectionid=76)：神门、内关、百会 / Shenmen, Neiguan, Baihui `HT7,PC6,GV20`。 |
+| `tcm-low-back-discomfort` | [清华大学医院 六个中医护腰法 / Tsinghua University Hospital back-care reference](https://xyy.tsinghua.edu.cn/info/1045/5937.htm)：肾俞、委中 / Shenshu, Weizhong `BL23,BL40`。采用正文同时明确列出两穴的院内重复页；最初的 `/info/1084/5936.htm` 提取正文未呈现委中段落。 / Uses the hospital duplicate page that explicitly includes both points; the initially inspected `/info/1084/5936.htm` extraction omitted the Weizhong section. |
+| `tcm-neck-discomfort` | [香港浸会大学 颈椎病穴位资料 / HKBU cervical reference](https://embracehealth.hkbu.edu.hk/html/eclassroom_book_detail.php?bookid=28&id=1363&sectionid=193)：风池、肩井 / Fengchi, Jianjing `GB20,GB21`；不把定位描述中的斜方肌当作病因证据。 / A trapezius landmark is not evidence of muscular disease cause. |
+| `tcm-constipation` | [中国医药大学附设医院 排便训练 / CMUH bowel training](https://www.cmuh.cmu.edu.tw/HealthEdus/Detail?no=5479)：足三里、天枢、中脘 / Zusanli, Tianshu, Zhongwan `ST36,ST25,CV12`。 |
+
+中文：香港浸会大学两页正文在直接网页提取中未显示，核查使用同一官方 URL 的搜索索引正文；记录的是索引中明确列出的名称，没有补写未见内容。全部新条目采用简短独立释义，不复制操作剂量、针刺步骤、训练次数、疗程、配方或图片；新增条目不构成完整训练库、疾病库或临床等价关系。
+
+English: Direct extraction omitted the two HKBU article bodies; verification used indexed body text for the same official URLs. Only explicitly listed names were retained. New entries use short original paraphrases without copied dosing, needling, repetitions, treatment courses, formulas or images. This is not a complete exercise/condition library or a claim of clinical equivalence.
+
+中文：[NCCIH 针灸效果与安全概览](https://www.nccih.nih.gov/health/acupuncture-effectiveness-and-safety)仅用于说明证据与安全边界：不能把针灸试验结果当作穴位按压疗效证明，也不能因来源声称传统用途就判定疗效成立。目录记录文献关联，不给个人治疗建议；不应以此延误医疗评估。
+
+English: The [NCCIH acupuncture effectiveness and safety overview](https://www.nccih.nih.gov/health/acupuncture-effectiveness-and-safety) informs evidence and safety limits. Acupuncture trials do not establish acupressure efficacy, and a traditional-use statement does not prove benefit. Catalog associations are educational references, not individual treatment recommendations, and must not delay clinical assessment.
+
+中文：校验要求有效分类与 `kind` 匹配、组及穴位代码已存在且不重复、双语字段完整、来源为 HTTPS。条目须有实际网格或有效穴位；纯穴位条目可无肌肉组，缺失肌腱本身不算实际覆盖。定向反例测试覆盖未知/重复穴位、分类错配、空关系、错误解剖交叉表与左右侧共用代码。
+
+English: Validation checks category/kind compatibility, unique known groups and point codes, bilingual fields and HTTPS sources. Each entry needs an actual mesh or valid point; point-only entries may omit muscle groups, while a missing tendon is not actual coverage. Focused negative tests cover unknown/duplicate points, category mismatch, empty relations, wrong anatomical crosswalks and bilateral shared codes.
+
+
+中文：原始 manifest 中 `FJ1428/FJ1428M` 未包含中文名；保留原文件完整性，以 `tools/models/names.mjs` 与网页目录中已审核的右侧/左侧梨状肌标签补足校验。这个回退只接受这两个 ID 且要求完整英文名分别为 `right piriformis`、`left piriformis`；其他结构缺失中文名仍会失败。目录组名为双语，回退不修改源元数据。
+
+English: The original manifest lacks Chinese labels for `FJ1428/FJ1428M`. Its integrity is preserved; validation uses the reviewed right/left piriformis labels already present in `tools/models/names.mjs` and the web catalog. The fallback accepts only those two IDs with exact full English names `right piriformis` and `left piriformis`. Missing Chinese labels on other structures still fail. The learning group is bilingual, and the fallback does not mutate source metadata.

@@ -17,6 +17,9 @@ export function LearningNotice({
   return (
     <>
       {entry.notice && <p className="notice">{text(locale, entry.notice)}</p>}
+      {entry.groupIds.length > 0 && !hasAvailable && (
+        <p className="missing">{t(locale, "noGeometry")}</p>
+      )}
       {gaps.length > 0 && (
         <div className="coverage-notice">
           {hasAvailable && (
