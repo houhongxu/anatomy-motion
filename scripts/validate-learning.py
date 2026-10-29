@@ -15,6 +15,7 @@ EXPECTED_NAMES = {
  "biceps-brachii": ("long head of biceps brachii","short head of biceps brachii"),
  "biceps-long-head-muscle": ("long head of biceps brachii",),
  "infraspinatus-muscle": ("infraspinatus muscle",),
+ "teres-minor": ("teres minor",), "gluteus-medius": ("gluteus medius",), "piriformis": ("piriformis",),
  "triceps-brachii": ("lateral head of triceps brachii","long head of triceps brachii","medial head of triceps brachii"),
  "rhomboids": ("rhomboid major","rhomboid minor"),
  "trapezius": ("transverse part of trapezius","ascending part of trapezius","descending part of trapezius"),
@@ -34,6 +35,12 @@ EXPECTED_NAMES = {
 }
 MISSING_ONLY = {"transversus-abdominis","multifidus","patellar-tendon","biceps-long-head-tendon","rotator-cuff-tendons","ecrb-tendon","common-flexor-tendon"}
 
+# 仅补足已审核 ID 的旧中文元数据 / Reviewed labels for these exact legacy IDs only.
+REVIEWED_NAME_FALLBACK = {
+    "FJ1428": ("right piriformis", "右侧梨状肌"),
+    "FJ1428M": ("left piriformis", "左侧梨状肌"),
+}
+
 def require(condition, message):
     if not condition:
         raise ValueError(message)
@@ -43,8 +50,11 @@ def bilingual(value, context):
     for lang in ("zh", "en"):
         require(isinstance(value.get(lang),str) and bool(value[lang].strip()), context + "." + lang + " is missing")
 
-def validate(catalog, manifest, verify_meshes=False):
+def validate(catalog, manifest, verify_meshes=False, acupuncture=None):
     require(catalog.get("version") == 1, "Unsupported catalog version")
+    if acupuncture is None:
+        acupuncture = json.loads((ROOT/"models/acupuncture.json").read_text())
+    point_codes = {point["code"] for point in acupuncture["points"]}
     structures = {s["id"]:s for s in manifest["structures"]}
     require(len(structures) == len(manifest["structures"]), "Duplicate structure IDs")
     groups = catalog.get("groups",[])
@@ -75,22 +85,33 @@ def validate(catalog, manifest, verify_meshes=False):
             expected = EXPECTED_NAMES[gid]
             # Pectoralis parts retain their exact part qualifier, while other groups use full reviewed labels.
             require((gid == "pectoralis-major" and name in {"abdominal part of pectoralis major","clavicular part of pectoralis major","sternocostal part of pectoralis major"}) or name in expected, f"Incorrect anatomical crosswalk: {gid} -> {sid} ({name})")
-            require(isinstance(structure.get("nameZh"),str) and structure["nameZh"], "Mapped structure lacks reviewed Chinese name: " + sid)
+            name_zh = structure.get("nameZh")
+            if not name_zh and sid in REVIEWED_NAME_FALLBACK:
+                expected_english, name_zh = REVIEWED_NAME_FALLBACK[sid]
+                require(structure["nameEn"] == expected_english, "Reviewed Chinese fallback English mismatch: " + sid)
+            require(isinstance(name_zh,str) and name_zh, "Mapped structure lacks reviewed Chinese name: " + sid)
             mapped.add(sid)
     for entry in entries:
         eid = entry["id"]
         require(re.fullmatch(r"[a-z0-9]+(?:-[a-z0-9]+)*",eid), "Invalid entry ID: " + eid)
         require(entry.get("kind") in {"exercise","condition"}, "Invalid entry kind: " + eid)
+        category = entry.get("category")
+        require(category in {"fitness", "stretching", "western", "tcm"}, "Invalid category: " + eid)
+        require(entry["kind"] == ("exercise" if category in {"fitness", "stretching"} else "condition"), "Category/kind mismatch: " + eid)
         bilingual(entry.get("name"), eid + ".name")
         bilingual(entry.get("summary"), eid + ".summary")
         group_ids = entry.get("groupIds")
-        require(isinstance(group_ids,list) and group_ids and len(group_ids) == len(set(group_ids)), "Invalid group IDs: " + eid)
+        require(isinstance(group_ids,list) and all(isinstance(gid,str) for gid in group_ids) and len(group_ids) == len(set(group_ids)), "Invalid group IDs: " + eid)
+        codes = entry.get("acupointCodes")
+        require(isinstance(codes,list) and all(isinstance(code,str) for code in codes) and len(codes) == len(set(codes)), "Duplicate/invalid acupoint codes: " + eid)
+        for code in codes:
+            require(code in point_codes, "Unknown acupoint code: " + code)
         for gid in group_ids:
             require(gid in group_by_id, "Unknown group: " + gid)
         referenced.update(group_ids)
         if entry["kind"] == "condition" or any("missing" in group_by_id[gid] for gid in group_ids):
             bilingual(entry.get("notice"), eid + ".notice")
-        require(any(group_by_id[gid]["structureIds"] for gid in group_ids), "Entry offers no actual mapped structure: " + eid)
+        require(any(group_by_id[gid]["structureIds"] for gid in group_ids) or codes, "Entry offers no mapped structure or acupoint: " + eid)
         sources = entry.get("sources")
         require(isinstance(sources,list) and sources, "Missing sources: " + eid)
         for source in sources:
@@ -109,7 +130,7 @@ def validate(catalog, manifest, verify_meshes=False):
             data = ROOT/"models"/item["file"]
             require(data.is_file(), "Missing mesh file: " + str(data))
             require(hashlib.sha256(data.read_bytes()).hexdigest() == item["sha256"], "Mesh hash mismatch: " + sid)
-    return {"groups":len(groups),"exercises":counts["exercise"],"conditions":counts["condition"],"mappedStructures":len(mapped),"missingOrPartialGroups":sum("missing" in g for g in groups)}
+    return {"categories":dict(Counter(e["category"] for e in entries)),"linkedAcupointCodes":len({code for e in entries for code in e["acupointCodes"]}),"groups":len(groups),"exercises":counts["exercise"],"conditions":counts["condition"],"mappedStructures":len(mapped),"missingOrPartialGroups":sum("missing" in g for g in groups)}
 
 def main():
     manifest = json.loads((ROOT/"shared/anatomy-manifest.json").read_text())

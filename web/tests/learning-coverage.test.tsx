@@ -133,4 +133,37 @@ describe("教学部分覆盖说明 / learning coverage notice", () => {
       ),
     ).not.toContain("Partial coverage");
   });
+  it("纯穴位条目不显示肌肉模型缺失警告 / point-only entries do not report missing muscle geometry", () => {
+    const pointOnly: LearningEntry = {
+      ...entry,
+      category: "tcm",
+      acupointCodes: ["LI4"],
+      groupIds: [],
+      notice: undefined,
+    };
+    const html = renderToStaticMarkup(
+      <LearningNotice
+        catalog={catalog}
+        learning={learning}
+        entry={pointOnly}
+        locale="zh"
+      />,
+    );
+    expect(html).not.toContain("暂无可用模型");
+    expect(html).not.toContain("部分覆盖");
+    expect(html).toBe("");
+  });
+  it("缺失的肌肉关联仍显示几何提示 / missing muscle mappings still show a geometry warning", () => {
+    const missing = { ...entry, groupIds: ["tendon"], notice: undefined };
+    const html = renderToStaticMarkup(
+      <LearningNotice
+        catalog={catalog}
+        learning={learning}
+        entry={missing}
+        locale="en"
+      />,
+    );
+    expect(html).toContain("No available geometry for this entry.");
+    expect(html).toContain(learning.groups[0].missing!.en);
+  });
 });
