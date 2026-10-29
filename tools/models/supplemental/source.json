@@ -1,0 +1,189 @@
+{
+  "id": "bodyparts3d-v3",
+  "name": "BodyParts3D 3.0",
+  "license": "CC BY-SA 2.1 JP",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.1/jp/",
+  "attribution": "BodyParts3D, Copyright© ライフサイエンス統合データベースセンター licensed by CC表示－継承2.1 日本 / BodyParts3D, © The Database Center for Life Science, CC BY-SA 2.1 JP.",
+  "sourceUrl": "https://dbarchive.biosciencedbc.jp/data/bodyparts3d/20110915/BodyParts3D_3.0_obj_99.zip",
+  "sourceCatalogUrl": "https://dbarchive.biosciencedbc.jp/data/bodyparts3d/20110915/parts_list_e.txt",
+  "licenseEvidenceUrl": "https://dbarchive.biosciencedbc.jp/data/bodyparts3d/20110915/README.html",
+  "archiveETag": "\"7fe684e-4aca5cf385740\"",
+  "archiveBytes": 134113358,
+  "extractionMethod": "HTTP byte ranges; ZIP CRC32 and entry sizes verified; archive SHA256 not claimed",
+  "coordinateSystem": "bodyparts3d-v1",
+  "coordinateTransform": {
+    "sourceCenter": [
+      0.010500000000007503,
+      -108.08885000000001,
+      781.72995
+    ],
+    "scale": 0.0009946871419309136,
+    "mapping": "(x,z,-y)"
+  },
+  "modifications": {
+    "zh": "从官方ZIP提取八个原始OBJ；沿用v1固定坐标变换，重算法线，量化并用Meshopt压缩为独立GLB。",
+    "en": "Extracted eight original OBJs from the official ZIP; applied the fixed v1 coordinate transform, recomputed normals, quantized and Meshopt-compressed into independent GLBs."
+  },
+  "structures": [
+    {
+      "id": "BP3D3_FMA13358",
+      "conceptId": "FMA13358",
+      "nameEn": "right latissimus dorsi",
+      "nameZh": "右侧背阔肌",
+      "kind": "muscle",
+      "side": "right",
+      "file": "tools/models/supplemental/FMA13358.obj",
+      "supplemental": true,
+      "sha256": "07082eb26856a47e408aa7915012140fc03ac8620baadec13fcde760ad369f9f",
+      "originalEntry": {
+        "member": "BodyParts3D_3.0_obj_99/FMA13358.obj",
+        "method": 8,
+        "crc": 714802407,
+        "compressed": 979102,
+        "size": 3378591,
+        "offset": 8416544,
+        "sha256": "07082eb26856a47e408aa7915012140fc03ac8620baadec13fcde760ad369f9f"
+      }
+    },
+    {
+      "id": "BP3D3_FMA13359",
+      "conceptId": "FMA13359",
+      "nameEn": "left latissimus dorsi",
+      "nameZh": "左侧背阔肌",
+      "kind": "muscle",
+      "side": "left",
+      "file": "tools/models/supplemental/FMA13359.obj",
+      "supplemental": true,
+      "sha256": "fad8dab60f63bceaed0dbee8b1bd6f11162176c4bc8ebd63844904b05bcbb671",
+      "originalEntry": {
+        "member": "BodyParts3D_3.0_obj_99/FMA13359.obj",
+        "method": 8,
+        "crc": 577892562,
+        "compressed": 983957,
+        "size": 3387404,
+        "offset": 9395727,
+        "sha256": "fad8dab60f63bceaed0dbee8b1bd6f11162176c4bc8ebd63844904b05bcbb671"
+      }
+    },
+    {
+      "id": "BP3D3_FMA13377",
+      "conceptId": "FMA13377",
+      "nameEn": "right rectus abdominis",
+      "nameZh": "右侧腹直肌",
+      "kind": "muscle",
+      "side": "right",
+      "file": "tools/models/supplemental/FMA13377.obj",
+      "supplemental": true,
+      "sha256": "b00b3d214f6ee3b4fc16ca9dd4e64b4ac3047862a2bfcb6c06b50e371d621772",
+      "originalEntry": {
+        "member": "BodyParts3D_3.0_obj_99/FMA13377.obj",
+        "method": 8,
+        "crc": 903819210,
+        "compressed": 862645,
+        "size": 2999340,
+        "offset": 10823630,
+        "sha256": "b00b3d214f6ee3b4fc16ca9dd4e64b4ac3047862a2bfcb6c06b50e371d621772"
+      }
+    },
+    {
+      "id": "BP3D3_FMA13378",
+      "conceptId": "FMA13378",
+      "nameEn": "left rectus abdominis",
+      "nameZh": "左侧腹直肌",
+      "kind": "muscle",
+      "side": "left",
+      "file": "tools/models/supplemental/FMA13378.obj",
+      "supplemental": true,
+      "sha256": "b8029d562de3ef08af46414a004bd4d4bd569da72849bcb00c4f4e5b610c8b4f",
+      "originalEntry": {
+        "member": "BodyParts3D_3.0_obj_99/FMA13378.obj",
+        "method": 8,
+        "crc": 2091967100,
+        "compressed": 805941,
+        "size": 2831699,
+        "offset": 11686356,
+        "sha256": "b8029d562de3ef08af46414a004bd4d4bd569da72849bcb00c4f4e5b610c8b4f"
+      }
+    },
+    {
+      "id": "BP3D3_FMA13892",
+      "conceptId": "FMA13892",
+      "nameEn": "right internal oblique",
+      "nameZh": "右侧腹内斜肌",
+      "kind": "muscle",
+      "side": "right",
+      "file": "tools/models/supplemental/FMA13892.obj",
+      "supplemental": true,
+      "sha256": "b5e1938292a9537226e6daf4bf3c787fe95437cd0be65bed89ac36be919a8213",
+      "originalEntry": {
+        "member": "BodyParts3D_3.0_obj_99/FMA13892.obj",
+        "method": 8,
+        "crc": 2887997536,
+        "compressed": 1324069,
+        "size": 4506350,
+        "offset": 19486844,
+        "sha256": "b5e1938292a9537226e6daf4bf3c787fe95437cd0be65bed89ac36be919a8213"
+      }
+    },
+    {
+      "id": "BP3D3_FMA13893",
+      "conceptId": "FMA13893",
+      "nameEn": "left internal oblique",
+      "nameZh": "左侧腹内斜肌",
+      "kind": "muscle",
+      "side": "left",
+      "file": "tools/models/supplemental/FMA13893.obj",
+      "supplemental": true,
+      "sha256": "c768ff8691c181b9826a8f5f83869ec8e6f29d36f7d7ff780d52b8a3b9f8fc40",
+      "originalEntry": {
+        "member": "BodyParts3D_3.0_obj_99/FMA13893.obj",
+        "method": 8,
+        "crc": 2288143157,
+        "compressed": 1261546,
+        "size": 4294518,
+        "offset": 20810994,
+        "sha256": "c768ff8691c181b9826a8f5f83869ec8e6f29d36f7d7ff780d52b8a3b9f8fc40"
+      }
+    },
+    {
+      "id": "BP3D3_FMA22348",
+      "conceptId": "FMA22348",
+      "nameEn": "right quadratus lumborum",
+      "nameZh": "右侧腰方肌",
+      "kind": "muscle",
+      "side": "right",
+      "file": "tools/models/supplemental/FMA22348.obj",
+      "supplemental": true,
+      "sha256": "ba3b92af3412c9197981e6ae31d7268b4febed4d3b3766f5994f691750037bc8",
+      "originalEntry": {
+        "member": "BodyParts3D_3.0_obj_99/FMA22348.obj",
+        "method": 8,
+        "crc": 499744222,
+        "compressed": 118423,
+        "size": 384125,
+        "offset": 30041983,
+        "sha256": "ba3b92af3412c9197981e6ae31d7268b4febed4d3b3766f5994f691750037bc8"
+      }
+    },
+    {
+      "id": "BP3D3_FMA22349",
+      "conceptId": "FMA22349",
+      "nameEn": "left quadratus lumborum",
+      "nameZh": "左侧腰方肌",
+      "kind": "muscle",
+      "side": "left",
+      "file": "tools/models/supplemental/FMA22349.obj",
+      "supplemental": true,
+      "sha256": "f978ff10049acb3f5caabfb37293bc28c801d0c13a093dab58d681b3f873136a",
+      "originalEntry": {
+        "member": "BodyParts3D_3.0_obj_99/FMA22349.obj",
+        "method": 8,
+        "crc": 1423728241,
+        "compressed": 112277,
+        "size": 368647,
+        "offset": 30160487,
+        "sha256": "f978ff10049acb3f5caabfb37293bc28c801d0c13a093dab58d681b3f873136a"
+      }
+    }
+  ]
+}

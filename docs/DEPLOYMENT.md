@@ -14,9 +14,11 @@
 
 ## 构建来源 / Build provenance
 
-Cocos 前端由官方 Creator 3.8.8 构建，发布为指定源提交的 Release 资源。`deploy/web-build.json` 固定源提交、creator 源树、资源名与 SHA256；流水线下载并验证，防止把新代码与旧前端混合。更改 creator 内容后须重新构建并更新该文件。镜像使用完整提交 SHA 标签，部署固定镜像 digest。
+React前端与后端在同一固定PR提交中构建。Docker独立前端阶段执行锁文件安装和Vite生产构建，不再下载Cocos Release。models/web的压缩GLB在仓库内校验，运行镜像仅包含白名单GLB、目录／学习／穴位元数据和后端记录清单，不包含旧617份JSON网格。镜像使用完整提交SHA标签，部署仍固定image digest。
 
-The frontend is built with official Creator 3.8.8 and uploaded as a Release asset for a source commit. `deploy/web-build.json` pins its source commit, creator tree, asset and SHA256. The workflow verifies them to prevent mixing new source with an old frontend. Rebuild and update this file after creator changes. Images use full-commit SHA tags; deployments pin image digests.
+The React frontend and backend build from the same fixed PR commit. A separate Docker frontend stage installs locked dependencies and runs Vite, without downloading Cocos releases. Compressed models/web GLBs are validated in-repository. Runtime includes whitelist GLBs, catalog/learning/surface metadata and the record manifest, excluding the old617 mesh JSONs. Images retain full-commit SHA tags and digest-pinned deployment.
+
+旧deploy/web-build.json与prepare-web.py仅为旧Cocos版本恢复保留，不参与当前流水线。/ Legacy deploy/web-build.json and prepare-web.py remain only for recovering old Cocos releases, outside the current pipeline.
 
 ## 权限与预览选择 / Permissions and preview selection
 
@@ -38,7 +40,7 @@ Repository variable `PREVIEW_PR_NUMBER` and the `deploy-preview` label gate imag
 
 Acceptance separately checks Pod placement/Ready, Service endpoints, HTTPS certificates and `/api/health`, plus frontend and model assets. A successful workflow alone is not application acceptance.
 
-容器与预览流水线使用 Node.js 22 LTS；本地 Cocos 构建工具链独立。/ Containers and the preview workflow use Node.js 22 LTS; the local Cocos build toolchain remains separate.
+容器与预览流水线使用 Node.js 22 LTS；本地 React 构建同样使用 Node。/ Containers and the preview workflow use Node.js 22 LTS; local React builds also use Node.
 
 ## 固定命令 stdio 桥 / Fixed-command stdio bridge
 

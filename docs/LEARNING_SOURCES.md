@@ -123,3 +123,9 @@ English: IDs below are source element IDs; M-suffixed elements are source-provid
 | 肩袖肌腱炎 / Rotator cuff tendinitis | 损伤概念 / Condition | [AAOS — Shoulder Impingement / Rotator Cuff Tendinitis](https://www.orthoinfo.org/diseases--conditions/shoulder-impingementrotator-cuff-tendinitis/) |
 | 网球肘（肱骨外上髁病） / Tennis elbow (lateral epicondylitis) | 损伤概念 / Condition | [AAOS — Tennis Elbow (Lateral Epicondylitis)](https://www.orthoinfo.org/diseases--conditions/tennis-elbow-lateral-epicondylitis/) |
 | 高尔夫球肘（肱骨内上髁病） / Golfer's elbow (medial epicondylitis) | 损伤概念 / Condition | [AAOS — Medial Epicondylitis (Golfer's Elbow)](https://www.orthoinfo.org/diseases--conditions/medial-epicondylitis-golfers-elbow/) |
+
+## React 目录补齐 / React catalog supplementation
+
+BodyParts3D3.0的独立左右网格补齐背阔肌、腹直肌、腹内斜肌和腰方肌后，学习映射引用BP3D3_FMA稳定ID；腹斜肌群现在同时包含腹内外斜肌。此前“缺少这些网格”的覆盖统计属于历史Cocos版本。新40条目白名单外的关联结构不会下载，仍须显示部分覆盖，不将缺失肌腱用肌腹替代。来源及许可见WEB_ASSETS.md。
+
+Independent sided BodyParts3D3.0 meshes now supply latissimus dorsi, rectus abdominis, internal oblique and quadratus lumborum through stable BP3D3_FMA IDs. The oblique group includes both internal/external obliques. Earlier missing-mesh statistics describe historical Cocos versions. Linked structures outside the40-entry whitelist are not downloaded and remain disclosed as partial coverage; muscle bellies do not substitute for absent tendons. See WEB_ASSETS.md for provenance/licensing.

@@ -15,6 +15,7 @@ class LearningValidationTest(unittest.TestCase):
     def setUpClass(cls):
         cls.catalog = json.loads((ROOT/"models/learning.json").read_text())
         cls.manifest = json.loads((ROOT/"models/manifest.json").read_text())
+        cls.manifest["structures"] += json.loads((ROOT/"shared/supplemental-manifest.json").read_text())["structures"]
     def assert_invalid(self, mutate):
         catalog = copy.deepcopy(self.catalog)
         mutate(catalog)
@@ -33,7 +34,7 @@ class LearningValidationTest(unittest.TestCase):
     def test_reject_http_source(self):
         self.assert_invalid(lambda c:c["entries"][0]["sources"][0].update(url="http://example.com"))
     def test_reject_missing_coverage_notice(self):
-        self.assert_invalid(lambda c:next(e for e in c["entries"] if e["id"]=="pull-up").pop("notice"))
+        self.assert_invalid(lambda c:next(e for e in c["entries"] if e["id"]=="plank").pop("notice"))
     def test_reject_tendon_substitution(self):
         self.assert_invalid(lambda c:next(g for g in c["groups"] if g["id"]=="patellar-tendon").update(structureIds=["FJ1433"]))
 if __name__ == "__main__":
