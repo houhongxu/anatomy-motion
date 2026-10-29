@@ -239,7 +239,7 @@ function Atlas({
     setRegion(wholeBodyScope.region);
     setSuperficial(wholeBodyScope.superficial);
     setDeep(wholeBodyScope.deep);
-    setView("fit");
+    setView("reset");
     setViewTick((value) => value + 1);
     backToAtlas();
   }
@@ -397,25 +397,22 @@ function Atlas({
           <div
             className="view-controls"
             role="group"
-            aria-label={t(locale, "fit")}
+            aria-label={t(locale, "reset")}
           >
-            {(["front", "back", "leftView", "rightView", "fit"] as View[]).map(
-              (value) => (
-                <button
-                  key={value}
-                  className={view === value ? "active" : ""}
-                  onClick={() => {
-                    if (value === "fit") restoreWholeBody();
-                    else {
-                      setView(value);
-                      setViewTick((x) => x + 1);
-                    }
-                  }}
-                >
-                  {t(locale, value)}
-                </button>
-              ),
-            )}
+            {(
+              ["front", "back", "leftView", "rightView", "reset"] as View[]
+            ).map((value) => (
+              <button
+                key={value}
+                className={view === value ? "active" : ""}
+                onClick={() => {
+                  setView(value);
+                  setViewTick((x) => x + 1);
+                }}
+              >
+                {t(locale, value)}
+              </button>
+            ))}
           </div>
           {resources.loading > 0 && (
             <div className="load-status" role="status">
@@ -553,6 +550,7 @@ function Atlas({
                     setSearch("");
                   }}
                   onClear={clearSelection}
+                  canRestoreWholeBody={region !== "all"}
                   onWholeBody={restoreWholeBody}
                 />
               </section>

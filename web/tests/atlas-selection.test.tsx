@@ -99,6 +99,7 @@ const acupuncture: Acupuncture = {
 };
 const scope = { mode: "muscles" as const, ...wholeBodyScope };
 const callbacks = {
+  canRestoreWholeBody: false,
   onStructure: () => {},
   onEntry: () => {},
   onRecord: () => {},
@@ -281,11 +282,25 @@ describe("图谱详情和学习目录边界 / atlas details and learning directo
     expect(html).toContain("结构arm");
     expect(html).toContain("关联动作");
     expect(html).toContain("取消选择");
-    expect(html).toContain("返回全身");
+    expect(html).not.toContain("返回全身");
     expect(html).not.toContain("结构leg");
     expect(html).not.toContain('type="search"');
     expect(html).not.toContain("<select");
     expect(html).not.toContain("学习目录");
+  });
+  it("仅区域浏览显示返回全身入口 / regional browsing alone exposes the whole-body restore action", () => {
+    const html = renderToStaticMarkup(
+      <AtlasSelectionDetails
+        structure={catalog.structures.arm}
+        locale="en"
+        acupuncture={acupuncture}
+        related={[]}
+        {...callbacks}
+        canRestoreWholeBody
+      />,
+    );
+    expect(html).toContain("Restore whole body");
+    expect(html).toContain("Clear selection");
   });
   it("肌群详情需先明确左右结构才可记录 / group details require an explicit sided structure before recording", () => {
     const left = catalog.structures.arm;

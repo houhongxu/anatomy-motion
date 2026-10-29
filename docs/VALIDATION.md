@@ -64,3 +64,8 @@ These are desktop browser and phone-sized checks, not physical iOS/Android certi
 
 - 移除三个预设，只保留肌肉、皮肤、穴位、经络四个主开关。浅层/深层在肌肉开启时显示，透明度仅在皮肤开启时显示；关闭肌肉清除两层，重新开启默认浅层。未改资源规划或数据。 / Three presets are removed in favor of four primary switches: muscles, skin, points and meridians. Muscle sublayers and skin opacity appear conditionally. Turning muscles off clears both layers; enabling them defaults to superficial. Resource planning and data remain unchanged.
 - 48项网页测试、typecheck、生产构建通过；集中浏览器检查390px/320px手机、总开关复位、皮肤与穴位组合、条件滑杆、详情打开与英文切换，无控制台错误或整页溢出。320px下四个主开关均在可见宽度内，栏高保持58px。 / All48 web tests, typecheck and build passed. A focused390px/320px browser session checked master reset, combined skin/points, conditional opacity, open details and English switching, with no console errors or page overflow. All four primary switches fit within320px and the bar remains58px tall.
+
+## 重置视角 / Reset view (2026-10-29)
+
+- 原“全身”改为“重置视角”，仅将相机回到正面、居中并适配完整人体，保留图层、区域、选择、页面及面板状态。“返回全身”只在限定区域时显示。 / The old Fit button becomes Reset view: it only returns the camera to a centered front view fitting the whole body, preserving layers, region, selection, tab and panel state. Restore whole body appears only for a restricted region.
+- 52项网页测试、typecheck、生产构建通过；相机数学测试覆盖手机/桌面视锥和居中位置。浏览器截图确认背面→重置后正面全身，穴位开关保留且面板不弹出；全身范围内详情不再显示区域恢复按钮。控制台无错误。 / All52 web tests, typecheck and build passed; camera math tests cover phone/desktop framing and centering. Browser screenshots confirmed Back→Reset returns to the full front body, retaining points and keeping the panel closed. Whole-body details omit the region-restore button. No console errors.
