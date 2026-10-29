@@ -53,7 +53,7 @@ const words = {
   back: ["背面", "Back"],
   leftView: ["左侧", "Left"],
   rightView: ["右侧", "Right"],
-  reset: ["重置视角", "Reset view"],
+  reset: ["重置", "Reset"],
   loading: ["正在加载人体…", "Loading body…"],
   loadingStructures: ["按需加载结构", "Loading selected structures"],
   retry: ["重试", "Retry"],
