@@ -1,5 +1,4 @@
 import { useId } from "react";
-import type { AtlasPreset } from "./planner";
 import type { Locale } from "./types";
 import { t } from "./i18n";
 export type LayerVisibility = {
@@ -9,29 +8,30 @@ export type LayerVisibility = {
   points: boolean;
   meridians: boolean;
 };
+export function muscleLayers(
+  checked: boolean,
+): Pick<LayerVisibility, "superficial" | "deep"> {
+  return { superficial: checked, deep: false };
+}
 export type LayerControlsProps = {
   locale: Locale;
-  preset: AtlasPreset;
   layers: LayerVisibility;
   skinOpacity: number;
-  onPreset: (preset: AtlasPreset) => void;
+  onMuscles: (checked: boolean) => void;
   onLayer: (layer: keyof LayerVisibility, checked: boolean) => void;
   onOpacity: (value: number) => void;
 };
 export function LayerControls({
   locale,
-  preset,
   layers,
   skinOpacity,
-  onPreset,
+  onMuscles,
   onLayer,
   onOpacity,
 }: LayerControlsProps) {
   const titleId = useId();
   const switches = [
     { id: "skin", label: "body" },
-    { id: "superficial", label: "layerSuperficial" },
-    { id: "deep", label: "layerDeep" },
     { id: "points", label: "points" },
     { id: "meridians", label: "meridians" },
   ] as const;
@@ -40,23 +40,15 @@ export function LayerControls({
       <h2 className="layer-title" id={titleId}>
         {t(locale, "layers")}
       </h2>
-      <div
-        className="layer-presets"
-        role="group"
-        aria-label={t(locale, "mode")}
-      >
-        {(["muscles", "acupuncture", "overlay"] as const).map((value) => (
-          <button
-            key={value}
-            aria-pressed={preset === value}
-            className={preset === value ? "active" : ""}
-            onClick={() => onPreset(value)}
-          >
-            {t(locale, value)}
-          </button>
-        ))}
-      </div>
       <div className="layer-switches">
+        <label className="toggle">
+          <input
+            type="checkbox"
+            checked={layers.superficial || layers.deep}
+            onChange={(event) => onMuscles(event.target.checked)}
+          />
+          <span>{t(locale, "muscles")}</span>
+        </label>
         {switches.map((layer) => (
           <label className="toggle" key={layer.id}>
             <input
@@ -68,6 +60,29 @@ export function LayerControls({
           </label>
         ))}
       </div>
+      {(layers.superficial || layers.deep) && (
+        <div
+          className="muscle-sublayers"
+          role="group"
+          aria-label={t(locale, "muscles")}
+        >
+          {(
+            [
+              { id: "superficial", label: "layerSuperficial" },
+              { id: "deep", label: "layerDeep" },
+            ] as const
+          ).map((layer) => (
+            <label className="toggle" key={layer.id}>
+              <input
+                type="checkbox"
+                checked={layers[layer.id]}
+                onChange={(event) => onLayer(layer.id, event.target.checked)}
+              />
+              <span>{t(locale, layer.label)}</span>
+            </label>
+          ))}
+        </div>
+      )}
       {layers.skin && (
         <label className="layer-opacity">
           <span>

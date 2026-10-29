@@ -10,7 +10,7 @@ import type {
   User,
 } from "./types";
 import { initialLocale, t, text } from "./i18n";
-import { learningIds, planResources, presetLayers } from "./planner";
+import { learningIds, planResources } from "./planner";
 import {
   entryCategory,
   entryPoints,
@@ -25,7 +25,7 @@ import { Records } from "./Records";
 import { LearningNotice } from "./LearningNotice";
 import { AtlasSelectionDetails, Sources } from "./AnatomyDetails";
 import { DirectoryTabs } from "./DirectoryTabs";
-import { LayerControls } from "./LayerControls";
+import { LayerControls, muscleLayers } from "./LayerControls";
 import type { DirectoryKind, SelectionAction } from "./atlas-state";
 import {
   explorerReducer,
@@ -155,9 +155,6 @@ function Atlas({
       : undefined;
   const [structureKind, setStructureKind] = useState<"muscle" | "tendon">(
     "muscle",
-  );
-  const [preset, setPreset] = useState<"muscles" | "acupuncture" | "overlay">(
-    "muscles",
   );
   const [category, setCategory] = useState<LearningCategory | "all">("all");
   const [showSkin, setShowSkin] = useState(false);
@@ -290,22 +287,6 @@ function Atlas({
     if (item.acupointCodes?.length) setShowPoints(true);
     setTab("learning");
     setPanel(true);
-  }
-  function applyPreset(next: typeof preset) {
-    const selectionIds = activeEntry
-      ? learningIds(catalog, learning, activeEntry)
-      : selectedIds;
-    const layers = presetLayers(
-      next,
-      selectionIds.map((id) => catalog.structures[id]).filter(Boolean),
-    );
-    setPreset(next);
-    setSuperficial(layers.superficial);
-    setDeep(layers.deep);
-    setShowSkin(layers.showSkin);
-    setSkinOpacity(layers.skinOpacity);
-    setShowPoints(layers.showPoints);
-    setShowMeridians(layers.showMeridians);
   }
   const related = relatedEntries(
     learning,
@@ -465,7 +446,6 @@ function Atlas({
         </div>
         <LayerControls
           locale={locale}
-          preset={preset}
           layers={{
             skin: showSkin,
             superficial,
@@ -474,7 +454,11 @@ function Atlas({
             meridians: showMeridians,
           }}
           skinOpacity={skinOpacity}
-          onPreset={applyPreset}
+          onMuscles={(checked) => {
+            const layers = muscleLayers(checked);
+            setSuperficial(layers.superficial);
+            setDeep(layers.deep);
+          }}
           onLayer={(layer, value) =>
             ({
               skin: setShowSkin,

@@ -1002,29 +1002,23 @@ button.primary:hover:not(:disabled) {
 .layer-title {
   font-size: 12px;
 }
-.layer-presets {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-.layer-presets button {
-  padding: 6px 8px;
-  font-size: 11px;
-  white-space: nowrap;
-}
-.layer-presets button.active {
-  color: #a34e44;
-  border-color: #e7c7c0;
-  background: #fbf0ed;
-}
 .layer-switches {
   display: flex;
   flex-direction: column;
   gap: 3px;
 }
-.layer-switches .toggle {
+.layer-switches .toggle,
+.muscle-sublayers .toggle {
   min-height: 30px;
   white-space: nowrap;
+}
+.muscle-sublayers {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  border-left: 1px solid var(--border);
+  padding-left: 10px;
+  margin-left: 5px;
 }
 .layer-opacity {
   display: flex;
@@ -1067,19 +1061,20 @@ button.primary:hover:not(:disabled) {
     clip-path: inset(50%);
     white-space: nowrap;
   }
-  .layer-presets,
-  .layer-switches {
+  .layer-switches,
+  .muscle-sublayers {
     flex-direction: row;
     flex: 0 0 auto;
     align-items: center;
     gap: 9px;
   }
-  .layer-presets button {
-    min-height: 38px;
-    padding: 6px 9px;
-  }
-  .layer-switches .toggle {
+  .layer-switches .toggle,
+  .muscle-sublayers .toggle {
     min-height: 42px;
+  }
+  .muscle-sublayers {
+    padding-left: 12px;
+    margin-left: 0;
   }
   .layer-opacity {
     flex: 0 0 auto;
